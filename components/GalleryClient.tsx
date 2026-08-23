@@ -15,7 +15,6 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_03", tall: true, cat: "Stone Town", alt: "Narrow Stone Town alley in morning light" },
   { seed: "gallery-stonetown-door", tall: true, cat: "Stone Town", alt: "Historic Stone Town door and street" },
   { seed: "gallery-alley", cat: "Stone Town", alt: "Stone Town alley — daily life" },
-  { seed: "zanzibar_stone_town", cat: "Stone Town", alt: "Stone Town waterfront — UNESCO alleys" },
   { seed: "zanzibar_ai_13", cat: "Stone Town", alt: "Stone Town rooftop and sea view" },
   { seed: "zanzibar_ai_14", cat: "Stone Town", alt: "Old Fort, Stone Town" },
 
