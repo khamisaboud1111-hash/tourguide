@@ -11,7 +11,10 @@ export function placeholderPhoto(seed: string, width = 1200, height = 900) {
     return `/${seed}`;
   }
   const real = zanzibarImageMap[seed];
-  if (real) return real;
+  if (real) {
+    if (real.startsWith("photos/")) return `/${real}`;
+    return real;
+  }
   // Dev fallback — do NOT ship unknown seeds to prod as if they were Zanzibar
   return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${width}/${height}`;
 }
