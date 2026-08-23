@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design tokens as CSS vars — Tailwind config is the source of truth;
+      vars exist so non-Tailwind contexts (inline styles, JS, email) can read them ── */
+:root {
+  /* Surfaces & ink */
+  --color-canvas: #FBF8F1;      /* stone.50 — warm ivory */
+  --color-surface-muted: #F5EFDD;
+  --color-card: #FFFFFF;
+  --color-ink: #1A241F;
+  --color-ink-muted: #4A3E29;
+  --color-ink-faint: #6B5A38;
+  --color-border: #EDE3C8;
+  --color-border-strong: #E0D2AC;
+
+  /* Brand accents */
+  --color-ocean: #142825;       /* lagoon.900 — Deep Ocean ~ #0B2927 family */
+  --color-clove: #8B3A2B;       /* clove.500 — Clove / Earth */
+  --color-brass: #C08A2E;       /* saffron.500 — Brass luxury accent */
+  --color-clove-hover: #712E22; /* clove.600 */
+
+  /* Radii */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-soft: 0 1px 2px rgba(10, 19, 28, 0.06), 0 4px 12px rgba(10, 19, 28, 0.05);
+  --shadow-card: 0 1px 3px rgba(10, 19, 28, 0.07), 0 8px 24px rgba(10, 19, 28, 0.06);
+  --shadow-card-hover: 0 4px 12px rgba(10, 19, 28, 0.09), 0 16px 32px rgba(10, 19, 28, 0.07);
+  --shadow-nav: 0 1px 0 rgba(10, 19, 28, 0.06), 0 12px 32px rgba(10, 19, 28, 0.08);
+  --shadow-floating: 0 8px 24px rgba(10, 19, 28, 0.12), 0 20px 48px rgba(10, 19, 28, 0.10);
+
+  /* Motion */
+  --duration-micro: 150ms;
+  --duration-ui: 200ms;
+  --duration-emphasis: 280ms;
+  --duration-enter: 320ms;
+  --ease-ui: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Container */
+  --container-content: 72rem; /* 1152px */
+  --container-wide: 80rem;    /* 1280px */
+}
+
+@layer base {
+  * {
+    @apply border-stone-200;
+  }
+
+  html {
+    scrollbar-gutter: stable;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-stone-50 text-stone-900;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display;
+  }
+
+  /* Visible keyboard focus — premium brass ring, not default outline */
+  :focus-visible {
+    outline: 2px solid var(--color-clove);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Selection mirrors brand */
+  ::selection {
+    background: #F3D68C; /* saffron.200 */
+    color: #2A211C; /* stone.900 */
+  }
+
+  /* Form elements inherit body font by default; tight rendering */
+  input, textarea, select, button {
+    font: inherit;
+  }
+}
+
+@layer components {
+  /* Reusable focus ring for components that need stronger treatment (cards, dialogs) */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clove-500 focus-visible:ring-offset-2 focus-visible:ring-offset-stone-50;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .container-page {
+    @apply mx-auto max-w-6xl px-6 md:px-10;
+    max-width: var(--container-content);
+  }
+
+  .container-wide {
+    @apply mx-auto px-6 md:px-10;
+    max-width: var(--container-wide);
+  }
+
+  /* Editorial type helpers — apply Fraunces italic for brand moments */
+  .font-display-italic {
+    @apply font-display italic;
+  }
+
+  /* Subtle hairline divider — Zanzibar door motif remains the signature divider;
+     this is the quiet workhorse between sections */
+  .hairline {
+    @apply border-stone-200;
+  }
+
+  /* Hide scrollbar but keep scroll */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
