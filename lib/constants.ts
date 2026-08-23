@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────
 
 export const business = {
-  name: "Zanzibar Karibu Tours",
+  name: "Sitmeir Tours and Travel",
   tagline: "See Zanzibar the way locals do",
   guideName: "Your Guide's Name",
   guideBioShort:

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AtSign, Mail, Phone, MapPin, ArrowRight, MessageCircle } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
+import Logo from "./Logo";
 import DoorMotifDivider from "./DoorMotifDivider";
 
 export default function Footer() {
@@ -39,7 +40,8 @@ export default function Footer() {
 
       <div className="container-page py-10 grid gap-10 md:grid-cols-12 border-t border-indigo-700/60">
         <div className="md:col-span-5">
-          <h3 className="font-display text-xl font-semibold text-white">{business.name}</h3>
+          <Logo variant="light" size="sm" href={null} />
+          <p className="mt-2 text-saffron-300 text-xs uppercase tracking-[0.12em] font-medium">{business.name}</p>
           <p className="mt-3 text-stone-300 text-sm leading-relaxed max-w-sm">
             {business.guideBioShort}
           </p>

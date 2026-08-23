@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, MessageCircle, ArrowRight } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
+import Logo from "./Logo";
 
 const links = [
   { href: "/tours", label: "Experiences" },
@@ -71,10 +72,6 @@ export default function Navbar() {
     ? "text-stone-100/90 hover:text-white"
     : "text-stone-700 hover:text-clove-600";
 
-  const logoColor = isHome && !scrolled && !open
-    ? "text-stone-50"
-    : "text-lagoon-800";
-
   return (
     <>
       <a
@@ -89,13 +86,7 @@ export default function Navbar() {
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <div className={`container-page flex items-center justify-between transition-all duration-300 ${scrolled ? "h-[64px] py-2" : "h-[72px] py-3"}`}>
-          <Link
-            href="/"
-            className={`font-display text-xl md:text-2xl font-semibold tracking-tight transition-colors ${logoColor}`}
-            aria-label={`${business.name} — home`}
-          >
-            {business.name}
-          </Link>
+          <Logo variant={isHome && !scrolled && !open ? "light" : "dark"} size="md" />
 
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-8 font-body text-[0.9375rem]">
@@ -149,9 +140,9 @@ export default function Navbar() {
           className="fixed inset-0 z-50 flex flex-col bg-stone-50 md:hidden animate-fade-in"
         >
           <div className="container-page flex h-[72px] items-center justify-between border-b border-stone-200" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-            <Link href="/" onClick={() => setOpen(false)} className="font-display text-xl font-semibold text-lagoon-800">
-              {business.name}
-            </Link>
+            <span onClick={() => setOpen(false)} className="inline-flex">
+              <Logo variant="dark" size="sm" href="/" />
+            </span>
             <button
               ref={closeBtnRef}
               onClick={() => setOpen(false)}
