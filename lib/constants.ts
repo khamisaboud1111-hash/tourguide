@@ -9,8 +9,8 @@ export const business = {
   guideName: "Your Guide's Name",
   guideBioShort:
     "A licensed Zanzibar tour guide with years of experience showing visitors the real island — its old town, its spice farms, and its reefs.",
-  whatsappNumber: "255700000000", // digits only, country code first, no + or spaces
-  phoneDisplay: "+255 700 000 000",
+  whatsappNumber: "255674804477", // 0674804477 — digits only, country code first, no + or spaces
+  phoneDisplay: "0674804477",
   email: "hello@example.com",
   instagram: "https://instagram.com/yourhandle",
   location: "Stone Town, Zanzibar, Tanzania",

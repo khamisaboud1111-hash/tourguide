@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { MessageCircle, BadgeCheck, Languages, MapPin, ArrowRight, Heart, Compass, Users, Clock, Shield } from "lucide-react";
+import { MessageCircle, BadgeCheck, Languages, MapPin, ArrowRight, Heart, Compass, Users, Clock, Shield, Phone } from "lucide-react";
 import DoorMotifDivider from "@/components/DoorMotifDivider";
 import { business, waLink } from "@/lib/constants";
 import { placeholderPhoto } from "@/lib/placeholder";
@@ -97,6 +97,19 @@ export default function AboutPage() {
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Compass size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">Real routes</span><br /><span className="text-stone-600">Not scripts</span></p></div>
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Clock size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">Flexible</span><br /><span className="text-stone-600">Your pace</span></p></div>
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Users size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">Small groups</span><br /><span className="text-stone-600">Private ok</span></p></div>
+          </div>
+
+          <div className="mt-6 rounded-2xl bg-stone-50 border border-stone-200 p-5">
+            <h3 className="font-display text-sm font-semibold text-stone-900 flex items-center gap-2"><Phone size={14} className="text-clove-600" /> Direct contact</h3>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="inline-flex items-center gap-2 rounded-full bg-white border border-stone-300 px-5 py-2.5 text-sm font-medium hover:border-clove-300 hover:text-clove-700 transition-colors">
+                <Phone size={16} /> {business.phoneDisplay}
+              </a>
+              <a href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-lagoon-700 text-white px-5 py-2.5 text-sm font-medium hover:bg-lagoon-800 transition-colors shadow-soft">
+                <MessageCircle size={16} /> WhatsApp
+              </a>
+            </div>
+            <p className="text-xs text-stone-500 mt-2">Fastest reply on WhatsApp — {business.phoneDisplay}</p>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
