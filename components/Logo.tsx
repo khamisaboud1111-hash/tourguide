@@ -132,7 +132,7 @@ export default function Logo({ variant = "dark", className = "", href = "/", siz
           Tours and Travel
           <span className={`h-px w-4 ${isLight ? "bg-white/30" : "bg-stone-300"}`} />
         </span>
-        <span className={`hidden md:block text-[0.62rem] leading-none mt-0.5 font-body ${isLight ? "text-stone-200/70" : "text-stone-400"} tracking-wide`}>Zanzibar · Since 2015</span>
+
       </span>
     </Link>
   );
