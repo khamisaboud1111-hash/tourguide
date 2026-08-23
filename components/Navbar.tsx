@@ -6,22 +6,25 @@ import { usePathname } from "next/navigation";
 import { Menu, X, MessageCircle, ArrowRight } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
 import Logo from "./Logo";
-
-const links = [
-  { href: "/tours", label: "Experiences" },
-  { href: "/journal", label: "Journal" },
-  { href: "/about", label: "About" },
-  { href: "/gallery", label: "Gallery" },
-  { href: "/contact", label: "Contact" },
-];
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useLang } from "@/lib/i18n/context";
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { t } = useLang();
   const isHome = pathname === "/";
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const links = [
+    { href: "/tours", label: t("experiences") },
+    { href: "/journal", label: t("journal") },
+    { href: "/about", label: t("about") },
+    { href: "/gallery", label: t("gallery") },
+    { href: "/contact", label: t("contact") },
+  ];
 
   // Scroll detection — compact + solid after ~32px
   useEffect(() => {
@@ -103,6 +106,7 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher variant={isHome && !scrolled ? "light" : "dark"} />
             <a
               href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)}
               target="_blank"
@@ -110,20 +114,22 @@ export default function Navbar() {
               className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${isHome && !scrolled ? "bg-stone-50 text-stone-900 hover:bg-white shadow-card" : "bg-clove-600 text-stone-50 hover:bg-clove-700 shadow-soft"}`}
             >
               <MessageCircle size={16} />
-              Plan Your Trip
+              {t("planTrip")}
             </a>
           </div>
 
-          {/* Mobile toggle */}
-          <button
-            className={`md:hidden inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${isHome && !scrolled && !open ? "border-stone-50/25 text-stone-50 hover:bg-stone-50/10" : "border-stone-200 text-stone-800 hover:bg-stone-100"}`}
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? "Close menu" : "Open menu"}
-            aria-expanded={open}
-            aria-controls="mobile-menu"
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <LanguageSwitcher variant={isHome && !scrolled && !open ? "light" : "dark"} />
+            <button
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors ${isHome && !scrolled && !open ? "border-stone-50/25 text-stone-50 hover:bg-stone-50/10" : "border-stone-200 text-stone-800 hover:bg-stone-100"}`}
+              onClick={() => setOpen((v) => !v)}
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              aria-controls="mobile-menu"
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </div>
 
         {/* Desktop compact underline when scrolled? handled via shadow */}
@@ -167,6 +173,10 @@ export default function Navbar() {
                 </span>
               </Link>
             ))}
+
+            <div className="mt-4">
+              <LanguageSwitcher variant="dark" />
+            </div>
 
             <div className="mt-8 grid gap-3">
               <a

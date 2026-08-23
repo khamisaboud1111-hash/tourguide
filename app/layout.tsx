@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { LocalBusinessJsonLd } from "@/components/StructuredData";
+import { LanguageProvider } from "@/lib/i18n/context";
 import { business } from "@/lib/constants";
 
 const fraunces = Fraunces({
@@ -43,11 +44,13 @@ export default function RootLayout({
       <body
         className={`${fraunces.variable} ${workSans.variable} font-body bg-stone-50 text-stone-900 antialiased`}
       >
-        <Navbar />
-        <main id="main-content">{children}</main>
-        <Footer />
-        <WhatsAppButton />
-        <LocalBusinessJsonLd />
+        <LanguageProvider>
+          <Navbar />
+          <main id="main-content">{children}</main>
+          <Footer />
+          <WhatsAppButton />
+          <LocalBusinessJsonLd />
+        </LanguageProvider>
       </body>
     </html>
   );

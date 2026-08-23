@@ -9,6 +9,7 @@ import { business, waLink } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
+import ExploreMapLoader from "@/components/ExploreMapLoader";
 
 export const dynamic = "force-dynamic";
 
@@ -71,8 +72,7 @@ export default async function HomePage() {
     .from("tours")
     .select("*")
     .eq("is_published", true)
-    .order("created_at", { ascending: false })
-    .limit(6);
+    .order("created_at", { ascending: false });
   const tours = (data ?? []).map(rowToTour);
   const [featured, ...rest] = tours;
   const signature = tours.slice(0, 6);
@@ -260,6 +260,47 @@ export default async function HomePage() {
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Interactive Zanzibar map ─────────────────────────── */}
+      <section className="container-page py-12 md:py-16">
+        <SectionHeading
+          kicker="Explore Zanzibar"
+          title="See the island on the map"
+          description="Tap a pin to preview the experience — Stone Town, spice farms, Jozani, Menai Bay and more. Every marker is a real tour location."
+        />
+        <div className="mt-8 grid lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 h-[420px] md:h-[480px] rounded-2xl overflow-hidden border border-stone-200 shadow-card">
+            {tours.length > 0 ? (
+              <ExploreMapLoader tours={tours} />
+            ) : (
+              <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">
+                No tours yet — add them in <Link href="/admin" className="text-clove-600 underline">/admin</Link> and they will appear as pins here automatically.
+              </div>
+            )}
+          </div>
+          <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5 md:p-6">
+            <h3 className="font-display font-semibold text-stone-900">Where we go</h3>
+            <ul className="mt-4 space-y-3">
+              {tours.slice(0, 6).map((t) => (
+                <li key={t.slug} className="flex items-start gap-3">
+                  <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-clove-600 shrink-0" />
+                  <div>
+                    <Link href={`/tours/${t.slug}`} className="text-sm font-medium text-stone-900 hover:text-clove-600 transition-colors">
+                      {t.title}
+                    </Link>
+                    <p className="text-xs text-stone-500">{t.category} · {t.duration} · {t.meetingPoint}</p>
+                  </div>
+                </li>
+              ))}
+              {tours.length === 0 && <li className="text-sm text-stone-500">Your tours will list here once published.</li>}
+            </ul>
+            <Link href="/tours" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-clove-700 hover:gap-2.5 transition-all">
+              View all experiences <ArrowRight size={16} />
+            </Link>
+            <p className="mt-3 text-xs text-stone-500">Map pins are real tour meeting points from the database — no invented coordinates.</p>
           </div>
         </div>
       </section>
