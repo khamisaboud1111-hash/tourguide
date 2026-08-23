@@ -51,7 +51,15 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
         className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${isLight ? "border-white/20 bg-white/10 text-white hover:bg-white/15 backdrop-blur" : "border-stone-200 bg-white text-stone-700 hover:border-stone-300 hover:bg-stone-50"}`}
       >
         <Globe size={14} className={isLight ? "text-white" : "text-clove-600"} />
-        <span className="text-sm leading-none">{current.flag}</span>
+        <img
+          src={`https://flagcdn.com/w20/${current.country}.png`}
+          srcSet={`https://flagcdn.com/w40/${current.country}.png 2x`}
+          width={20}
+          height={15}
+          alt={current.flag}
+          className="h-3.5 w-5 rounded-sm object-cover shadow-sm shrink-0"
+          loading="lazy"
+        />
         <span className="hidden sm:inline">{current.native}</span>
         <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""} ${isLight ? "text-white/70" : "text-stone-400"}`} />
       </button>
@@ -100,7 +108,15 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
                   }}
                   className={`flex items-center gap-2.5 px-4 py-3 text-left hover:bg-stone-50 transition-colors border-b border-stone-100 ${active ? "bg-clove-50" : ""}`}
                 >
-                  <span className="text-lg leading-none">{l.flag}</span>
+                  <img
+                    src={`https://flagcdn.com/w20/${l.country}.png`}
+                    srcSet={`https://flagcdn.com/w40/${l.country}.png 2x`}
+                    width={20}
+                    height={15}
+                    alt={l.flag}
+                    className="h-4 w-6 rounded-sm object-cover shadow-sm shrink-0"
+                    loading="lazy"
+                  />
                   <span className="flex-1 min-w-0">
                     <span className={`block text-sm font-medium leading-none ${active ? "text-clove-700" : "text-stone-900"}`}>{l.native}</span>
                     <span className="block text-xs text-stone-500 leading-none mt-1">{l.label}</span>

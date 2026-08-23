@@ -1,18 +1,18 @@
 export type Lang = "en" | "sw" | "fr" | "de" | "it" | "es" | "zh" | "ja" | "ar" | "ru" | "pt" | "nl";
 
-export const languages: { code: Lang; label: string; native: string; flag: string }[] = [
-  { code: "en", label: "English", native: "English", flag: "🇬🇧" },
-  { code: "sw", label: "Swahili", native: "Kiswahili", flag: "🇹🇿" },
-  { code: "fr", label: "French", native: "Français", flag: "🇫🇷" },
-  { code: "de", label: "German", native: "Deutsch", flag: "🇩🇪" },
-  { code: "it", label: "Italian", native: "Italiano", flag: "🇮🇹" },
-  { code: "es", label: "Spanish", native: "Español", flag: "🇪🇸" },
-  { code: "zh", label: "Chinese", native: "中文", flag: "🇨🇳" },
-  { code: "ja", label: "Japanese", native: "日本語", flag: "🇯🇵" },
-  { code: "ar", label: "Arabic", native: "العربية", flag: "🇸🇦" },
-  { code: "ru", label: "Russian", native: "Русский", flag: "🇷🇺" },
-  { code: "pt", label: "Portuguese", native: "Português", flag: "🇵🇹" },
-  { code: "nl", label: "Dutch", native: "Nederlands", flag: "🇳🇱" },
+export const languages: { code: Lang; label: string; native: string; flag: string; country: string }[] = [
+  { code: "en", label: "English", native: "English", flag: "🇬🇧", country: "gb" },
+  { code: "sw", label: "Swahili", native: "Kiswahili", flag: "🇹🇿", country: "tz" },
+  { code: "fr", label: "French", native: "Français", flag: "🇫🇷", country: "fr" },
+  { code: "de", label: "German", native: "Deutsch", flag: "🇩🇪", country: "de" },
+  { code: "it", label: "Italian", native: "Italiano", flag: "🇮🇹", country: "it" },
+  { code: "es", label: "Spanish", native: "Español", flag: "🇪🇸", country: "es" },
+  { code: "zh", label: "Chinese", native: "中文", flag: "🇨🇳", country: "cn" },
+  { code: "ja", label: "Japanese", native: "日本語", flag: "🇯🇵", country: "jp" },
+  { code: "ar", label: "Arabic", native: "العربية", flag: "🇸🇦", country: "sa" },
+  { code: "ru", label: "Russian", native: "Русский", flag: "🇷🇺", country: "ru" },
+  { code: "pt", label: "Portuguese", native: "Português", flag: "🇵🇹", country: "pt" },
+  { code: "nl", label: "Dutch", native: "Nederlands", flag: "🇳🇱", country: "nl" },
 ];
 
 type Dict = Record<string, string>;
