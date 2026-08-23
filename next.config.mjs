@@ -3,13 +3,22 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        // Placeholder photo service — used only until real tour photos
-        // are added under /public/photos. See PLACEHOLDER-IMAGES.md.
         protocol: "https",
         hostname: "picsum.photos",
       },
+      {
+        protocol: "https",
+        hostname: "upload.wikimedia.org",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+      },
     ],
-    // Serve local public/photos with responsive sizes, modern formats
     formats: ["image/avif", "image/webp"],
   },
   experimental: {
