@@ -119,8 +119,6 @@ export default function GalleryClient() {
               sizes="(min-width:768px) 33vw, 50vw"
               className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <span className="absolute top-2 left-2 rounded-full bg-white/90 backdrop-blur px-2.5 py-1 text-xs font-medium text-stone-700 border border-stone-200/60">{p.cat}</span>
-            <span className="absolute bottom-2 left-2 right-2 text-xs text-white/90 bg-indigo-900/30 backdrop-blur px-2 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity line-clamp-1">{p.alt}</span>
           </button>
         ))}
       </div>
