@@ -1,16 +1,25 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Globe, ChevronDown, Check } from "lucide-react";
+import { Globe, ChevronDown, Check, Search, X } from "lucide-react";
 import { useLang } from "@/lib/i18n/context";
 import { languages } from "@/lib/i18n/dictionary";
 
 export default function LanguageSwitcher({ variant = "dark" }: { variant?: "light" | "dark" }) {
   const { lang, setLang } = useLang();
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const ref = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const current = languages.find((l) => l.code === lang) ?? languages[0];
   const isLight = variant === "light";
+
+  const sorted = [...languages].sort((a, b) => a.label.localeCompare(b.label));
+  const filtered = query.trim()
+    ? sorted.filter((l) =>
+        [l.label, l.native, l.code, l.flag].join(" ").toLowerCase().includes(query.toLowerCase())
+      )
+    : sorted;
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -24,6 +33,13 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
       window.removeEventListener("keydown", onEsc);
     };
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      setQuery("");
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
+  }, [open]);
 
   return (
     <div ref={ref} className="relative">
@@ -47,10 +63,32 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
         >
           <div className="px-4 py-3 border-b border-stone-100 bg-stone-50/70">
             <p className="text-xs font-semibold tracking-[0.08em] uppercase text-stone-500">Choose language</p>
-            <p className="text-xs text-stone-400">Shows with flag — instantly</p>
+            <p className="text-xs text-stone-400">A → Z with flag — searchable</p>
+          </div>
+          <div className="px-3 py-2 border-b border-stone-100 bg-white">
+            <label className="relative block">
+              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+              <input
+                ref={inputRef}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search languages…"
+                className="w-full rounded-xl border border-stone-200 bg-stone-50 pl-9 pr-8 py-2 text-sm outline-none focus:border-clove-300 focus:ring-2 focus:ring-clove-100"
+                aria-label="Search languages"
+              />
+              {query && (
+                <button
+                  onClick={() => setQuery("")}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 p-1"
+                >
+                  <X size={14} />
+                </button>
+              )}
+            </label>
           </div>
           <div className="grid grid-cols-2 gap-0 overflow-y-auto no-scrollbar">
-            {languages.map((l) => {
+            {filtered.map((l) => {
               const active = l.code === lang;
               return (
                 <button
@@ -72,8 +110,11 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
               );
             })}
           </div>
+          {filtered.length === 0 && (
+            <p className="px-4 py-6 text-center text-sm text-stone-500">No languages match “{query}”.</p>
+          )}
           <div className="px-3 py-2 bg-stone-50 border-t border-stone-100 text-[11px] text-stone-500 text-center">
-            More languages coming — English is complete, others translate navigation & hero first.
+            {filtered.length} languages · A → Z with flag
           </div>
         </div>
       )}
