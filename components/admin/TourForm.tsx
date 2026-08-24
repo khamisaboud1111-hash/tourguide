@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import type { Tour } from "@/lib/tours";
@@ -156,7 +156,7 @@ export default function TourForm({ action, tour }: Props) {
       </p>
 
       <div>
-        <label className={labelClasses} htmlFor="highlights">Highlights <span className="text-stone-400 font-normal">(one per line: Title: Body â€” or paste JSON)</span></label>
+        <label className={labelClasses} htmlFor="highlights">Highlights <span className="text-stone-400 font-normal">(one per line: Title: Body — or paste JSON)</span></label>
         <textarea id="highlights" name="highlights" rows={3} defaultValue={tour?.highlights ? tour.highlights.map((h) => `${h.title}: ${h.body}`).join("\n") : ""} placeholder="Walk the alleys: Carved doors, bazaars..." className={inputClasses} />
       </div>
       <div>

@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
@@ -14,7 +14,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
     <div className="min-h-screen bg-stone-100">
       <header className="bg-indigo-800 text-stone-100">
         <div className="container-page flex items-center justify-between h-16">
-          <span className="font-display font-semibold">{business.name} â€” Admin</span>
+          <span className="font-display font-semibold">{business.name} — Admin</span>
           <div className="flex items-center gap-5 text-sm">
             <Link
               href="/"

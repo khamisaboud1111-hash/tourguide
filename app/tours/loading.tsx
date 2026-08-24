@@ -1,4 +1,4 @@
-﻿export default function ToursLoading() {
+export default function ToursLoading() {
   return (
     <div className="container-page py-10">
       <div className="h-4 w-28 bg-stone-200 rounded-full animate-pulse" />

@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -54,7 +54,7 @@ function parseTourForm(formData: FormData) {
   if (!parsed.success) {
     throw new Error(
       "Please check the tour form: " +
-        parsed.error.issues.map((i) => `${i.path.join(".")} â€” ${i.message}`).join("; ")
+        parsed.error.issues.map((i) => `${i.path.join(".")} — ${i.message}`).join("; ")
     );
   }
   return parsed.data;

@@ -1,4 +1,4 @@
-﻿import { business } from "@/lib/constants";
+import { business } from "@/lib/constants";
 
 export function LocalBusinessJsonLd() {
   const data = {

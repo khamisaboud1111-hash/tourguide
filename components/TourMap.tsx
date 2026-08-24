@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
@@ -6,10 +6,10 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 // Leaflet's default marker icons reference image paths that don't survive
-// bundling â€” this points them at a CDN so pins actually render.
+// bundling — this points them at a CDN so pins actually render.
 function useLeafletIconFix() {
   useEffect(() => {
-    // @ts-expect-error â€” _getIconUrl is a private Leaflet internal we need to clear
+    // @ts-expect-error — _getIconUrl is a private Leaflet internal we need to clear
     delete L.Icon.Default.prototype._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",

@@ -1,4 +1,4 @@
-﻿import Image from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, Users, Compass, MessageCircle, Star, MapPin, Clock, Waves } from "lucide-react";
 import TourCard from "@/components/TourCard";
@@ -45,7 +45,7 @@ export default async function HomePage() {
   const signature = tours.slice(0, 6);
 
   const values = [
-    { icon: ShieldCheck, title: t("licensedLocal"), body: lang === "sw" ? "Kila ziara inaongozwa moja kwa moja â€” leseni na maarifa ya Stone Town." : t("whyDesc") },
+    { icon: ShieldCheck, title: t("licensedLocal"), body: lang === "sw" ? "Kila ziara inaongozwa moja kwa moja — leseni na maarifa ya Stone Town." : t("whyDesc") },
     { icon: Users, title: t("smallGroups"), body: t("smallGroupsDesc") },
     { icon: Compass, title: t("localKnowledge"), body: t("localKnowledgeDesc") },
   ];
@@ -59,7 +59,7 @@ export default async function HomePage() {
 
   const destinations = [
     { name: "Stone Town", blurb: lang === "en" ? "Coral-stone alleys, carved doors, bazaars" : t("exploreIslandTitle"), seed: "stonetown-door" },
-    { name: "Spice Farms", blurb: lang === "en" ? "Clove, vanilla, cinnamon â€” tasted live" : t("localKnowledge"), seed: "spice-farm" },
+    { name: "Spice Farms", blurb: lang === "en" ? "Clove, vanilla, cinnamon — tasted live" : t("localKnowledge"), seed: "spice-farm" },
     { name: "Jozani Forest", blurb: lang === "en" ? "Red colobus monkeys, mangrove boardwalk" : t("personalAttention"), seed: "jozani-forest" },
     { name: "South Coast", blurb: lang === "en" ? "Menai Bay, sandbanks & dhow sailing" : t("authenticExp"), seed: "safariblue" },
   ];
@@ -113,21 +113,21 @@ export default async function HomePage() {
               <MapPin size={16} className="text-clove-600 shrink-0" />
               <span className="text-sm text-stone-700 flex-1">
                 <span className="block text-[11px] uppercase tracking-[0.08em] text-stone-500">{t("where")}</span>
-                Stone Town Â· Spice Farms Â· Jozani
+                Stone Town · Spice Farms · Jozani
               </span>
             </label>
             <label className="flex items-center gap-3 rounded-xl bg-stone-50 border border-stone-200 px-4 py-3">
               <Clock size={16} className="text-clove-600 shrink-0" />
               <span className="text-sm text-stone-700 flex-1">
                 <span className="block text-[11px] uppercase tracking-[0.08em] text-stone-500">{t("when")}</span>
-                {lang === "en" ? "Any date â€” flexible" : t("flexibleDates")}
+                {lang === "en" ? "Any date — flexible" : t("flexibleDates")}
               </span>
             </label>
             <label className="flex items-center gap-3 rounded-xl bg-stone-50 border border-stone-200 px-4 py-3">
               <Waves size={16} className="text-clove-600 shrink-0" />
               <span className="text-sm text-stone-700 flex-1">
                 <span className="block text-[11px] uppercase tracking-[0.08em] text-stone-500">{t("experience")}</span>
-                Culture Â· Ocean Â· Nature
+                Culture · Ocean · Nature
               </span>
             </label>
           </div>
@@ -165,7 +165,7 @@ export default async function HomePage() {
             <div className="col-span-3 relative aspect-[16/7] rounded-2xl overflow-hidden">
               <Image src={placeholderPhoto("ocean-sandbank", 1200, 500)} alt="White sandbank" fill className="object-cover" sizes="100vw" />
               <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/40 to-transparent" />
-              <p className="absolute bottom-3 left-4 text-stone-50 text-xs md:text-sm font-medium">Menai Bay Â· reached by dhow</p>
+              <p className="absolute bottom-3 left-4 text-stone-50 text-xs md:text-sm font-medium">Menai Bay · reached by dhow</p>
             </div>
           </div>
         </div>
@@ -181,7 +181,7 @@ export default async function HomePage() {
         </div>
         {signature.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-sm text-stone-500">
-            No experiences yet â€” <Link href="/admin" className="text-clove-600 underline">/admin</Link>.
+            No experiences yet — <Link href="/admin" className="text-clove-600 underline">/admin</Link>.
           </p>
         ) : (
           <div className="grid md:grid-cols-3 gap-5 md:gap-6">
@@ -221,7 +221,7 @@ export default async function HomePage() {
         <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreMapTitle")} description={t("exploreMapDesc")} />
         <div className="mt-8 grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 h-[420px] md:h-[480px] rounded-2xl overflow-hidden border border-stone-200 shadow-card">
-            {tours.length > 0 ? <ExploreMapLoader tours={tours} /> : <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">No tours yet â€” add them in /admin.</div>}
+            {tours.length > 0 ? <ExploreMapLoader tours={tours} /> : <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">No tours yet — add them in /admin.</div>}
           </div>
           <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5 md:p-6">
             <h3 className="font-display font-semibold text-stone-900">{t("whereWeGo")}</h3>
@@ -231,7 +231,7 @@ export default async function HomePage() {
                   <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-clove-600 shrink-0" />
                   <div>
                     <Link href={`/tours/${t.slug}`} className="text-sm font-medium text-stone-900 hover:text-clove-600 transition-colors">{t.title}</Link>
-                    <p className="text-xs text-stone-500">{t.category} Â· {t.duration} Â· {t.meetingPoint}</p>
+                    <p className="text-xs text-stone-500">{t.category} · {t.duration} · {t.meetingPoint}</p>
                   </div>
                 </li>
               ))}
@@ -318,7 +318,7 @@ export default async function HomePage() {
           {[
             { title: lang === "en" ? "Best time to visit Zanzibar" : t("journalTitle"), excerpt: lang === "en" ? "Seasons, tides and when each tour shines." : t("journalDesc"), seed: "journal-season" },
             { title: lang === "en" ? "What to pack for a spice farm" : t("journalTitle"), excerpt: lang === "en" ? "Shoes, sun and the small things guides notice." : t("journalDesc"), seed: "journal-pack" },
-            { title: lang === "en" ? "Stone Town in half a day" : t("journalTitle"), excerpt: lang === "en" ? "A slow walk â€” doors, markets, rooftops." : t("journalDesc"), seed: "journal-stonetown" },
+            { title: lang === "en" ? "Stone Town in half a day" : t("journalTitle"), excerpt: lang === "en" ? "A slow walk — doors, markets, rooftops." : t("journalDesc"), seed: "journal-stonetown" },
           ].map((a) => (
             <div key={a.title} className="rounded-2xl bg-white border border-stone-200 overflow-hidden shadow-soft hover:shadow-card-hover transition-shadow">
               <div className="relative aspect-[16/10] overflow-hidden">

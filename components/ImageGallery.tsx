@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
@@ -111,7 +111,7 @@ export default function ImageGallery({ photos, title }: { photos: { src: string;
           autoFocus
         >
           <div className="flex items-center justify-between px-4 md:px-6 py-4 text-stone-100">
-            <p className="text-sm font-medium">{title} â€” {active + 1} / {photos.length}</p>
+            <p className="text-sm font-medium">{title} — {active + 1} / {photos.length}</p>
             <button onClick={() => setOpen(false)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white">
               <X size={18} />
             </button>

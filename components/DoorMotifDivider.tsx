@@ -1,11 +1,11 @@
-﻿type Props = {
+type Props = {
   className?: string;
   tone?: "onLight" | "onDark";
 };
 
 // A repeating rosette-and-stud motif, referencing the carved geometric
 // borders and brass studs found on traditional Zanzibari doors. Used as
-// the site's one recurring signature element â€” a section divider, not
+// the site's one recurring signature element — a section divider, not
 // a page-wide decoration.
 export default function DoorMotifDivider({ className = "", tone = "onLight" }: Props) {
   const stroke = tone === "onLight" ? "#8B3A2B" : "#F5EFDD"; // clove-500 / stone-100

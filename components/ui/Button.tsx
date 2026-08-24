@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { cn } from "@/lib/tokens";
 
 type Variant = "primary" | "secondary" | "outline" | "ghost" | "inverse";
@@ -8,18 +8,18 @@ const base =
   "inline-flex items-center justify-center gap-2 font-medium transition-colors transition-transform duration-ui ease-ui focus-ring disabled:opacity-60 disabled:pointer-events-none select-none";
 
 const variants: Record<Variant, string> = {
-  // Clove â€” primary action, booking, CTAs
+  // Clove — primary action, booking, CTAs
   primary:
     "bg-clove-600 text-stone-50 hover:bg-clove-700 active:bg-clove-800 shadow-soft hover:shadow-card",
-  // Lagoon â€” secondary, WhatsApp-adjacent, calm
+  // Lagoon — secondary, WhatsApp-adjacent, calm
   secondary:
     "bg-lagoon-600 text-stone-50 hover:bg-lagoon-700 active:bg-lagoon-800 shadow-soft hover:shadow-card",
-  // Light outline â€” over stone/indigo hero alternatives
+  // Light outline — over stone/indigo hero alternatives
   outline:
     "border border-stone-300 text-stone-800 hover:border-clove-300 hover:text-clove-700 hover:bg-clove-50/60 bg-stone-50",
   ghost:
     "text-stone-700 hover:text-clove-700 hover:bg-stone-100 bg-transparent border border-transparent",
-  // Over dark / image â€” for hero overlays
+  // Over dark / image — for hero overlays
   inverse:
     "bg-stone-50 text-stone-900 hover:bg-white border border-stone-200 shadow-card",
 };

@@ -1,4 +1,4 @@
-﻿import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { updateBookingStatus, updatePaymentStatus } from "@/app/actions/bookings";
 import AutoSubmitSelect from "@/components/admin/AutoSubmitSelect";
 
@@ -33,7 +33,7 @@ export default async function AdminBookingsPage() {
       <div className="space-y-4">
         {bookings?.length === 0 && (
           <p className="text-sm text-stone-500">
-            No booking requests yet â€” they&apos;ll show up here as soon as someone submits the
+            No booking requests yet — they&apos;ll show up here as soon as someone submits the
             form on the tour detail page.
           </p>
         )}

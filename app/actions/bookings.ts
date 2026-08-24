@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { bookingSchema } from "@/lib/validations";
 import { sendBookingEmails } from "@/lib/email";
 
-// Simple in-memory rate limiter â€” 5 bookings / 60s per IP. Swap to Upstash Redis for multi-instance.
+// Simple in-memory rate limiter — 5 bookings / 60s per IP. Swap to Upstash Redis for multi-instance.
 const _rate = new Map<string, number[]>();
 function rateLimitOk(ip: string, limit = 5, windowMs = 60_000): boolean {
   const now = Date.now();
@@ -25,7 +25,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   // Rate limit by IP (best-effort, fail open if headers unavailable)
   try {
     const ip = headers().get("x-forwarded-for")?.split(",")[0]?.trim() || headers().get("x-real-ip") || "unknown";
-    if (!rateLimitOk(ip)) return { ok: false, error: "Too many requests â€” please wait a minute and try again, or message on WhatsApp." };
+    if (!rateLimitOk(ip)) return { ok: false, error: "Too many requests — please wait a minute and try again, or message on WhatsApp." };
   } catch {}
   const raw = {
     tourId: formData.get("tourId") ?? "",
@@ -62,7 +62,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     return { ok: false, error: "Something went wrong saving your request. Please try WhatsApp instead." };
   }
 
-  // Email is best-effort â€” a booking should still succeed even if Resend
+  // Email is best-effort — a booking should still succeed even if Resend
   // isn't configured yet or a send fails.
   try {
     await sendBookingEmails({

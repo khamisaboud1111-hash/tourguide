@@ -1,4 +1,4 @@
-﻿import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { timingSafeEqual } from "crypto";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Malformed payload" }, { status: 400 });
   }
 
-  // Never trust the webhook body's status alone â€” re-verify server-to-server.
+  // Never trust the webhook body's status alone — re-verify server-to-server.
   const verifyRes = await fetch(
     `https://api.flutterwave.com/v3/transactions/${transactionId}/verify`,
     { headers: { Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}` } }

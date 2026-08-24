@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { business } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
@@ -6,8 +6,8 @@ import ToursExplorer from "@/components/ToursExplorer";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
-  title: `Experiences â€” ${business.name}`,
-  description: "Culture, ocean, nature â€” every way to see Zanzibar with a local guide. Small groups, flexible days.",
+  title: `Experiences — ${business.name}`,
+  description: "Culture, ocean, nature — every way to see Zanzibar with a local guide. Small groups, flexible days.",
 };
 
 export const revalidate = 60;
@@ -38,7 +38,7 @@ export default async function ToursPage() {
       <div className="mt-8">
         {tours.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-sm text-stone-500">
-            No tours published yet â€” add some from the admin dashboard at <span className="font-medium">/admin</span>.
+            No tours published yet — add some from the admin dashboard at <span className="font-medium">/admin</span>.
           </p>
         ) : (
           <ToursExplorer tours={tours} />

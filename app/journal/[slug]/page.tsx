@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -16,9 +16,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const a = getArticle(slug);
   if (!a) return {};
   return {
-    title: `${a.title} â€” ${business.name} Journal`,
+    title: `${a.title} — ${business.name} Journal`,
     description: a.excerpt,
-    openGraph: { title: `${a.title} â€” ${business.name}`, description: a.excerpt, type: "article" },
+    openGraph: { title: `${a.title} — ${business.name}`, description: a.excerpt, type: "article" },
   };
 }
 
@@ -37,7 +37,7 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
 
       {a.draft && (
         <div className="mt-4 rounded-xl bg-saffron-50 border border-saffron-200 text-saffron-800 text-sm px-4 py-3">
-          <span className="font-medium">Coming soon â€” draft slot.</span> This is placeholder content. The owner will replace it with a real guide before launch.
+          <span className="font-medium">Coming soon — draft slot.</span> This is placeholder content. The owner will replace it with a real guide before launch.
         </div>
       )}
 
@@ -60,7 +60,7 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
         <p>{a.content}</p>
       </div>
 
-      {/* Article structured data â€” truthful, no fake dates beyond placeholder */}
+      {/* Article structured data — truthful, no fake dates beyond placeholder */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

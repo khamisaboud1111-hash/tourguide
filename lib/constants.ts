@@ -11,8 +11,10 @@ export const business = {
     "A licensed Zanzibar tour guide with years of experience showing visitors the real island — its old town, its spice farms, and its reefs.",
   whatsappNumber: "255674804477", // 0674804477 — digits only, country code first, no + or spaces
   phoneDisplay: "0674804477",
-  email: "hello@example.com",
-  instagram: "https://instagram.com/yourhandle",
+  email: "abdulhamidameir96@gmail.com",
+  facebook: "https://www.facebook.com/Abdul Hamid",
+  tiktok: "https://www.tiktok.com/@sitmeirtourtravel",
+  instagram: "https://instagram.com/sitmeirtourtravel",
   location: "Stone Town, Zanzibar, Tanzania",
   mapCenter: { lat: -6.1659, lng: 39.2026 }, // Stone Town coordinates — replace with your actual meeting point
   depositPercent: 0.2, // 20% deposit online, rest paid to the guide directly

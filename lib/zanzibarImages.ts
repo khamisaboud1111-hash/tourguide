@@ -3,20 +3,36 @@
 // Generated from zanzibar_website_images.zip (3) + openai pack (40) — all Zanzibar, all local.
 
 export const zanzibarImageMap: Record<string, string> = {
+  // ── Owner real photos (14 from owner shoot) ────────
+  "sitmeir_real_01": `photos/sitmeir_real_01.jpg`,
+  "sitmeir_real_02": `photos/sitmeir_real_02.jpg`,
+  "sitmeir_real_03": `photos/sitmeir_real_03.jpg`,
+  "sitmeir_real_04": `photos/sitmeir_real_04.jpg`,
+  "sitmeir_real_05": `photos/sitmeir_real_05.jpg`,
+  "sitmeir_real_06": `photos/sitmeir_real_06.jpg`,
+  "sitmeir_real_07": `photos/sitmeir_real_07.jpg`,
+  "sitmeir_real_08": `photos/sitmeir_real_08.jpg`,
+  "sitmeir_real_09": `photos/sitmeir_real_09.jpg`,
+  "sitmeir_real_10": `photos/sitmeir_real_10.jpg`,
+  "sitmeir_real_11": `photos/sitmeir_real_11.jpg`,
+  "sitmeir_real_12": `photos/sitmeir_real_12.jpg`,
+  "sitmeir_real_13": `photos/sitmeir_real_13.jpg`,
+  "sitmeir_real_14": `photos/sitmeir_real_14.jpg`,
+
   // ── Hero & editorial — owner local ──────────────────
-  "hero-dhow-sunset": `photos/zanzibar_ai_06.jpg`, // sunset dhow — AI but Zanzibar-authentic
-  "hero-zanzibar": `photos/zanzibar_ai_06.jpg`,
-  "about-zanzibar-street": `photos/zanzibar_ai_01.jpg`, // Stone Town arch/fountain
-  "guide-portrait": `photos/zanzibar_ai_35.jpg`, // guide/person
-  "guide-portrait-2": `photos/zanzibar_ai_35.jpg`,
+  "hero-dhow-sunset": `photos/sitmeir_real_14.jpg`, // real palm-sunset beach shot
+  "hero-zanzibar": `photos/sitmeir_real_01.jpg`, // turquoise lagoon aerial
+  "about-zanzibar-street": `photos/sitmeir_real_11.jpg`, // Stone Town clock tower street
+  "guide-portrait": `photos/sitmeir_real_07.jpg`,
+  "guide-portrait-2": `photos/sitmeir_real_07.jpg`,
 
   // ── Tours (DB photo_seed values) ───────────────────
-  "stonetown-1": `photos/zanzibar_ai_01.jpg`, // Hamamni baths / Stone Town arches
-  "spicefarm-1": `photos/zanzibar_ai_04.jpg`, // spice / food
-  "safariblue-1": `photos/zanzibar_ai_08.jpg`, // turquoise ocean, sandbank
-  "jozani-1": `photos/zanzibar_ai_16.jpg`, // Jozani forest / mangrove
-  "sunset-dhow-1": `photos/zanzibar_nungwi_sunset.webp`, // real Nungwi sunset
-  "prisonisland-1": `photos/zanzibar_ai_11.jpg`, // island / beach
+  "stonetown-1": `photos/sitmeir_real_12.jpg`, // carved door alley
+  "spicefarm-1": `photos/zanzibar_ai_04.jpg`,
+  "safariblue-1": `photos/sitmeir_real_01.jpg`, // turquoise lagoon pier
+  "jozani-1": `photos/zanzibar_ai_16.jpg`,
+  "sunset-dhow-1": `photos/sitmeir_real_14.jpg`, // real sunset beach
+  "prisonisland-1": `photos/sitmeir_real_10.jpg`, // Stone Town waterfront boats
 
   // variants used by gallery detail (tourSeed + "-2" etc)
   "stonetown-1-2": `photos/zanzibar_stone_town.webp`,

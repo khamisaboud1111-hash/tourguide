@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { createServiceClient } from "@/lib/supabase/service";
 import { business } from "@/lib/constants";
@@ -7,7 +7,7 @@ import { business } from "@/lib/constants";
 // creating/paying a deposit on their own booking isn't a logged-in
 // Supabase user, so the admin-only RLS policy on bookings would block
 // both the read and the update below. The only data this touches is the
-// single booking matching the id passed in â€” never arbitrary rows.
+// single booking matching the id passed in — never arbitrary rows.
 
 type PaymentLinkResult = { ok: true; link: string } | { ok: false; error: string };
 
@@ -15,7 +15,7 @@ export async function createPaymentLink(bookingId: string): Promise<PaymentLinkR
   if (!process.env.FLUTTERWAVE_SECRET_KEY) {
     return {
       ok: false,
-      error: "Online payment isn't set up yet â€” please use WhatsApp to arrange payment for now.",
+      error: "Online payment isn't set up yet — please use WhatsApp to arrange payment for now.",
     };
   }
 
@@ -53,7 +53,7 @@ export async function createPaymentLink(bookingId: string): Promise<PaymentLinkR
       },
       customizations: {
         title: business.name,
-        description: `Deposit â€” ${booking.tour_title_snapshot}`,
+        description: `Deposit — ${booking.tour_title_snapshot}`,
       },
     }),
   });
@@ -61,7 +61,7 @@ export async function createPaymentLink(bookingId: string): Promise<PaymentLinkR
   const json = await response.json();
 
   if (json.status !== "success" || !json.data?.link) {
-    return { ok: false, error: "Couldn't start the payment â€” please try WhatsApp instead." };
+    return { ok: false, error: "Couldn't start the payment — please try WhatsApp instead." };
   }
 
   await supabase

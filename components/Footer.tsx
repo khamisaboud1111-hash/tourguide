@@ -1,5 +1,6 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { AtSign, Mail, Phone, MapPin, ArrowRight, MessageCircle } from "lucide-react";
+import { FacebookIcon, TikTokIcon } from "@/components/SocialIcons";
 import { business, waLink } from "@/lib/constants";
 import Logo from "./Logo";
 import DoorMotifDivider from "./DoorMotifDivider";
@@ -26,7 +27,7 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap gap-3 shrink-0">
             <Link
-              href="/tours"
+              href="/book"
               className="inline-flex items-center gap-2 rounded-full bg-stone-50 text-indigo-900 px-6 py-3.5 text-sm font-medium hover:bg-white transition-colors shadow-card"
             >
               {t("planTrip")} <ArrowRight size={16} />
@@ -59,6 +60,7 @@ export default function Footer() {
           <h4 className="font-body font-semibold text-xs uppercase tracking-[0.12em] text-saffron-300 mb-4">{t("experiences")}</h4>
           <ul className="space-y-2.5 text-sm text-stone-300">
             <li><Link href="/tours" className="hover:text-white transition-colors">{t("allTours")}</Link></li>
+            <li><Link href="/book" className="hover:text-white transition-colors">Book online</Link></li>
             <li><Link href="/tours" className="hover:text-white transition-colors">Culture &amp; History</Link></li>
             <li><Link href="/tours" className="hover:text-white transition-colors">Ocean &amp; Sailing</Link></li>
             <li><Link href="/tours" className="hover:text-white transition-colors">Nature &amp; Wildlife</Link></li>
@@ -105,13 +107,25 @@ export default function Footer() {
               </span>
               <a href={business.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
             </li>
+            <li className="flex items-center gap-2.5">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-indigo-700 border border-indigo-600 shrink-0">
+                <FacebookIcon size={14} className="text-saffron-300" />
+              </span>
+              <a href={business.facebook} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Facebook — Abdul Hamid</a>
+            </li>
+            <li className="flex items-center gap-2.5">
+              <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-indigo-700 border border-indigo-600 shrink-0">
+                <TikTokIcon size={14} className="text-saffron-300" />
+              </span>
+              <a href={business.tiktok} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TikTok — Sitmeir Tour &amp; Travel</a>
+            </li>
           </ul>
         </div>
       </div>
 
       <div className="border-t border-indigo-600/60">
         <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-stone-400">
-          <p>Â© {new Date().getFullYear()} {business.name}. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} {business.name}. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/contact" className="hover:text-stone-200 transition-colors">{t("cancellation")}</Link>
             <span className="h-3 w-px bg-indigo-600" />

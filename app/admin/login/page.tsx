@@ -1,4 +1,4 @@
-﻿import { signIn } from "@/app/actions/auth";
+import { signIn } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
 
 export default async function AdminLoginPage({

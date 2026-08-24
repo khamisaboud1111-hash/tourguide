@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
@@ -14,7 +14,7 @@ export default function WhatsAppButton() {
   if (pathname?.startsWith("/tours/") && pathname !== "/tours") {
     label = "Ask about this tour";
     shortLabel = "Ask";
-    // slug appears in pathname â€” use it in message for context
+    // slug appears in pathname — use it in message for context
     const slug = pathname.split("/").pop() || "";
     const pretty = slug.replace(/-/g, " ");
     text = `Hi ${business.guideName}, I'm interested in the ${pretty} tour. Is it available?`;

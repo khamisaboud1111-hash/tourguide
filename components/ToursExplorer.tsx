@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
@@ -143,7 +143,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               </select>
             </label>
             <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">Max price â€” {maxPrice ? `$${maxPrice}` : "Any"}</span>
+              <span className="block text-xs font-medium text-stone-700">Max price — {maxPrice ? `$${maxPrice}` : "Any"}</span>
               <input
                 type="range"
                 min={20}

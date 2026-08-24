@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { Plus, Pencil, Trash2, Eye, EyeOff } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { deleteTour, togglePublish } from "@/app/actions/tours";
@@ -30,14 +30,14 @@ export default async function AdminToursPage() {
 
       <div className="rounded-2xl border border-stone-200 bg-stone-50 divide-y divide-stone-200">
         {tours?.length === 0 && (
-          <p className="p-6 text-sm text-stone-500">No tours yet â€” add your first one above.</p>
+          <p className="p-6 text-sm text-stone-500">No tours yet — add your first one above.</p>
         )}
         {tours?.map((tour) => (
           <div key={tour.id} className="flex items-center justify-between gap-4 p-5">
             <div className="min-w-0">
               <p className="font-medium text-stone-900 truncate">{tour.title}</p>
               <p className="text-sm text-stone-500">
-                {tour.category} Â· ${tour.price_usd} Â·{" "}
+                {tour.category} · ${tour.price_usd} ·{" "}
                 <span className={tour.is_published ? "text-lagoon-700" : "text-stone-400"}>
                   {tour.is_published ? "Published" : "Hidden"}
                 </span>
