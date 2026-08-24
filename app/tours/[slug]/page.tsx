@@ -12,6 +12,7 @@ import BookingForm from "@/components/BookingForm";
 import ImageGallery from "@/components/ImageGallery";
 import StickyBookingBar from "@/components/StickyBookingBar";
 import TourCard from "@/components/TourCard";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -74,6 +75,8 @@ const faq = [
 ];
 
 export default async function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();
+  const t = (k: string) => tServer(k, lang);
   const { slug } = await params;
   const supabase = await createClient();
   const { data } = await supabase.from("tours").select("*").eq("slug", slug).single();
@@ -147,14 +150,14 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           </div>
 
           <div>
-            <h2 className="font-display text-2xl font-semibold">About this experience</h2>
+            <h2 className="font-display text-2xl font-semibold">{t("aboutThis")}</h2>
             <p className="mt-3 text-stone-700 leading-relaxed text-[15px]">{tour.description}</p>
             <p className="mt-3 text-stone-600 text-sm leading-relaxed">{tour.summary}</p>
           </div>
 
           {/* Highlights */}
           <div>
-            <h3 className="font-display text-xl font-semibold mb-4">Highlights</h3>
+            <h3 className="font-display text-xl font-semibold mb-4">{t("highlights")}</h3>
             <div className="grid sm:grid-cols-3 gap-4">
               {highlights.map((h) => (
                 <div key={h.title} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
@@ -168,7 +171,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
 
           {/* Itinerary */}
           <div>
-            <h3 className="font-display text-xl font-semibold mb-4">Itinerary</h3>
+            <h3 className="font-display text-xl font-semibold mb-4">{t("itinerary")}</h3>
             <ol className="relative border-l border-stone-200 pl-6 space-y-4">
               {itinerary.map((step) => (
                 <li key={step} className="relative">
@@ -183,7 +186,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           {/* Included / Excluded */}
           <div className="grid sm:grid-cols-2 gap-6 md:gap-8">
             <div className="rounded-2xl bg-lagoon-50 border border-lagoon-200 p-5">
-              <h3 className="font-display text-base font-semibold text-lagoon-900">Included</h3>
+              <h3 className="font-display text-base font-semibold text-lagoon-900">{t("included")}</h3>
               <ul className="mt-3 space-y-2">
                 {tour.includes.map((i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-stone-700">
@@ -193,7 +196,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
               </ul>
             </div>
             <div className="rounded-2xl bg-stone-50 border border-stone-200 p-5">
-              <h3 className="font-display text-base font-semibold">Not included</h3>
+              <h3 className="font-display text-base font-semibold">{t("notIncluded")}</h3>
               <ul className="mt-3 space-y-2">
                 {tour.excludes.map((i) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-stone-700">
@@ -207,11 +210,11 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           {/* What to bring + Meeting */}
           <div className="grid md:grid-cols-2 gap-6">
             <div className="rounded-2xl bg-white border border-stone-200 p-5">
-              <h3 className="font-display text-base font-semibold mb-2">What to bring</h3>
-              <p className="text-sm text-stone-600">Comfortable shoes, sunscreen, water, camera. Light scarf for Stone Town stops. Your guide will remind you what&apos;s specific to this tour when confirming.</p>
+              <h3 className="font-display text-base font-semibold mb-2">{t("whatToBring")}</h3>
+              <p className="text-sm text-stone-600">{t("whatToBringDesc")}</p>
             </div>
             <div className="rounded-2xl bg-white border border-stone-200 p-5">
-              <h3 className="font-display text-base font-semibold mb-2 flex items-center gap-2"><MapPin size={16} className="text-clove-600" /> Meeting point</h3>
+              <h3 className="font-display text-base font-semibold mb-2 flex items-center gap-2"><MapPin size={16} className="text-clove-600" /> {t("meetingPoint")}</h3>
               <p className="text-sm text-stone-700">{tour.meetingPoint}</p>
               <p className="text-xs text-stone-500 mt-1">{tour.coords.lat.toFixed(4)}, {tour.coords.lng.toFixed(4)} — copy into maps. Nearby landmark included in confirmation.</p>
               <div className="mt-3 h-48 rounded-xl overflow-hidden border border-stone-200">
@@ -222,13 +225,13 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
 
           {/* Cancellation */}
           <div className="rounded-2xl bg-stone-100 border border-stone-200 p-5">
-            <h3 className="font-display text-base font-semibold flex items-center gap-2"><ShieldCheck size={16} className="text-lagoon-700" /> Cancellation</h3>
-            <p className="text-sm text-stone-600 mt-2 leading-relaxed">Free to cancel or reschedule until the guide confirms. After confirmation, message directly for weather or timing changes — flexibility is part of a local guide.</p>
+            <h3 className="font-display text-base font-semibold flex items-center gap-2"><ShieldCheck size={16} className="text-lagoon-700" /> {t("cancellation")}</h3>
+            <p className="text-sm text-stone-600 mt-2 leading-relaxed">{t("cancellationDesc")}</p>
           </div>
 
           {/* FAQ */}
           <div>
-            <h3 className="font-display text-xl font-semibold mb-3">Good to know</h3>
+            <h3 className="font-display text-xl font-semibold mb-3">{t("goodToKnow")}</h3>
             <div className="divide-y divide-stone-200 rounded-2xl border border-stone-200 bg-white overflow-hidden">
               {faq.map((f) => (
                 <details key={f.q} className="group px-5 py-4">
@@ -244,7 +247,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           {/* Related */}
           {related.length > 0 && (
             <div>
-              <h3 className="font-display text-xl font-semibold mb-4">You might also like</h3>
+              <h3 className="font-display text-xl font-semibold mb-4">{t("youMayLike")}</h3>
               <div className="grid sm:grid-cols-3 gap-4">
                 {related.map((r) => (
                   <TourCard key={r.slug} tour={r} />
