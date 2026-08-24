@@ -5,6 +5,7 @@ import { MessageCircle, BadgeCheck, Languages, MapPin, ArrowRight, Heart, Compas
 import DoorMotifDivider from "@/components/DoorMotifDivider";
 import { business, waLink } from "@/lib/constants";
 import { placeholderPhoto } from "@/lib/placeholder";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: `About ${business.guideName} — ${business.name}`,
@@ -32,6 +33,8 @@ const favoritePlaces = [
 ];
 
 export default function AboutPage() {
+  const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();
+  const t = (k: string) => tServer(k, lang);
   return (
     <div>
       {/* Hero portrait */}
@@ -72,7 +75,7 @@ export default function AboutPage() {
         </div>
 
         <div className="md:col-span-3">
-          <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">About your guide</p>
+          <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("aboutGuide")}</p>
           <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-balance">{business.guideName}</h1>
           <p className="mt-2 text-lagoon-700 font-medium text-sm flex flex-wrap gap-2 items-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-stone-700 text-xs"><Shield size={12} /> Licensed</span>
@@ -126,8 +129,8 @@ export default function AboutPage() {
       {/* Why book with me */}
       <section className="bg-stone-100 py-12 md:py-16">
         <div className="container-page">
-          <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">Why book with me</p>
-          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">Five reasons to go local</h2>
+          <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("aboutGuide")}</p>
+          <h2 className="font-display text-3xl md:text-4xl font-semibold mb-8">{t("fiveReasons")}</h2>
           <div className="grid md:grid-cols-5 gap-4">
             {pillars.map((p) => (
               <div key={p.n} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
@@ -145,7 +148,7 @@ export default function AboutPage() {
       <section className="container-page py-12 md:py-16">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div>
-            <h3 className="font-display text-2xl font-semibold">How I design a day</h3>
+            <h3 className="font-display text-2xl font-semibold">{t("howIDesign")}</h3>
             <ol className="mt-4 space-y-3 text-sm text-stone-700 list-decimal list-inside marker:text-clove-600">
               <li><span className="font-medium text-stone-900">We talk first.</span> Dates, hotel, who&apos;s traveling, what you love.</li>
               <li><span className="font-medium text-stone-900">I pick the timing.</span> Tide, light, farm hours — so it actually makes sense.</li>

@@ -5,6 +5,7 @@ import TourMapLoader from "@/components/TourMapLoader";
 import { business, waLink } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: `Contact — ${business.name}`,
@@ -14,14 +15,16 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function ContactPage() {
+  const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();
+  const t = (k: string) => tServer(k, lang);
   const supabase = await createClient();
   const { data } = await supabase.from("tours").select("*").eq("is_published", true).order("title");
   const tours = (data ?? []).map(rowToTour);
 
   return (
     <div className="container-page py-10 md:py-14">
-      <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">Get in touch</p>
-      <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">Let&apos;s plan your trip</h1>
+      <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("contact")}</p>
+      <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">{t("readyTitle")}</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">Message directly — no agency, no forms that vanish. WhatsApp is fastest and you&apos;ll talk to your guide in person.</p>
 
       <div className="mt-10 grid md:grid-cols-2 gap-8 md:gap-12">

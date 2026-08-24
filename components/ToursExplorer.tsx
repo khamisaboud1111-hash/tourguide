@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import type { Tour } from "@/lib/tours";
 import TourCard from "./TourCard";
+import { useLang } from "@/lib/i18n/context";
 
 type SortKey = "recommended" | "price-asc" | "price-desc" | "duration";
 
@@ -33,6 +34,7 @@ const difficulties: { label: string; value: Tour["difficulty"] | "All" }[] = [
 ];
 
 export default function ToursExplorer({ tours }: { tours: Tour[] }) {
+  const { t } = useLang();
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("All");
   const [dur, setDur] = useState("All durations");
@@ -80,9 +82,9 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
             <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tours, Stone Town, spice, reef…"
+              placeholder={t("searchTours")}
               className="w-full rounded-xl border border-stone-300 bg-stone-50 pl-10 pr-10 py-3 text-sm outline-none focus:border-clove-500 focus:ring-2 focus:ring-clove-500/15 transition-colors"
-              aria-label="Search tours"
+              aria-label={t("searchTours")}
             />
             {query && (
               <button onClick={() => setQuery("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
