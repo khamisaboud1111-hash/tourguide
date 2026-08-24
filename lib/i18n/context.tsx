@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { dictionary, languages, t, type Lang } from "./dictionary";
 
 type Ctx = {
@@ -17,6 +18,7 @@ export function useLang() {
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("en");
+  const router = useRouter();
 
   useEffect(() => {
     const saved = localStorage.getItem("lang") as Lang | null;
@@ -31,9 +33,17 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     localStorage.setItem("lang", lang);
+    document.cookie = `lang=${lang}; path=/; max-age=31536000; SameSite=Lax`;
   }, [lang]);
 
-  const setLang = (l: Lang) => setLangState(l);
+  const setLang = (l: Lang) => {
+    setLangState(l);
+    document.cookie = `lang=${l}; path=/; max-age=31536000; SameSite=Lax`;
+    // Force server components to re-render with new lang
+    router.refresh();
+    // Fallback hard reload if router.refresh doesn't pick new cookie quickly
+    setTimeout(() => window.location.reload(), 150);
+  };
 
   const tt = (key: string) => t(lang, key);
 
