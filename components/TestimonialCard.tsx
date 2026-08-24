@@ -1,4 +1,4 @@
-import { Star } from "lucide-react";
+﻿import { Star } from "lucide-react";
 
 export type Testimonial = {
   quote: string;
@@ -16,10 +16,10 @@ export default function TestimonialCard({ testimonial }: { testimonial: Testimon
         ))}
       </div>
       <blockquote className="font-display text-lg leading-snug text-stone-800">
-        “{testimonial.quote}”
+        â€œ{testimonial.quote}â€
       </blockquote>
       <figcaption className="mt-4 text-sm text-stone-500">
-        <span className="font-medium text-stone-700">{testimonial.name}</span>, {testimonial.origin} ·{" "}
+        <span className="font-medium text-stone-700">{testimonial.name}</span>, {testimonial.origin} Â·{" "}
         {testimonial.tour}
       </figcaption>
     </figure>

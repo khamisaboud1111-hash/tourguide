@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { CheckCircle2, XCircle } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -39,7 +39,7 @@ export default async function BookingConfirmedPage({
       }
     }
   } else if (status === "cancelled") {
-    message = "Payment was cancelled — no charge was made.";
+    message = "Payment was cancelled â€” no charge was made.";
   }
 
   return (

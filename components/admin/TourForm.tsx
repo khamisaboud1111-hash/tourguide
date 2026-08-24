@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import type { Tour } from "@/lib/tours";
@@ -20,6 +20,11 @@ type TourRow = {
   lng: number;
   photo_seed: string;
   is_published: boolean;
+  is_featured?: boolean;
+  highlights?: { title: string; body: string }[];
+  itinerary?: string[];
+  what_to_bring?: string[];
+  cancellation_policy?: string;
 };
 
 type Props = {
@@ -64,7 +69,7 @@ export default function TourForm({ action, tour }: Props) {
         </div>
         <div>
           <label className={labelClasses} htmlFor="groupSize">Group size</label>
-          <input id="groupSize" name="groupSize" required defaultValue={tour?.group_size} placeholder="e.g. 1–8 people" className={inputClasses} />
+          <input id="groupSize" name="groupSize" required defaultValue={tour?.group_size} placeholder="e.g. 1â€“8 people" className={inputClasses} />
         </div>
       </div>
 
@@ -150,14 +155,32 @@ export default function TourForm({ action, tour }: Props) {
         Tip: right-click the spot on Google Maps and tap the coordinates to copy them.
       </p>
 
+      <div>
+        <label className={labelClasses} htmlFor="highlights">Highlights <span className="text-stone-400 font-normal">(one per line: Title: Body â€” or paste JSON)</span></label>
+        <textarea id="highlights" name="highlights" rows={3} defaultValue={tour?.highlights ? tour.highlights.map((h) => `${h.title}: ${h.body}`).join("\n") : ""} placeholder="Walk the alleys: Carved doors, bazaars..." className={inputClasses} />
+      </div>
+      <div>
+        <label className={labelClasses} htmlFor="itinerary">Itinerary <span className="text-stone-400 font-normal">(one per line)</span></label>
+        <textarea id="itinerary" name="itinerary" rows={4} defaultValue={tour?.itinerary?.join("\n") ?? ""} placeholder="09:00 Meet at Forodhani..." className={inputClasses} />
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label className={labelClasses} htmlFor="whatToBring">What to bring <span className="text-stone-400 font-normal">(one per line)</span></label>
+          <textarea id="whatToBring" name="whatToBring" rows={3} defaultValue={tour?.what_to_bring?.join("\n") ?? ""} className={inputClasses} />
+        </div>
+        <div>
+          <label className={labelClasses} htmlFor="cancellationPolicy">Cancellation policy</label>
+          <textarea id="cancellationPolicy" name="cancellationPolicy" rows={3} defaultValue={tour?.cancellation_policy ?? ""} className={inputClasses} />
+        </div>
+      </div>
+
       <label className="flex items-center gap-2 text-sm text-stone-700">
-        <input
-          type="checkbox"
-          name="isPublished"
-          defaultChecked={tour?.is_published ?? true}
-          className="rounded border-stone-300"
-        />
+        <input type="checkbox" name="isPublished" defaultChecked={tour?.is_published ?? true} className="rounded border-stone-300" />
         Published (visible on the live site)
+      </label>
+      <label className="flex items-center gap-2 text-sm text-stone-700">
+        <input type="checkbox" name="isFeatured" defaultChecked={tour?.is_featured ?? false} className="rounded border-stone-300" />
+        Featured on homepage
       </label>
 
       <button
@@ -165,7 +188,7 @@ export default function TourForm({ action, tour }: Props) {
         disabled={submitting}
         className="rounded-full bg-clove-600 hover:bg-clove-700 disabled:opacity-60 transition-colors text-stone-50 px-6 py-3 font-medium"
       >
-        {submitting ? "Saving…" : "Save tour"}
+        {submitting ? "Savingâ€¦" : "Save tour"}
       </button>
     </form>
   );

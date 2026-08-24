@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useRef, useEffect } from "react";
 import { Globe, ChevronDown, Check, Search, X } from "lucide-react";
@@ -71,7 +71,7 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
         >
           <div className="px-4 py-3 border-b border-stone-100 bg-stone-50/70">
             <p className="text-xs font-semibold tracking-[0.08em] uppercase text-stone-500">Choose language</p>
-            <p className="text-xs text-stone-400">A → Z with flag — searchable</p>
+            <p className="text-xs text-stone-400">A â†’ Z with flag â€” searchable</p>
           </div>
           <div className="px-3 py-2 border-b border-stone-100 bg-white">
             <label className="relative block">
@@ -80,7 +80,7 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
                 ref={inputRef}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search languages…"
+                placeholder="Search languagesâ€¦"
                 className="w-full rounded-xl border border-stone-200 bg-stone-50 pl-9 pr-8 py-2 text-sm outline-none focus:border-clove-300 focus:ring-2 focus:ring-clove-100"
                 aria-label="Search languages"
               />
@@ -127,10 +127,10 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
             })}
           </div>
           {filtered.length === 0 && (
-            <p className="px-4 py-6 text-center text-sm text-stone-500">No languages match “{query}”.</p>
+            <p className="px-4 py-6 text-center text-sm text-stone-500">No languages match â€œ{query}â€.</p>
           )}
           <div className="px-3 py-2 bg-stone-50 border-t border-stone-100 text-[11px] text-stone-500 text-center">
-            {filtered.length} languages · A → Z with flag
+            {filtered.length} languages Â· A â†’ Z with flag
           </div>
         </div>
       )}

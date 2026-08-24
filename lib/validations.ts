@@ -20,6 +20,11 @@ export const tourSchema = z.object({
   lng: z.coerce.number().min(-180).max(180),
   photoSeed: z.string().min(1, "Photo seed is required"),
   isPublished: z.coerce.boolean().optional(),
+  isFeatured: z.coerce.boolean().optional(),
+  highlights: z.string().optional(), // JSON array or newline Title: Body
+  itinerary: z.string().optional(), // newline per step
+  whatToBring: z.string().optional(),
+  cancellationPolicy: z.string().optional(),
 });
 
 export const bookingSchema = z.object({

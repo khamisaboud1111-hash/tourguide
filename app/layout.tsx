@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { Fraunces, Work_Sans } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
@@ -24,11 +24,11 @@ const workSans = Work_Sans({
 });
 
 export const metadata: Metadata = {
-  title: `${business.name} — ${business.tagline}`,
+  title: `${business.name} â€” ${business.tagline}`,
   description: business.guideBioShort,
   metadataBase: process.env.NEXT_PUBLIC_SITE_URL ? new URL(process.env.NEXT_PUBLIC_SITE_URL) : undefined,
   openGraph: {
-    title: `${business.name} — ${business.tagline}`,
+    title: `${business.name} â€” ${business.tagline}`,
     description: business.guideBioShort,
     type: "website",
     locale: "en_TZ",

@@ -1,4 +1,4 @@
-export default function Loading() {
+﻿export default function Loading() {
   return (
     <div className="container-page py-16 animate-pulse">
       <div className="h-6 w-24 bg-stone-200 rounded-full" />

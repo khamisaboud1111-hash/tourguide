@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -7,70 +7,70 @@ import { placeholderPhoto } from "@/lib/placeholder";
 
 type Photo = { seed: string; tall?: boolean; cat: string; alt: string };
 
-// Full Zanzibar gallery — 40 AI + 3 owner shots, all real Zanzibar, categorized so each tab has fit.
+// Full Zanzibar gallery â€” 40 AI + 3 owner shots, all real Zanzibar, categorized so each tab has fit.
 const photos: Photo[] = [
-  // Stone Town — doors, alleys, baths, markets, waterfront (8)
-  { seed: "zanzibar_ai_01", tall: true, cat: "Stone Town", alt: "Hamamni Persian Baths — Stone Town arches and fountain" },
+  // Stone Town â€” doors, alleys, baths, markets, waterfront (8)
+  { seed: "zanzibar_ai_01", tall: true, cat: "Stone Town", alt: "Hamamni Persian Baths â€” Stone Town arches and fountain" },
   { seed: "zanzibar_ai_02", cat: "Stone Town", alt: "Carved Zanzibar door in Stone Town alley" },
   { seed: "zanzibar_ai_03", tall: true, cat: "Stone Town", alt: "Narrow Stone Town alley in morning light" },
   { seed: "gallery-stonetown-door", tall: true, cat: "Stone Town", alt: "Historic Stone Town door and street" },
-  { seed: "gallery-alley", cat: "Stone Town", alt: "Stone Town alley — daily life" },
+  { seed: "gallery-alley", cat: "Stone Town", alt: "Stone Town alley â€” daily life" },
   { seed: "zanzibar_ai_13", cat: "Stone Town", alt: "Stone Town rooftop and sea view" },
   { seed: "zanzibar_ai_14", cat: "Stone Town", alt: "Old Fort, Stone Town" },
 
-  // Ocean — Mnemba, Nungwi, Safari Blue, dhows, sandbanks, reef (10)
+  // Ocean â€” Mnemba, Nungwi, Safari Blue, dhows, sandbanks, reef (10)
   { seed: "zanzibar_ai_06", cat: "Ocean", alt: "Dhow at sunset off Zanzibar" },
-  { seed: "zanzibar_ai_08", tall: true, cat: "Ocean", alt: "Mnemba Island — turquoise water and white sandbank" },
-  { seed: "zanzibar_ai_09", cat: "Ocean", alt: "Safari Blue — dhow sailing Menai Bay" },
+  { seed: "zanzibar_ai_08", tall: true, cat: "Ocean", alt: "Mnemba Island â€” turquoise water and white sandbank" },
+  { seed: "zanzibar_ai_09", cat: "Ocean", alt: "Safari Blue â€” dhow sailing Menai Bay" },
   { seed: "zanzibar_ai_10", tall: true, cat: "Ocean", alt: "Reef snorkeling off Zanzibar" },
-  { seed: "zanzibar_ai_11", cat: "Ocean", alt: "Prison Island beach — Aldabra tortoise coast" },
+  { seed: "zanzibar_ai_11", cat: "Ocean", alt: "Prison Island beach â€” Aldabra tortoise coast" },
   { seed: "zanzibar_ai_12", cat: "Ocean", alt: "Traditional dhow on Indian Ocean" },
-  { seed: "zanzibar_mnemba_island", tall: true, cat: "Ocean", alt: "Mnemba atoll — crystal water" },
-  { seed: "zanzibar_nungwi_sunset", cat: "Ocean", alt: "Nungwi sunset — beach and dhow silhouette" },
+  { seed: "zanzibar_mnemba_island", tall: true, cat: "Ocean", alt: "Mnemba atoll â€” crystal water" },
+  { seed: "zanzibar_nungwi_sunset", cat: "Ocean", alt: "Nungwi sunset â€” beach and dhow silhouette" },
   { seed: "gallery-beach-sandbank", tall: true, cat: "Ocean", alt: "White sandbank at low tide" },
   { seed: "gallery-dhow-sailing", cat: "Ocean", alt: "Dhow sailing Safari Blue" },
-  { seed: "zanzibar_ai_15", cat: "Ocean", alt: "Beach and palm — south coast Zanzibar" },
-  { seed: "zanzibar_ai_20", cat: "Ocean", alt: "Ocean horizon — Kendwa beach" },
+  { seed: "zanzibar_ai_15", cat: "Ocean", alt: "Beach and palm â€” south coast Zanzibar" },
+  { seed: "zanzibar_ai_20", cat: "Ocean", alt: "Ocean horizon â€” Kendwa beach" },
 
-  // Culture — markets, mosques, history (6)
-  { seed: "gallery-market", cat: "Culture", alt: "Darajani market — Stone Town" },
-  { seed: "zanzibar_ai_23", cat: "Culture", alt: "Stone Town street — Swahili life" },
-  { seed: "zanzibar_ai_24", tall: true, cat: "Culture", alt: "Forodhani night market — Zanzibar" },
-  { seed: "zanzibar_ai_25", cat: "Culture", alt: "Old mosque and arch — Stone Town" },
-  { seed: "zanzibar_ai_26", cat: "Culture", alt: "House of Wonders — Stone Town" },
-  { seed: "zanzibar_ai_27", cat: "Culture", alt: "Taarab musician — Stone Town culture" },
+  // Culture â€” markets, mosques, history (6)
+  { seed: "gallery-market", cat: "Culture", alt: "Darajani market â€” Stone Town" },
+  { seed: "zanzibar_ai_23", cat: "Culture", alt: "Stone Town street â€” Swahili life" },
+  { seed: "zanzibar_ai_24", tall: true, cat: "Culture", alt: "Forodhani night market â€” Zanzibar" },
+  { seed: "zanzibar_ai_25", cat: "Culture", alt: "Old mosque and arch â€” Stone Town" },
+  { seed: "zanzibar_ai_26", cat: "Culture", alt: "House of Wonders â€” Stone Town" },
+  { seed: "zanzibar_ai_27", cat: "Culture", alt: "Taarab musician â€” Stone Town culture" },
 
-  // Food / Spice — farms, tasting, harvest (6)
-  { seed: "zanzibar_ai_04", cat: "Food", alt: "Zanzibar spice — clove and vanilla tasting" },
-  { seed: "zanzibar_ai_05", tall: true, cat: "Food", alt: "Spice farm — harvest in Zanzibar" },
-  { seed: "gallery-spice-farm", cat: "Food", alt: "Spice farm — see, smell, taste" },
+  // Food / Spice â€” farms, tasting, harvest (6)
+  { seed: "zanzibar_ai_04", cat: "Food", alt: "Zanzibar spice â€” clove and vanilla tasting" },
+  { seed: "zanzibar_ai_05", tall: true, cat: "Food", alt: "Spice farm â€” harvest in Zanzibar" },
+  { seed: "gallery-spice-farm", cat: "Food", alt: "Spice farm â€” see, smell, taste" },
   { seed: "gallery-spice-harvest", cat: "Food", alt: "Harvesting spices in Zanzibar" },
-  { seed: "zanzibar_ai_28", cat: "Food", alt: "Spice selection — cinnamon, cardamom" },
-  { seed: "zanzibar_ai_29", cat: "Food", alt: "Seafood lunch — Safari Blue beach" },
+  { seed: "zanzibar_ai_28", cat: "Food", alt: "Spice selection â€” cinnamon, cardamom" },
+  { seed: "zanzibar_ai_29", cat: "Food", alt: "Seafood lunch â€” Safari Blue beach" },
 
-  // Nature — Jozani, mangroves, wildlife (7)
-  { seed: "zanzibar_ai_16", tall: true, cat: "Nature", alt: "Jozani Forest — mangrove boardwalk" },
-  { seed: "zanzibar_ai_17", cat: "Nature", alt: "Red colobus monkey — Jozani" },
-  { seed: "zanzibar_ai_18", cat: "Nature", alt: "Jozani forest canopy — green" },
-  { seed: "zanzibar_ai_19", tall: true, cat: "Nature", alt: "Mangrove — Jozani Chwaka Bay" },
-  { seed: "zanzibar_ai_30", cat: "Nature", alt: "Forest trail — Jozani" },
-  { seed: "zanzibar_ai_31", cat: "Nature", alt: "Wildlife — Zanzibar forest" },
-  { seed: "zanzibar_ai_32", tall: true, cat: "Nature", alt: "Baobab and coast — Zanzibar nature" },
+  // Nature â€” Jozani, mangroves, wildlife (7)
+  { seed: "zanzibar_ai_16", tall: true, cat: "Nature", alt: "Jozani Forest â€” mangrove boardwalk" },
+  { seed: "zanzibar_ai_17", cat: "Nature", alt: "Red colobus monkey â€” Jozani" },
+  { seed: "zanzibar_ai_18", cat: "Nature", alt: "Jozani forest canopy â€” green" },
+  { seed: "zanzibar_ai_19", tall: true, cat: "Nature", alt: "Mangrove â€” Jozani Chwaka Bay" },
+  { seed: "zanzibar_ai_30", cat: "Nature", alt: "Forest trail â€” Jozani" },
+  { seed: "zanzibar_ai_31", cat: "Nature", alt: "Wildlife â€” Zanzibar forest" },
+  { seed: "zanzibar_ai_32", tall: true, cat: "Nature", alt: "Baobab and coast â€” Zanzibar nature" },
 
-  // People — guide, guests, village (4)
-  { seed: "zanzibar_ai_35", cat: "People", alt: "Local guide with guests — Stone Town" },
-  { seed: "zanzibar_ai_36", tall: true, cat: "People", alt: "Guide explaining — spice farm" },
-  { seed: "zanzibar_ai_37", cat: "People", alt: "Fisherman — Nungwi beach" },
-  { seed: "zanzibar_ai_38", cat: "People", alt: "Village children — Zanzibar" },
+  // People â€” guide, guests, village (4)
+  { seed: "zanzibar_ai_35", cat: "People", alt: "Local guide with guests â€” Stone Town" },
+  { seed: "zanzibar_ai_36", tall: true, cat: "People", alt: "Guide explaining â€” spice farm" },
+  { seed: "zanzibar_ai_37", cat: "People", alt: "Fisherman â€” Nungwi beach" },
+  { seed: "zanzibar_ai_38", cat: "People", alt: "Village children â€” Zanzibar" },
 
-  // Experiences — mixed, tour moments (5)
-  { seed: "zanzibar_ai_33", cat: "Experiences", alt: "Tour experience — dhow deck at sunset" },
-  { seed: "zanzibar_ai_34", tall: true, cat: "Experiences", alt: "Guests on safari blue — sailing" },
-  { seed: "zanzibar_ai_39", cat: "Experiences", alt: "Stone Town walking tour — group" },
-  { seed: "zanzibar_ai_40", cat: "Experiences", alt: "Sunset dhow cruise — Stone Town coast" },
-  { seed: "gallery-experience", cat: "Experiences", alt: "Guests tasting fruit — spice tour" },
-  { seed: "zanzibar_ai_21", cat: "Experiences", alt: "Snorkeling — reef experience" },
-  { seed: "zanzibar_ai_22", tall: true, cat: "Experiences", alt: "Island picnic — Safari Blue" },
+  // Experiences â€” mixed, tour moments (5)
+  { seed: "zanzibar_ai_33", cat: "Experiences", alt: "Tour experience â€” dhow deck at sunset" },
+  { seed: "zanzibar_ai_34", tall: true, cat: "Experiences", alt: "Guests on safari blue â€” sailing" },
+  { seed: "zanzibar_ai_39", cat: "Experiences", alt: "Stone Town walking tour â€” group" },
+  { seed: "zanzibar_ai_40", cat: "Experiences", alt: "Sunset dhow cruise â€” Stone Town coast" },
+  { seed: "gallery-experience", cat: "Experiences", alt: "Guests tasting fruit â€” spice tour" },
+  { seed: "zanzibar_ai_21", cat: "Experiences", alt: "Snorkeling â€” reef experience" },
+  { seed: "zanzibar_ai_22", tall: true, cat: "Experiences", alt: "Island picnic â€” Safari Blue" },
 ];
 
 const cats = ["All", "Stone Town", "Ocean", "Culture", "Food", "Nature", "People", "Experiences"];
@@ -130,7 +130,7 @@ export default function GalleryClient() {
         <div className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label="Gallery lightbox">
           <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
             <p className="text-sm">
-              {current.alt} — {open + 1} / {filtered.length}
+              {current.alt} â€” {open + 1} / {filtered.length}
             </p>
             <button onClick={() => setOpen(null)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
               <X size={18} />
@@ -145,7 +145,7 @@ export default function GalleryClient() {
               <ChevronRight size={20} />
             </button>
           </div>
-          <div className="px-6 pb-6 text-center text-xs text-stone-300">{current.cat} · {current.alt}</div>
+          <div className="px-6 pb-6 text-center text-xs text-stone-300">{current.cat} Â· {current.alt}</div>
         </div>
       )}
     </>

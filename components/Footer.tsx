@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { AtSign, Mail, Phone, MapPin, ArrowRight, MessageCircle } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
 import Logo from "./Logo";
@@ -111,7 +111,7 @@ export default function Footer() {
 
       <div className="border-t border-indigo-600/60">
         <div className="container-page py-5 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-stone-400">
-          <p>© {new Date().getFullYear()} {business.name}. All rights reserved.</p>
+          <p>Â© {new Date().getFullYear()} {business.name}. All rights reserved.</p>
           <div className="flex items-center gap-4">
             <Link href="/contact" className="hover:text-stone-200 transition-colors">{t("cancellation")}</Link>
             <span className="h-3 w-px bg-indigo-600" />

@@ -1,4 +1,5 @@
-import { NextResponse, type NextRequest } from "next/server";
+﻿import { NextResponse, type NextRequest } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { createServiceClient } from "@/lib/supabase/service";
 
 // Parses "booking-<uuid>-<timestamp>" back into the booking id.
@@ -9,10 +10,13 @@ function bookingIdFromTxRef(txRef: string): string | null {
 }
 
 export async function POST(request: NextRequest) {
-  const signature = request.headers.get("verif-hash");
-  const expected = process.env.FLUTTERWAVE_WEBHOOK_SECRET_HASH;
-
-  if (!expected || signature !== expected) {
+  const signature = request.headers.get("verif-hash") ?? "";
+  const expected = process.env.FLUTTERWAVE_WEBHOOK_SECRET_HASH ?? "";
+  // Constant-time compare to avoid timing leak
+  const sigBuf = Buffer.from(signature);
+  const expBuf = Buffer.from(expected);
+  const valid = expected.length > 0 && sigBuf.length === expBuf.length && timingSafeEqual(sigBuf, expBuf);
+  if (!valid) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
@@ -24,7 +28,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Malformed payload" }, { status: 400 });
   }
 
-  // Never trust the webhook body's status alone — re-verify server-to-server.
+  // Never trust the webhook body's status alone â€” re-verify server-to-server.
   const verifyRes = await fetch(
     `https://api.flutterwave.com/v3/transactions/${transactionId}/verify`,
     { headers: { Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}` } }

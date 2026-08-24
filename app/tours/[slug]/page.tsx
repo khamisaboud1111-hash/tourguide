@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -23,39 +23,39 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!data) return {};
   const tour = rowToTour(data);
   return {
-    title: `${tour.title} — ${business.name}`,
+    title: `${tour.title} â€” ${business.name}`,
     description: tour.summary,
-    openGraph: { title: `${tour.title} — ${business.name}`, description: tour.summary },
+    openGraph: { title: `${tour.title} â€” ${business.name}`, description: tour.summary },
   };
 }
 
-// Minimal highlight/itinerary fallbacks — no fake content, just generic structure that the owner can replace per-tour via DB later.
+// Minimal highlight/itinerary fallbacks â€” no fake content, just generic structure that the owner can replace per-tour via DB later.
 function highlightsFor(tour: ReturnType<typeof rowToTour>) {
   const map: Record<string, { title: string; body: string }[]> = {
     "stone-town-walking-tour": [
       { title: "Walk the coral-stone alleys", body: "Carved doors, bazaars, and the layered history of Swahili, Omani and Indian Zanzibar." },
-      { title: "House of Wonders & Slave Market memorial", body: "Context and quiet — where the island's past is remembered properly." },
-      { title: "Rooftop viewpoint", body: "Stone Town's flat roofs and the sea beyond — best light before noon." },
+      { title: "House of Wonders & Slave Market memorial", body: "Context and quiet â€” where the island's past is remembered properly." },
+      { title: "Rooftop viewpoint", body: "Stone Town's flat roofs and the sea beyond â€” best light before noon." },
     ],
     "spice-farm-tour": [
-      { title: "Taste the Spice Island", body: "Clove, vanilla, cinnamon, nutmeg — seen, smelled and tasted live on the farm." },
+      { title: "Taste the Spice Island", body: "Clove, vanilla, cinnamon, nutmeg â€” seen, smelled and tasted live on the farm." },
       { title: "Walk with the farmer", body: "How each crop is grown and why Zanzibar once led the world in clove." },
-      { title: "Fruit tasting", body: "Fresh harvest to finish — seasonal and generous." },
+      { title: "Fruit tasting", body: "Fresh harvest to finish â€” seasonal and generous." },
     ],
     "safari-blue": [
       { title: "Dhow sailing in Menai Bay", body: "Traditional wooden dhow, calm water, and sandbanks at low tide." },
-      { title: "Snorkeling the reef", body: "Clear, protected water — gear included." },
-      { title: "Seafood lunch on the beach", body: "Grilled fish, fruit — eaten with your feet in the sand." },
+      { title: "Snorkeling the reef", body: "Clear, protected water â€” gear included." },
+      { title: "Seafood lunch on the beach", body: "Grilled fish, fruit â€” eaten with your feet in the sand." },
     ],
     "jozani-forest-tour": [
-      { title: "Red colobus monkeys", body: "Endemic to Zanzibar — quiet troops, close but wild." },
-      { title: "Mangrove boardwalk", body: "A suspended walk over the estuary — birds, crabs, quiet." },
-      { title: "National park forest", body: "Zanzibar's only national park — a short, easy walk." },
+      { title: "Red colobus monkeys", body: "Endemic to Zanzibar â€” quiet troops, close but wild." },
+      { title: "Mangrove boardwalk", body: "A suspended walk over the estuary â€” birds, crabs, quiet." },
+      { title: "National park forest", body: "Zanzibar's only national park â€” a short, easy walk." },
     ],
   };
   return map[tour.slug] ?? [
     { title: "Local guiding", body: "Led in person, paced for questions and wandering." },
-    { title: "Small group", body: "No buses — you see more when the group stays small." },
+    { title: "Small group", body: "No buses â€” you see more when the group stays small." },
     { title: "Real island day", body: "Timing that matches tide, light and season." },
   ];
 }
@@ -63,15 +63,15 @@ function highlightsFor(tour: ReturnType<typeof rowToTour>) {
 function itineraryFor(tour: ReturnType<typeof rowToTour>) {
   if (tour.slug === "stone-town-walking-tour") return ["09:00 Meet at Forodhani Gardens", "09:20 Coral-stone alleys & doors", "10:00 Bazaar & House of Wonders", "10:45 Memorial & viewpoints", "12:00 Tea break, tour ends"];
   if (tour.slug === "safari-blue") return ["08:30 Fumba jetty & dhow boarding", "09:30 Sail to sandbank, swim", "11:00 Snorkel the reef", "13:00 Seafood lunch on the beach", "15:30 Sail back"];
-  if (tour.slug === "jozani-forest-tour") return ["09:00 Jozani visitor centre", "09:20 Forest walk — colobus troops", "10:30 Mangrove boardwalk", "11:15 Depart or optional extension"];
+  if (tour.slug === "jozani-forest-tour") return ["09:00 Jozani visitor centre", "09:20 Forest walk â€” colobus troops", "10:30 Mangrove boardwalk", "11:15 Depart or optional extension"];
   // generic
-  return [`Start — ${tour.meetingPoint}`, "Main experience — unhurried, guide-led", "Local stops chosen for the day", "Return — same meeting point unless arranged otherwise"];
+  return [`Start â€” ${tour.meetingPoint}`, "Main experience â€” unhurried, guide-led", "Local stops chosen for the day", "Return â€” same meeting point unless arranged otherwise"];
 }
 
 const faq = [
-  { q: "Is hotel pickup included?", a: "Depends on the tour — see 'Not included' for each. Pickup can usually be arranged for a small fee; ask on WhatsApp with your hotel name." },
+  { q: "Is hotel pickup included?", a: "Depends on the tour â€” see 'Not included' for each. Pickup can usually be arranged for a small fee; ask on WhatsApp with your hotel name." },
   { q: "What should I bring?", a: "Comfortable shoes, sun protection, water, camera. The tour page lists specifics per experience." },
-  { q: "Do I pay now?", a: "No — your request is a booking inquiry. The guide confirms availability, then you can pay a small deposit online or the full on the day." },
+  { q: "Do I pay now?", a: "No â€” your request is a booking inquiry. The guide confirms availability, then you can pay a small deposit online or the full on the day." },
 ];
 
 export default async function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -90,16 +90,18 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
   const deposit = Math.max(1, Math.round(tour.priceUsd * business.depositPercent));
   const remaining = tour.priceUsd - deposit;
 
-  // Build gallery — seed + 3 variants using same seed family so placeholders stay coherent
+  // Build gallery â€” seed + 3 variants using same seed family so placeholders stay coherent
   const gallery = [
-    { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} — main view` },
-    { src: placeholderPhoto(`${tour.photoSeed}-2`, 800, 600), alt: `${tour.title} — detail` },
-    { src: placeholderPhoto(`${tour.photoSeed}-3`, 800, 600), alt: `${tour.title} — local scene` },
-    { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} — another view` },
+    { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} â€” main view` },
+    { src: placeholderPhoto(`${tour.photoSeed}-2`, 800, 600), alt: `${tour.title} â€” detail` },
+    { src: placeholderPhoto(`${tour.photoSeed}-3`, 800, 600), alt: `${tour.title} â€” local scene` },
+    { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} â€” another view` },
   ];
 
-  const highlights = highlightsFor(tour);
-  const itinerary = itineraryFor(tour);
+  const highlights = tour.highlights && tour.highlights.length > 0 ? tour.highlights : highlightsFor(tour);
+  const itinerary = tour.itinerary && tour.itinerary.length > 0 ? tour.itinerary : itineraryFor(tour);
+  const whatToBringList = tour.whatToBring && tour.whatToBring.length > 0 ? tour.whatToBring : ["Comfortable shoes", "Sunscreen, water, camera", "Light scarf for Stone Town"];
+  const cancellationText = tour.cancellationPolicy || t("cancellationDesc");
 
   return (
     <div className="pb-20 md:pb-0">
@@ -116,7 +118,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
 
       {/* Title row */}
       <div className="container-page mt-4">
-        <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium">{tour.category}</p>
+        <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium">{tour.category}</p>
         <h1 className="font-display text-3xl md:text-5xl font-semibold text-stone-900 mt-2 text-balance">{tour.title}</h1>
         <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-stone-600">
           <span className="inline-flex items-center gap-1.5"><MapPin size={14} className="text-clove-600" />{tour.meetingPoint}</span>
@@ -133,7 +135,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
       </div>
 
       <div className="container-page py-8 md:py-12 grid md:grid-cols-3 gap-8 md:gap-12">
-        {/* Left — editorial */}
+        {/* Left â€” editorial */}
         <div className="md:col-span-2 space-y-10">
           {/* Quick facts */}
           <div className="grid grid-cols-3 gap-3">
@@ -180,7 +182,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
                 </li>
               ))}
             </ol>
-            <p className="mt-3 text-xs text-stone-500">Times are flexible — the guide adjusts to tide and season.</p>
+            <p className="mt-3 text-xs text-stone-500">Times are flexible â€” the guide adjusts to tide and season.</p>
           </div>
 
           {/* Included / Excluded */}
@@ -211,12 +213,16 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           <div className="grid md:grid-cols-2 gap-6">
             <div className="rounded-2xl bg-white border border-stone-200 p-5">
               <h3 className="font-display text-base font-semibold mb-2">{t("whatToBring")}</h3>
-              <p className="text-sm text-stone-600">{t("whatToBringDesc")}</p>
+              <ul className="mt-2 space-y-1.5">
+                {whatToBringList.map((w) => (
+                  <li key={w} className="flex items-start gap-2 text-sm text-stone-600"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-clove-600 shrink-0" />{w}</li>
+                ))}
+              </ul>
             </div>
             <div className="rounded-2xl bg-white border border-stone-200 p-5">
               <h3 className="font-display text-base font-semibold mb-2 flex items-center gap-2"><MapPin size={16} className="text-clove-600" /> {t("meetingPoint")}</h3>
               <p className="text-sm text-stone-700">{tour.meetingPoint}</p>
-              <p className="text-xs text-stone-500 mt-1">{tour.coords.lat.toFixed(4)}, {tour.coords.lng.toFixed(4)} — copy into maps. Nearby landmark included in confirmation.</p>
+              <p className="text-xs text-stone-500 mt-1">{tour.coords.lat.toFixed(4)}, {tour.coords.lng.toFixed(4)} â€” copy into maps. Nearby landmark included in confirmation.</p>
               <div className="mt-3 h-48 rounded-xl overflow-hidden border border-stone-200">
                 <TourMapLoader lat={tour.coords.lat} lng={tour.coords.lng} label={tour.meetingPoint} />
               </div>
@@ -226,7 +232,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           {/* Cancellation */}
           <div className="rounded-2xl bg-stone-100 border border-stone-200 p-5">
             <h3 className="font-display text-base font-semibold flex items-center gap-2"><ShieldCheck size={16} className="text-lagoon-700" /> {t("cancellation")}</h3>
-            <p className="text-sm text-stone-600 mt-2 leading-relaxed">{t("cancellationDesc")}</p>
+            <p className="text-sm text-stone-600 mt-2 leading-relaxed">{cancellationText}</p>
           </div>
 
           {/* FAQ */}
@@ -257,12 +263,12 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           )}
         </div>
 
-        {/* Right — booking card */}
+        {/* Right â€” booking card */}
         <aside className="md:col-span-1" id="booking">
           <div className="sticky top-[88px] rounded-2xl border border-stone-200 bg-white shadow-card p-6 space-y-5">
             <div>
               <p className="font-display text-3xl font-semibold text-stone-900">${tour.priceUsd} <span className="text-sm font-body font-normal text-stone-500">/ person</span></p>
-              <p className="text-xs text-stone-500 mt-1">Deposit ${deposit} · Remaining ${remaining} on the day · {business.depositPercent * 100}% online</p>
+              <p className="text-xs text-stone-500 mt-1">Deposit ${deposit} Â· Remaining ${remaining} on the day Â· {business.depositPercent * 100}% online</p>
             </div>
 
             <BookingForm tourId={tour.id} tourTitle={tour.title} priceUsd={tour.priceUsd} />
@@ -281,7 +287,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
               <MessageCircle size={18} /> Ask about this tour
             </a>
             <p className="text-xs text-stone-500 text-center">
-              No payment now — {business.guideName} will confirm details and dates with you directly.
+              No payment now â€” {business.guideName} will confirm details and dates with you directly.
             </p>
           </div>
         </aside>

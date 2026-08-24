@@ -1,4 +1,4 @@
-"use server";
+﻿"use server";
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -10,6 +10,19 @@ function splitLines(value: string): string[] {
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function parseHighlights(v: string): { title: string; body: string }[] {
+  if (!v.trim()) return [];
+  try {
+    const j = JSON.parse(v);
+    if (Array.isArray(j)) return j.filter((x) => x.title && x.body);
+  } catch {}
+  // fallback: lines "Title: Body"
+  return v.split("\n").map((l) => l.trim()).filter(Boolean).map((line) => {
+    const [title, ...rest] = line.split(":");
+    return { title: title.trim(), body: rest.join(":").trim() || title.trim() };
+  }).filter((x) => x.title);
 }
 
 function parseTourForm(formData: FormData) {
@@ -30,13 +43,18 @@ function parseTourForm(formData: FormData) {
     lng: formData.get("lng"),
     photoSeed: formData.get("photoSeed"),
     isPublished: formData.get("isPublished") === "on",
+    isFeatured: formData.get("isFeatured") === "on",
+    highlights: formData.get("highlights") ?? "",
+    itinerary: formData.get("itinerary") ?? "",
+    whatToBring: formData.get("whatToBring") ?? "",
+    cancellationPolicy: formData.get("cancellationPolicy") ?? "",
   };
 
   const parsed = tourSchema.safeParse(raw);
   if (!parsed.success) {
     throw new Error(
       "Please check the tour form: " +
-        parsed.error.issues.map((i) => `${i.path.join(".")} — ${i.message}`).join("; ")
+        parsed.error.issues.map((i) => `${i.path.join(".")} â€” ${i.message}`).join("; ")
     );
   }
   return parsed.data;
@@ -63,6 +81,11 @@ export async function createTour(formData: FormData) {
     lng: data.lng,
     photo_seed: data.photoSeed,
     is_published: data.isPublished ?? true,
+    is_featured: data.isFeatured ?? false,
+    highlights: parseHighlights(data.highlights ?? ""),
+    itinerary: splitLines(data.itinerary ?? ""),
+    what_to_bring: splitLines(data.whatToBring ?? ""),
+    cancellation_policy: (data.cancellationPolicy as string)?.trim() || "Free to cancel or reschedule until the guide confirms.",
   });
 
   if (error) throw new Error(`Couldn't create tour: ${error.message}`);
@@ -95,6 +118,11 @@ export async function updateTour(id: string, formData: FormData) {
       lng: data.lng,
       photo_seed: data.photoSeed,
       is_published: data.isPublished ?? true,
+      is_featured: data.isFeatured ?? false,
+      highlights: parseHighlights(data.highlights ?? ""),
+      itinerary: splitLines(data.itinerary ?? ""),
+      what_to_bring: splitLines(data.whatToBring ?? ""),
+      cancellation_policy: (data.cancellationPolicy as string)?.trim() || "Free to cancel or reschedule until the guide confirms.",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);

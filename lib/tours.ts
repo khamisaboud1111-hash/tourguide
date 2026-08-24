@@ -14,6 +14,11 @@ export type Tour = {
   meetingPoint: string;
   coords: { lat: number; lng: number };
   photoSeed: string;
+  highlights?: { title: string; body: string }[];
+  itinerary?: string[];
+  whatToBring?: string[];
+  cancellationPolicy?: string;
+  isFeatured?: boolean;
 };
 
 // Supabase rows come back snake_case — this is the one place that
@@ -35,6 +40,11 @@ export function rowToTour(row: {
   lat: number;
   lng: number;
   photo_seed: string;
+  highlights?: { title: string; body: string }[] | null;
+  itinerary?: string[] | null;
+  what_to_bring?: string[] | null;
+  cancellation_policy?: string | null;
+  is_featured?: boolean | null;
 }): Tour {
   return {
     id: row.id,
@@ -52,5 +62,10 @@ export function rowToTour(row: {
     meetingPoint: row.meeting_point,
     coords: { lat: row.lat, lng: row.lng },
     photoSeed: row.photo_seed,
+    highlights: (row.highlights as Tour["highlights"]) ?? undefined,
+    itinerary: row.itinerary ?? undefined,
+    whatToBring: row.what_to_bring ?? undefined,
+    cancellationPolicy: row.cancellation_policy ?? undefined,
+    isFeatured: row.is_featured ?? undefined,
   };
 }

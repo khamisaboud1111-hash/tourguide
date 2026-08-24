@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Send } from "lucide-react";
@@ -83,7 +83,7 @@ export default function ContactForm({ tours }: { tours: Tour[] }) {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className={inputClasses}
-          placeholder="Dates you're visiting, group size, anything else useful to know…"
+          placeholder="Dates you're visiting, group size, anything else useful to knowâ€¦"
         />
       </div>
 
@@ -95,7 +95,7 @@ export default function ContactForm({ tours }: { tours: Tour[] }) {
         Send via WhatsApp
       </button>
       <p className="text-xs text-stone-500 text-center">
-        This opens WhatsApp with your message ready to send — nothing is stored on this site.
+        This opens WhatsApp with your message ready to send â€” nothing is stored on this site.
       </p>
     </form>
   );

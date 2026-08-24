@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -26,7 +26,7 @@ export default function Navbar() {
     { href: "/contact", label: t("contact") },
   ];
 
-  // Scroll detection — compact + solid after ~32px
+  // Scroll detection â€” compact + solid after ~32px
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 32);
     onScroll();
@@ -199,7 +199,7 @@ export default function Navbar() {
 
             <div className="mt-auto pt-8 text-sm text-stone-500 space-y-1">
               <p className="font-medium text-stone-700">{business.location}</p>
-              <p>{business.phoneDisplay} · {business.email}</p>
+              <p>{business.phoneDisplay} Â· {business.email}</p>
             </div>
           </nav>
         </div>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import dynamic from "next/dynamic";
 
@@ -6,7 +6,7 @@ const TourMap = dynamic(() => import("./TourMap"), {
   ssr: false,
   loading: () => (
     <div className="h-full w-full rounded-2xl bg-stone-200 animate-pulse flex items-center justify-center text-stone-400 text-sm">
-      Loading map…
+      Loading mapâ€¦
     </div>
   ),
 });

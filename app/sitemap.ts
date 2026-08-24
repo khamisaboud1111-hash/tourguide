@@ -1,4 +1,4 @@
-import type { MetadataRoute } from "next";
+﻿import type { MetadataRoute } from "next";
 import { business } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { journalArticles } from "@/lib/journal";
@@ -16,7 +16,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/journal`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.6 },
   ];
 
-  // Tours — only published
+  // Tours â€” only published
   try {
     const supabase = await createClient();
     const { data } = await supabase.from("tours").select("slug, updated_at").eq("is_published", true);

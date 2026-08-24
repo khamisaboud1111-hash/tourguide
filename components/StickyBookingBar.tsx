@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { MessageCircle } from "lucide-react";
 import { waLink, business } from "@/lib/constants";
@@ -10,7 +10,7 @@ export default function StickyBookingBar({ price, title, slug }: { price: number
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="flex-1">
           <p className="font-display font-semibold text-stone-900 leading-none">From ${price}<span className="font-body text-xs text-stone-500 font-normal"> / person</span></p>
-          <p className="text-xs text-stone-500 mt-1">Flexible date · Confirm on WhatsApp</p>
+          <p className="text-xs text-stone-500 mt-1">Flexible date Â· Confirm on WhatsApp</p>
         </div>
         <a
           href={wa}

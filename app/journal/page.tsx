@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Clock, ArrowRight } from "lucide-react";
@@ -7,17 +7,17 @@ import { journalArticles } from "@/lib/journal";
 import { placeholderPhoto } from "@/lib/placeholder";
 
 export const metadata: Metadata = {
-  title: `Journal — ${business.name}`,
-  description: "Practical Zanzibar notes — when to go, what to pack, and how to walk Stone Town slowly.",
+  title: `Journal â€” ${business.name}`,
+  description: "Practical Zanzibar notes â€” when to go, what to pack, and how to walk Stone Town slowly.",
 };
 
 export default function JournalPage() {
   return (
     <div className="container-page py-10 md:py-14">
-      <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">Zanzibar journal</p>
+      <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">Zanzibar journal</p>
       <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">Travel notes & guides</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">
-        Short, useful reads for planning — no fluff. Articles are marked “Coming soon” until your guide replaces the placeholders with real writing. This keeps the structure SEO-ready without faking content.
+        Short, useful reads for planning â€” no fluff. Articles are marked â€œComing soonâ€ until your guide replaces the placeholders with real writing. This keeps the structure SEO-ready without faking content.
       </p>
 
       <div className="mt-10 grid md:grid-cols-3 gap-5 md:gap-6">
@@ -49,7 +49,7 @@ export default function JournalPage() {
 
       <div className="mt-12 rounded-2xl bg-stone-100 border border-stone-200 p-6 text-sm text-stone-600">
         <p className="font-medium text-stone-800">For the owner</p>
-        <p className="mt-1">Edit <code className="bg-white border border-stone-200 px-1.5 py-0.5 rounded text-xs">lib/journal.ts</code> to publish. Replace the three draft slots — or add more — and they appear instantly. No database migration needed for v1.</p>
+        <p className="mt-1">Edit <code className="bg-white border border-stone-200 px-1.5 py-0.5 rounded text-xs">lib/journal.ts</code> to publish. Replace the three draft slots â€” or add more â€” and they appear instantly. No database migration needed for v1.</p>
       </div>
     </div>
   );

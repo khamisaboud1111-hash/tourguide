@@ -1,4 +1,4 @@
-import { cn } from "@/lib/tokens";
+﻿import { cn } from "@/lib/tokens";
 
 type Align = "left" | "center";
 
@@ -22,7 +22,7 @@ export default function SectionHeading({
   return (
     <div className={cn(isCenter ? "text-center mx-auto max-w-2xl" : "max-w-2xl", className)}>
       {kicker && (
-        <p className="text-saffron-600 text-xs uppercase tracking-[0.2em] font-medium mb-3">
+        <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">
           {kicker}
         </p>
       )}

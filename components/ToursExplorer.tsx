@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo, useState } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
@@ -22,7 +22,7 @@ function parseDurationToMinutes(s: string): number {
 const categories = ["All", "Culture & History", "Culture & Nature", "Ocean & Sailing", "Nature & Wildlife", "Ocean & Wildlife"];
 const durations: { label: string; test: (t: Tour) => boolean }[] = [
   { label: "All durations", test: () => true },
-  { label: "2–3 hours", test: (t) => parseDurationToMinutes(t.duration) <= 180 },
+  { label: "2â€“3 hours", test: (t) => parseDurationToMinutes(t.duration) <= 180 },
   { label: "Half day", test: (t) => parseDurationToMinutes(t.duration) > 180 && parseDurationToMinutes(t.duration) <= 300 },
   { label: "Full day", test: (t) => parseDurationToMinutes(t.duration) > 300 },
 ];
@@ -143,7 +143,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               </select>
             </label>
             <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">Max price — {maxPrice ? `$${maxPrice}` : "Any"}</span>
+              <span className="block text-xs font-medium text-stone-700">Max price â€” {maxPrice ? `$${maxPrice}` : "Any"}</span>
               <input
                 type="range"
                 min={20}
@@ -180,7 +180,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
       ) : (
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {filtered.map((t) => (
-            <TourCard key={t.slug} tour={t} />
+            <TourCard key={t.slug} tour={t} highlight={query} />
           ))}
         </div>
       )}

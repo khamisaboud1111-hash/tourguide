@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +28,21 @@ function useFavorite(slug: string) {
   return { fav, toggle };
 }
 
-export default function TourCard({ tour, featured = false }: { tour: Tour; featured?: boolean }) {
+function Highlight({ text, query }: { text: string; query?: string }) {
+  if (!query || query.trim().length < 2) return <>{text}</>;
+  const q = query.trim();
+  const idx = text.toLowerCase().indexOf(q.toLowerCase());
+  if (idx === -1) return <>{text}</>;
+  return (
+    <>
+      {text.slice(0, idx)}
+      <mark className="bg-saffron-200 text-stone-900 px-0.5 rounded">{text.slice(idx, idx + q.length)}</mark>
+      {text.slice(idx + q.length)}
+    </>
+  );
+}
+
+export default function TourCard({ tour, featured = false, highlight }: { tour: Tour; featured?: boolean; highlight?: string }) {
   const { fav, toggle } = useFavorite(tour.slug);
 
   return (
@@ -65,9 +79,9 @@ export default function TourCard({ tour, featured = false }: { tour: Tour; featu
 
       <div className="flex flex-1 flex-col p-5">
         <h3 className={`font-display font-semibold text-stone-900 text-balance ${featured ? "text-xl md:text-2xl" : "text-lg leading-snug"}`}>
-          {tour.title}
+          <Highlight text={tour.title} query={highlight} />
         </h3>
-        <p className="mt-2 text-sm text-stone-600 leading-relaxed line-clamp-2">{tour.summary}</p>
+        <p className="mt-2 text-sm text-stone-600 leading-relaxed line-clamp-2"><Highlight text={tour.summary} query={highlight} /></p>
 
         <div className="mt-4 flex flex-wrap gap-2 text-xs">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-50 border border-stone-200 px-2.5 py-1 text-stone-600">

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState, useTransition } from "react";
 import { CheckCircle2, CreditCard, ArrowRight, ArrowLeft, Calendar, Users, User, Mail, MessageCircle } from "lucide-react";
@@ -80,7 +80,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           <div>
             <p className="font-display font-semibold text-lagoon-900">Booking request received</p>
             <p className="text-sm text-lagoon-800 mt-1">
-              Reference <span className="font-mono font-medium">ZKT-{result.bookingId?.slice(0, 8).toUpperCase()}</span> — you&apos;ll hear back to confirm details and availability shortly.
+              Reference <span className="font-mono font-medium">ZKT-{result.bookingId?.slice(0, 8).toUpperCase()}</span> â€” you&apos;ll hear back to confirm details and availability shortly.
             </p>
             <ol className="mt-3 text-xs text-lagoon-700 list-decimal list-inside space-y-1">
               <li>Your request has been received.</li>
@@ -105,7 +105,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-lagoon-700 hover:bg-lagoon-800 disabled:opacity-60 transition-colors text-white px-5 py-3 text-sm font-medium shadow-soft"
         >
           <CreditCard size={16} />
-          {isPayPending ? "Opening secure checkout…" : "Pay deposit online (optional)"}
+          {isPayPending ? "Opening secure checkoutâ€¦" : "Pay deposit online (optional)"}
         </button>
         {payError && <p className="text-xs text-clove-700">{payError}</p>}
 
@@ -113,7 +113,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ZKT-${result.bookingId?.slice(0, 8).toUpperCase()}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800">
             <MessageCircle size={14} /> WhatsApp
           </a>
-          <span className="text-stone-300">·</span>
+          <span className="text-stone-300">Â·</span>
           <a href="/tours" className="text-lagoon-700 hover:text-lagoon-800">Back to tours</a>
         </div>
       </div>
@@ -154,7 +154,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
               <Users size={14} className="text-clove-600" /> Travelers
             </label>
             <input id="partySize" type="number" min={1} value={partySize} onChange={(e) => setPartySize(e.target.value)} placeholder="e.g. 2" className={inputBase} />
-            <p className="text-xs text-stone-500 mt-1">Private available — just note group size and the guide will adjust.</p>
+            <p className="text-xs text-stone-500 mt-1">Private available â€” just note group size and the guide will adjust.</p>
           </div>
 
           {priceUsd && deposit !== null && (
@@ -179,11 +179,11 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           </div>
           <div>
             <label htmlFor="customerContact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> Email or phone</label>
-            <input id="customerContact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255…" className={inputBase} />
+            <input id="customerContact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255â€¦" className={inputBase} />
           </div>
           <div>
             <label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1.5">Notes (optional)</label>
-            <textarea id="message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Hotel, special requests, questions…" className={inputBase} />
+            <textarea id="message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Hotel, special requests, questionsâ€¦" className={inputBase} />
           </div>
 
           <div className="flex gap-2">
@@ -223,10 +223,10 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
               <ArrowLeft size={14} /> Back
             </button>
             <button type="submit" disabled={isPending} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3 font-medium hover:bg-clove-700 disabled:opacity-60 transition-colors shadow-soft">
-              {isPending ? "Sending…" : "Confirm request"} <ArrowRight size={16} />
+              {isPending ? "Sendingâ€¦" : "Confirm request"} <ArrowRight size={16} />
             </button>
           </div>
-          <p className="text-xs text-stone-500 text-center">No charge now — confirm details with your guide on WhatsApp.</p>
+          <p className="text-xs text-stone-500 text-center">No charge now â€” confirm details with your guide on WhatsApp.</p>
         </div>
       )}
     </form>
