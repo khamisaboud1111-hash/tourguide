@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { tourSchema } from "@/lib/validations";
+import { authorizeStaff } from "@/lib/auth";
 
 function splitLines(value: string): string[] {
   return value
@@ -18,7 +19,6 @@ function parseHighlights(v: string): { title: string; body: string }[] {
     const j = JSON.parse(v);
     if (Array.isArray(j)) return j.filter((x) => x.title && x.body);
   } catch {}
-  // fallback: lines "Title: Body"
   return v.split("\n").map((l) => l.trim()).filter(Boolean).map((line) => {
     const [title, ...rest] = line.split(":");
     return { title: title.trim(), body: rest.join(":").trim() || title.trim() };
@@ -61,6 +61,7 @@ function parseTourForm(formData: FormData) {
 }
 
 export async function createTour(formData: FormData) {
+  await authorizeStaff("create tour");
   const data = parseTourForm(formData);
   const supabase = await createClient();
 
@@ -96,6 +97,7 @@ export async function createTour(formData: FormData) {
 }
 
 export async function updateTour(id: string, formData: FormData) {
+  await authorizeStaff("update tour");
   const data = parseTourForm(formData);
   const supabase = await createClient();
 
@@ -136,6 +138,7 @@ export async function updateTour(id: string, formData: FormData) {
 }
 
 export async function deleteTour(id: string) {
+  await authorizeStaff("delete tour");
   const supabase = await createClient();
   const { error } = await supabase.from("tours").delete().eq("id", id);
   if (error) throw new Error(`Couldn't delete tour: ${error.message}`);
@@ -145,6 +148,7 @@ export async function deleteTour(id: string) {
 }
 
 export async function togglePublish(id: string, nextValue: boolean) {
+  await authorizeStaff("toggle publish");
   const supabase = await createClient();
   const { error } = await supabase
     .from("tours")

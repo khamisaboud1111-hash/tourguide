@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, CreditCard, ArrowRight, ArrowLeft, Calendar, Users, User, Mail, MessageCircle } from "lucide-react";
+import { CheckCircle2, CreditCard, ArrowRight, ArrowLeft, Calendar, Users, User, Mail, MessageCircle, MapPin } from "lucide-react";
 import { createBooking } from "@/app/actions/bookings";
 import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
+import { PICKUP_LOCATIONS } from "@/lib/validations";
+import { calculateBookingPrice } from "@/lib/pricing";
 
 type Props = {
   tourId?: string;
@@ -16,23 +18,21 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isPending, startTransition] = useTransition();
   const [isPayPending, startPayTransition] = useTransition();
-  const [result, setResult] = useState<{ ok: boolean; error?: string; bookingId?: string } | null>(null);
+  const [result, setResult] = useState<{ ok: boolean; error?: string; bookingId?: string; reference?: string } | null>(null);
   const [payError, setPayError] = useState<string | null>(null);
 
-  // form state for controlled validation
   const [requestedDate, setRequestedDate] = useState("");
-  const [partySize, setPartySize] = useState("");
+  const [partySize, setPartySize] = useState("2");
+  const [pickupLocation, setPickupLocation] = useState("");
+  const [pickupNotes, setPickupNotes] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [message, setMessage] = useState("");
 
-  const deposit = priceUsd ? Math.max(1, Math.round(priceUsd * business.depositPercent)) : null;
-  const remaining = priceUsd && deposit ? priceUsd - deposit : null;
+  // Client preview only — server recalculates authoritatively via calculateBookingPrice
+  const travelers = Math.max(1, parseInt(partySize) || 1);
+  const preview = priceUsd ? calculateBookingPrice(priceUsd, travelers, business.depositPercent) : null;
 
-  function canContinueStep1() {
-    // date and partySize optional in DB, but we guide user to fill them
-    return true;
-  }
   function canContinueStep2() {
     return customerName.trim().length >= 2 && customerContact.trim().length >= 3;
   }
@@ -55,22 +55,20 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
     formData.set("customerName", customerName);
     formData.set("customerContact", customerContact);
     formData.set("requestedDate", requestedDate);
-    formData.set("partySize", partySize);
+    formData.set("partySize", String(travelers));
+    formData.set("pickupLocation", pickupLocation);
+    formData.set("pickupNotes", pickupNotes);
     formData.set("message", message);
 
     startTransition(async () => {
       const res = await createBooking(formData);
-      setResult(res.ok ? { ok: true, bookingId: res.bookingId } : { ok: false, error: res.error });
-      if (res.ok) {
-        // reset
-        setRequestedDate("");
-        setPartySize("");
-        // keep name/contact for next booking? clear anyway
-      }
+      if (res.ok) setResult({ ok: true, bookingId: res.bookingId, reference: res.reference });
+      else setResult({ ok: false, error: res.error });
     });
   }
 
   if (result?.ok) {
+    const ref = result.reference ?? "";
     return (
       <div className="rounded-2xl border border-lagoon-200 bg-lagoon-50 p-5 space-y-4 animate-fade-in">
         <div className="flex gap-3">
@@ -80,22 +78,16 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           <div>
             <p className="font-display font-semibold text-lagoon-900">Booking request received</p>
             <p className="text-sm text-lagoon-800 mt-1">
-              Reference <span className="font-mono font-medium">ZKT-{result.bookingId?.slice(0, 8).toUpperCase()}</span> — you&apos;ll hear back to confirm details and availability shortly.
+              Reference <span className="font-mono font-semibold">{ref}</span> — you&apos;ll hear back to confirm details and availability shortly.
             </p>
-            <ol className="mt-3 text-xs text-lagoon-700 list-decimal list-inside space-y-1">
-              <li>Your request has been received.</li>
-              <li>The guide will confirm availability.</li>
-              <li>You&apos;ll get payment instructions (deposit {business.depositPercent * 100}% online or pay on the day).</li>
-              <li>Contact anytime on WhatsApp if you need to adjust.</li>
-            </ol>
           </div>
         </div>
 
-        {priceUsd && deposit !== null && (
+        {preview && (
           <div className="rounded-xl bg-white border border-lagoon-200 p-3 text-sm">
-            <div className="flex justify-between"><span className="text-stone-600">Total</span><span className="font-medium">${priceUsd}</span></div>
-            <div className="flex justify-between"><span className="text-stone-600">Deposit online</span><span className="font-medium">${deposit}</span></div>
-            <div className="flex justify-between font-semibold border-t border-stone-100 mt-2 pt-2"><span>Remaining</span><span>${remaining}</span></div>
+            <div className="flex justify-between"><span className="text-stone-600">Subtotal ({preview.travelers} × ${preview.pricePerPerson})</span><span className="font-medium">${preview.subtotal}</span></div>
+            <div className="flex justify-between"><span className="text-stone-600">Deposit online</span><span className="font-medium">${preview.deposit}</span></div>
+            <div className="flex justify-between font-semibold border-t border-stone-100 mt-2 pt-2"><span>Remaining</span><span>${preview.remaining}</span></div>
           </div>
         )}
 
@@ -105,12 +97,12 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-lagoon-700 hover:bg-lagoon-800 disabled:opacity-60 transition-colors text-white px-5 py-3 text-sm font-medium shadow-soft"
         >
           <CreditCard size={16} />
-          {isPayPending ? "Opening secure checkoutâ€¦" : "Pay deposit online (optional)"}
+          {isPayPending ? "Opening secure checkout…" : "Pay deposit online (optional)"}
         </button>
         {payError && <p className="text-xs text-clove-700">{payError}</p>}
 
         <div className="flex flex-wrap gap-2 justify-center text-xs">
-          <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ZKT-${result.bookingId?.slice(0, 8).toUpperCase()}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800">
+          <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ${ref}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800">
             <MessageCircle size={14} /> WhatsApp
           </a>
           <span className="text-stone-300">·</span>
@@ -125,7 +117,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* Step indicator */}
       <div className="flex items-center gap-2">
         {[1, 2, 3].map((s) => (
           <div key={s} className="flex items-center gap-2 flex-1">
@@ -146,22 +137,32 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
             <label htmlFor="requestedDate" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
               <Calendar size={14} className="text-clove-600" /> When would you like to go?
             </label>
-            <input id="requestedDate" type="date" value={requestedDate} onChange={(e) => setRequestedDate(e.target.value)} className={inputBase} />
-            <p className="text-xs text-stone-500 mt-1">Flexible? Leave blank and mention preferred window on next step.</p>
+            <input id="requestedDate" type="date" required value={requestedDate} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setRequestedDate(e.target.value)} className={inputBase} />
           </div>
           <div>
             <label htmlFor="partySize" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
               <Users size={14} className="text-clove-600" /> Travelers
             </label>
-            <input id="partySize" type="number" min={1} value={partySize} onChange={(e) => setPartySize(e.target.value)} placeholder="e.g. 2" className={inputBase} />
-            <p className="text-xs text-stone-500 mt-1">Private available — just note group size and the guide will adjust.</p>
+            <input id="partySize" type="number" min={1} max={20} required value={partySize} onChange={(e) => setPartySize(e.target.value)} className={inputBase} />
+          </div>
+          <div>
+            <label htmlFor="pickup" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
+              <MapPin size={14} className="text-clove-600" /> Pickup area (optional)
+            </label>
+            <select id="pickup" value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)} className={inputBase}>
+              <option value="">Not sure yet</option>
+              {PICKUP_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
+            </select>
+            {pickupLocation === "Other" && (
+              <input value={pickupNotes} onChange={(e) => setPickupNotes(e.target.value)} placeholder="Hotel / area name…" className={`${inputBase} mt-2`} />
+            )}
           </div>
 
-          {priceUsd && deposit !== null && (
+          {preview && (
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs leading-relaxed">
-              <div className="flex justify-between"><span className="text-stone-600">Total</span><span className="font-medium">${priceUsd} / person</span></div>
-              <div className="flex justify-between"><span className="text-stone-600">Deposit (online)</span><span className="font-medium">${deposit}</span></div>
-              <div className="flex justify-between"><span className="text-stone-600">Remaining on day</span><span className="font-medium">${remaining}</span></div>
+              <div className="flex justify-between"><span className="text-stone-600">{preview.travelers} × ${preview.pricePerPerson}</span><span className="font-medium">${preview.subtotal}</span></div>
+              <div className="flex justify-between"><span className="text-stone-600">Deposit (online)</span><span className="font-medium">${preview.deposit}</span></div>
+              <div className="flex justify-between"><span className="text-stone-600">Remaining on day</span><span className="font-medium">${preview.remaining}</span></div>
             </div>
           )}
 
@@ -179,11 +180,11 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           </div>
           <div>
             <label htmlFor="customerContact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> Email or phone</label>
-            <input id="customerContact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255â€¦" className={inputBase} />
+            <input id="customerContact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255…" className={inputBase} />
           </div>
           <div>
             <label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1.5">Notes (optional)</label>
-            <textarea id="message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Hotel, special requests, questionsâ€¦" className={inputBase} />
+            <textarea id="message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Hotel name, special requests, questions…" className={inputBase} />
           </div>
 
           <div className="flex gap-2">
@@ -202,17 +203,18 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 space-y-2 text-sm">
             <div className="flex justify-between"><span className="text-stone-500">Tour</span><span className="font-medium text-stone-900">{tourTitle}</span></div>
             {requestedDate && <div className="flex justify-between"><span className="text-stone-500">Date</span><span>{requestedDate}</span></div>}
-            {partySize && <div className="flex justify-between"><span className="text-stone-500">Travelers</span><span>{partySize}</span></div>}
+            <div className="flex justify-between"><span className="text-stone-500">Travelers</span><span>{travelers}</span></div>
+            {pickupLocation && <div className="flex justify-between"><span className="text-stone-500">Pickup</span><span>{pickupLocation}</span></div>}
             <div className="flex justify-between"><span className="text-stone-500">Name</span><span>{customerName}</span></div>
             <div className="flex justify-between"><span className="text-stone-500">Contact</span><span className="truncate max-w-[160px]">{customerContact}</span></div>
             {message && <div><span className="text-stone-500">Notes</span><p className="mt-1 text-stone-700 bg-white rounded-lg border border-stone-200 p-2">{message}</p></div>}
           </div>
 
-          {priceUsd && (
+          {preview && (
             <div className="rounded-xl bg-white border border-stone-200 p-3 text-sm">
-              <div className="flex justify-between"><span>Total</span><span className="font-display font-semibold">${priceUsd}</span></div>
-              <div className="flex justify-between text-stone-600"><span>Deposit</span><span>${deposit}</span></div>
-              <div className="flex justify-between text-stone-600"><span>Remaining</span><span>${remaining}</span></div>
+              <div className="flex justify-between"><span>Subtotal ({preview.travelers} × ${preview.pricePerPerson})</span><span className="font-display font-semibold">${preview.subtotal}</span></div>
+              <div className="flex justify-between text-stone-600"><span>Deposit</span><span>${preview.deposit}</span></div>
+              <div className="flex justify-between text-stone-600"><span>Remaining</span><span>${preview.remaining}</span></div>
             </div>
           )}
 
@@ -223,7 +225,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
               <ArrowLeft size={14} /> Back
             </button>
             <button type="submit" disabled={isPending} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3 font-medium hover:bg-clove-700 disabled:opacity-60 transition-colors shadow-soft">
-              {isPending ? "Sendingâ€¦" : "Confirm request"} <ArrowRight size={16} />
+              {isPending ? "Sending…" : "Confirm request"} <ArrowRight size={16} />
             </button>
           </div>
           <p className="text-xs text-stone-500 text-center">No charge now — confirm details with your guide on WhatsApp.</p>

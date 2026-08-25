@@ -4,9 +4,14 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { bookingSchema } from "@/lib/validations";
+import { calculateBookingPrice } from "@/lib/pricing";
+import { authorizeStaff } from "@/lib/auth";
+import { business } from "@/lib/constants";
 import { sendBookingEmails } from "@/lib/email";
 
-// Simple in-memory rate limiter — 5 bookings / 60s per IP. Swap to Upstash Redis for multi-instance.
+export type CreateBookingResult = { ok: true; bookingId: string; reference: string } | { ok: false; error: string };
+
+// Simple in-memory rate limiter — 5 bookings / 60s per IP. Swap to Upstash for multi-instance.
 const _rate = new Map<string, number[]>();
 function rateLimitOk(ip: string, limit = 5, windowMs = 60_000): boolean {
   const now = Date.now();
@@ -14,46 +19,108 @@ function rateLimitOk(ip: string, limit = 5, windowMs = 60_000): boolean {
   if (arr.length >= limit) return false;
   arr.push(now);
   _rate.set(ip, arr);
-  // prevent unbounded growth in dev
   if (_rate.size > 500) _rate.clear();
   return true;
 }
 
-export type CreateBookingResult = { ok: true; bookingId: string } | { ok: false; error: string };
-
 export async function createBooking(formData: FormData): Promise<CreateBookingResult> {
-  // Rate limit by IP (best-effort, fail open if headers unavailable)
   try {
     const ip = headers().get("x-forwarded-for")?.split(",")[0]?.trim() || headers().get("x-real-ip") || "unknown";
     if (!rateLimitOk(ip)) return { ok: false, error: "Too many requests — please wait a minute and try again, or message on WhatsApp." };
   } catch {}
-  const raw = {
+
+  const parsed = bookingSchema.safeParse({
     tourId: formData.get("tourId") ?? "",
-    tourTitleSnapshot: formData.get("tourTitleSnapshot"),
-    customerName: formData.get("customerName"),
-    customerContact: formData.get("customerContact"),
+    tourTitleSnapshot: formData.get("tourTitleSnapshot") ?? "",
+    customerName: formData.get("customerName") ?? "",
+    customerContact: formData.get("customerContact") ?? "",
     requestedDate: formData.get("requestedDate") ?? "",
     partySize: formData.get("partySize") || undefined,
+    pickupLocation: formData.get("pickupLocation") ?? "",
+    pickupNotes: formData.get("pickupNotes") ?? "",
+    country: formData.get("country") ?? "",
     message: formData.get("message") ?? "",
-  };
-
-  const parsed = bookingSchema.safeParse(raw);
+  });
   if (!parsed.success) {
     return { ok: false, error: parsed.error.issues[0]?.message ?? "Please check the form." };
   }
   const data = parsed.data;
 
   const supabase = await createClient();
+
+  // 1) Tour must exist and be published — server-side source of truth
+  const { data: tour, error: tourError } = await supabase
+    .from("tours")
+    .select("id, title, price_usd, is_published, group_size")
+    .eq("id", data.tourId)
+    .single();
+  if (tourError || !tour) return { ok: false, error: "That tour doesn't exist." };
+  if (!tour.is_published) return { ok: false, error: "That tour isn't available for booking right now." };
+
+  // 2) Availability check — prevent overbooking when a capacity row exists
+  const { data: avail } = await supabase
+    .from("tour_availability")
+    .select("capacity, booked, status")
+    .eq("tour_id", tour.id)
+    .eq("date", data.requestedDate)
+    .maybeSingle();
+  if (avail) {
+    if (avail.status === "unavailable" || avail.status === "full") {
+      return { ok: false, error: "That date is fully booked or unavailable — pick another date or ask us on WhatsApp." };
+    }
+    if (avail.booked + data.partySize > avail.capacity) {
+      return { ok: false, error: `Only ${Math.max(0, avail.capacity - avail.booked)} spots left on that date.` };
+    }
+  }
+
+  // 3) Authoritative pricing — server-side only
+  const price = calculateBookingPrice(Number(tour.price_usd), data.partySize, business.depositPercent);
+
+  // 4) Upsert customer (CRM)
+  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerContact);
+  let customerId: string | null = null;
+  const { data: existingCustomer } = await supabase
+    .from("customers")
+    .select("id")
+    .eq(isEmail ? "email" : "phone", data.customerContact)
+    .maybeSingle();
+  if (existingCustomer) {
+    customerId = existingCustomer.id;
+  } else {
+    const { data: newCustomer } = await supabase
+      .from("customers")
+      .insert({
+        full_name: data.customerName,
+        email: isEmail ? data.customerContact : null,
+        phone: isEmail ? null : data.customerContact,
+        country: data.country || null,
+      })
+      .select("id")
+      .single();
+    customerId = newCustomer?.id ?? null;
+  }
+
+  // 5) Insert booking with computed totals
   const { data: inserted, error } = await supabase
     .from("bookings")
     .insert({
-      tour_id: data.tourId || null,
-      tour_title_snapshot: data.tourTitleSnapshot,
+      tour_id: tour.id,
+      tour_title_snapshot: tour.title,
+      customer_id: customerId,
       customer_name: data.customerName,
       customer_contact: data.customerContact,
-      requested_date: data.requestedDate || null,
-      party_size: data.partySize ?? null,
+      requested_date: data.requestedDate,
+      party_size: data.partySize,
       message: data.message || null,
+      pickup_location: data.pickupLocation || null,
+      pickup_notes: data.pickupNotes || null,
+      country: data.country || null,
+      subtotal_usd: price.subtotal,
+      total_usd: price.subtotal,
+      deposit_usd: price.deposit,
+      remaining_usd: price.remaining,
+      currency: price.currency,
+      status: "pending",
     })
     .select()
     .single();
@@ -62,26 +129,43 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     return { ok: false, error: "Something went wrong saving your request. Please try WhatsApp instead." };
   }
 
-  // Email is best-effort — a booking should still succeed even if Resend
-  // isn't configured yet or a send fails.
+  // 6) Reserve capacity (best-effort — availability row may not exist)
+  if (avail) {
+    await supabase
+      .from("tour_availability")
+      .update({ booked: avail.booked + data.partySize, updated_at: new Date().toISOString() })
+      .eq("tour_id", tour.id)
+      .eq("date", data.requestedDate);
+  }
+
+  // Email is best-effort
   try {
     await sendBookingEmails({
       customerName: data.customerName,
       customerContact: data.customerContact,
-      tourTitle: data.tourTitleSnapshot,
+      tourTitle: tour.title,
       requestedDate: data.requestedDate,
       partySize: data.partySize,
       message: data.message,
+      bookingRef: `ZKT-${inserted.id.slice(0, 8).toUpperCase()}`,
+      pickupLocation: data.pickupLocation || undefined,
     });
   } catch (emailError) {
     console.error("Booking email failed:", emailError);
   }
 
   revalidatePath("/admin/bookings");
-  return { ok: true, bookingId: inserted.id };
+  return { ok: true, bookingId: inserted.id, reference: `ZKT-${inserted.id.slice(0, 8).toUpperCase()}` };
 }
 
+// ── Admin actions — all guarded ─────────────────────────────────────
+
+const VALID_STATUSES = ["pending","contacted","confirmed","deposit_pending","deposit_paid","ready","completed","cancelled","refunded","rescheduled"] as const;
+type BookingStatus = (typeof VALID_STATUSES)[number];
+
 export async function updateBookingStatus(id: string, status: string) {
+  await authorizeStaff("update booking status");
+  if (!VALID_STATUSES.includes(status as BookingStatus)) throw new Error("Invalid status");
   const supabase = await createClient();
   const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
   if (error) throw new Error(`Couldn't update booking: ${error.message}`);
@@ -89,6 +173,8 @@ export async function updateBookingStatus(id: string, status: string) {
 }
 
 export async function updatePaymentStatus(id: string, paymentStatus: string) {
+  await authorizeStaff("update payment status");
+  if (!["unpaid", "deposit_paid", "paid_in_full"].includes(paymentStatus)) throw new Error("Invalid payment status");
   const supabase = await createClient();
   const { error } = await supabase
     .from("bookings")

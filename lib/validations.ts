@@ -21,18 +21,56 @@ export const tourSchema = z.object({
   photoSeed: z.string().min(1, "Photo seed is required"),
   isPublished: z.coerce.boolean().optional(),
   isFeatured: z.coerce.boolean().optional(),
-  highlights: z.string().optional(), // JSON array or newline Title: Body
+  highlights: z.string().optional(), // JSON array or "Title: Body" lines
   itinerary: z.string().optional(), // newline per step
   whatToBring: z.string().optional(),
   cancellationPolicy: z.string().optional(),
 });
 
-export const bookingSchema = z.object({
+// Zanzibar pickup areas — extendable list (single source of truth for form + validation)
+export const PICKUP_LOCATIONS = [
+  "Stone Town",
+  "Nungwi",
+  "Kendwa",
+  "Paje",
+  "Jambiani",
+  "Kizimkazi",
+  "Other",
+] as const;
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^[+]?[\d\s()-]{7,20}$/;
+
+export const bookingSchema = z
+  .object({
+    tourId: z.string().uuid("Invalid tour"),
+    tourTitleSnapshot: z.string().min(1),
+    customerName: z.string().min(2, "Name is required").max(100),
+    customerContact: z
+      .string().min(3, "Email or phone is required").max(200)
+      .refine((v) => EMAIL_RE.test(v) || PHONE_RE.test(v), "Enter a valid email or phone number"),
+    requestedDate: z
+      .string().min(1, "Date is required")
+      .refine((v) => !Number.isNaN(Date.parse(v)), "Invalid date")
+      .refine((v) => {
+        const d = new Date(v);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return d >= today;
+      }, "Date cannot be in the past"),
+    partySize: z.coerce.number().int("Travelers must be a whole number").min(1, "At least 1 traveler").max(20, "Max 20 travelers — contact us for groups"),
+    pickupLocation: z.enum(PICKUP_LOCATIONS).optional().or(z.literal("")),
+    pickupNotes: z.string().max(500).optional().or(z.literal("")),
+    country: z.string().max(80).optional().or(z.literal("")),
+    message: z.string().max(1000).optional().or(z.literal("")),
+  });
+
+export type BookingInput = z.infer<typeof bookingSchema>;
+
+export const reviewSchema = z.object({
   tourId: z.string().uuid().optional().or(z.literal("")),
-  tourTitleSnapshot: z.string().min(1),
-  customerName: z.string().min(2, "Name is required"),
-  customerContact: z.string().min(3, "Email or phone is required"),
-  requestedDate: z.string().optional().or(z.literal("")),
-  partySize: z.coerce.number().int().min(1).optional(),
-  message: z.string().optional(),
+  customerName: z.string().min(2).max(100),
+  country: z.string().max(80).optional().or(z.literal("")),
+  rating: z.coerce.number().int().min(1).max(5),
+  review: z.string().min(10).max(2000),
 });
