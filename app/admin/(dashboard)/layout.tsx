@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays, Star } from "lucide-react";
+import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays, Star, BookOpen, Settings } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
 
@@ -8,7 +8,10 @@ const navItems = [
   { href: "/admin/bookings", label: "Bookings", icon: Inbox },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/availability", label: "Availability", icon: CalendarDays },
+  { href: "/admin/reviews", label: "Reviews", icon: Star },
+  { href: "/admin/journal", label: "Journal", icon: BookOpen },
   { href: "/admin/tours", label: "Tours", icon: MapPin },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
