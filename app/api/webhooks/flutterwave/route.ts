@@ -41,9 +41,10 @@ export async function POST(request: NextRequest) {
   }
 
   // Never trust the webhook body's status alone — re-verify server-to-server.
+  // Timeout prevents a hung upstream call from blocking the route.
   const verifyRes = await fetch(
     `https://api.flutterwave.com/v3/transactions/${transactionId}/verify`,
-    { headers: { Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}` } }
+    { headers: { Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}` }, signal: AbortSignal.timeout(10_000) }
   );
   const verifyJson = await verifyRes.json();
   const isSuccessful =

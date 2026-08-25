@@ -129,13 +129,23 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     return { ok: false, error: "Something went wrong saving your request. Please try WhatsApp instead." };
   }
 
-  // 6) Reserve capacity (best-effort — availability row may not exist)
+  // 6) Reserve capacity — ATOMIC: only increments if space remains, preventing
+  // overbooking when two bookings race. If it fails, roll back the booking row.
   if (avail) {
-    await supabase
+    const { data: reserved, error: reserveError } = await supabase
       .from("tour_availability")
       .update({ booked: avail.booked + data.partySize, updated_at: new Date().toISOString() })
       .eq("tour_id", tour.id)
-      .eq("date", data.requestedDate);
+      .eq("date", data.requestedDate)
+      .eq("booked", avail.booked) // optimistic lock: row unchanged since we read it
+      .lt("booked", avail.capacity - data.partySize + 1) // still fits
+      .select();
+
+    if (reserveError || !reserved || reserved.length === 0) {
+      // Someone else booked first — remove the booking we just created
+      await supabase.from("bookings").delete().eq("id", inserted.id);
+      return { ok: false, error: "That date just filled up — pick another date or ask us on WhatsApp." };
+    }
   }
 
   // Email is best-effort

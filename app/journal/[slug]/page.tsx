@@ -4,16 +4,24 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Clock, Calendar, User } from "lucide-react";
 import { business } from "@/lib/constants";
-import { getArticle, journalArticles } from "@/lib/journal";
+import { getPostBySlug } from "@/lib/journal-db";
+import { journalArticles } from "@/lib/journal";
 import { placeholderPhoto } from "@/lib/placeholder";
 
-export async function generateStaticParams() {
-  return journalArticles.map((a) => ({ slug: a.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const a = getArticle(slug);
+  // CMS first, static fallback
+  const post = await getPostBySlug(slug);
+  if (post) {
+    return {
+      title: `${post.title} — ${business.name} Journal`,
+      description: post.excerpt,
+      openGraph: { title: `${post.title} — ${business.name}`, description: post.excerpt, type: "article" },
+    };
+  }
+  const a = journalArticles.find((x) => x.slug === slug);
   if (!a) return {};
   return {
     title: `${a.title} — ${business.name} Journal`,
@@ -24,10 +32,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function JournalArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const a = getArticle(slug);
-  if (!a) notFound();
 
-  const date = new Date(a.date).toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
+  // CMS first, static fallback (keeps the 3 seeded slots working pre-migration)
+  const post = await getPostBySlug(slug);
+  const staticArticle = journalArticles.find((x) => x.slug === slug);
+  if (!post && !staticArticle) notFound();
+
+  const title = post?.title ?? staticArticle!.title;
+  const excerpt = post?.excerpt ?? staticArticle!.excerpt;
+  const content = post?.content ?? staticArticle!.content;
+  const coverSeed = post?.cover_seed ?? staticArticle!.coverSeed;
+  const category = post?.category ?? staticArticle!.category;
+  const readingMinutes = post?.reading_minutes ?? staticArticle!.readingMinutes;
+  const author = post?.author ?? staticArticle!.author;
+  const dateISO = post?.published_at ?? post?.created_at ?? staticArticle!.date;
+
+  const date = new Date(dateISO).toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
 
   return (
     <article className="container-page py-8 md:py-12 max-w-3xl">
@@ -36,35 +56,37 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
       </Link>
 
       <p className="mt-6 text-clove-700 text-xs uppercase tracking-[0.2em] font-medium flex items-center gap-2">
-        {a.category} <span className="h-1 w-1 rounded-full bg-stone-300" /> {a.readingMinutes} min read
+        {category} <span className="h-1 w-1 rounded-full bg-stone-300" /> {readingMinutes} min read
       </p>
-      <h1 className="font-display text-3xl md:text-5xl font-semibold mt-2 text-balance">{a.title}</h1>
-      <p className="mt-3 text-stone-600 leading-relaxed">{a.excerpt}</p>
+      <h1 className="font-display text-3xl md:text-5xl font-semibold mt-2 text-balance">{title}</h1>
+      <p className="mt-3 text-stone-600 leading-relaxed">{excerpt}</p>
       <div className="mt-4 flex items-center gap-4 text-xs text-stone-500">
-        <span className="inline-flex items-center gap-1.5"><User size={12} /> {a.author}</span>
+        <span className="inline-flex items-center gap-1.5"><User size={12} /> {author}</span>
         <span className="inline-flex items-center gap-1.5"><Calendar size={12} /> {date}</span>
-        <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {a.readingMinutes} min</span>
+        <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {readingMinutes} min</span>
       </div>
 
       <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mt-6 bg-stone-100">
-        <Image src={placeholderPhoto(a.coverSeed, 1200, 700)} alt={a.title} fill sizes="100vw" className="object-cover" priority />
+        <Image src={placeholderPhoto(coverSeed, 1200, 700)} alt={title} fill sizes="100vw" className="object-cover" priority />
       </div>
 
-      <div className="prose max-w-none mt-8 text-stone-700 leading-relaxed">
-        <p>{a.content}</p>
+      <div className="mt-8 space-y-4 text-stone-700 leading-relaxed">
+        {content.split(/\n\s*\n/).filter(Boolean).map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
       </div>
 
-      {/* Article structured data — truthful, no fake dates beyond placeholder */}
+      {/* Article structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Article",
-            headline: a.title,
-            description: a.excerpt,
-            author: { "@type": "Person", name: a.author },
-            datePublished: a.date,
+            headline: title,
+            description: excerpt,
+            author: { "@type": "Person", name: author },
+            datePublished: dateISO,
             publisher: { "@type": "Organization", name: business.name },
           }),
         }}
