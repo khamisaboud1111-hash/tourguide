@@ -7,7 +7,8 @@ import { placeholderPhoto } from "@/lib/placeholder";
 
 type Photo = { seed: string; tall?: boolean; cat: string; alt: string };
 
-// Full Zanzibar gallery — owner photos (14 real shots + 3 + 40 AI), all real Zanzibar, categorized.
+// Full Zanzibar gallery — owner photos (14 real shots + 3 + 40 AI), all real Zanzibar.
+// Categories kept internally for the lightbox caption; no filter chips shown (per owner request).
 const photos: Photo[] = [
   // ── Owner real photos (14) — beaches, Stone Town, resorts, sunset ──
   { seed: "sitmeir_real_01", tall: true, cat: "Ocean", alt: "Turquoise lagoon and thatched pier — Nungwi, Zanzibar" },
@@ -25,7 +26,7 @@ const photos: Photo[] = [
   { seed: "sitmeir_real_13", tall: true, cat: "Ocean", alt: "Rocky cliff coast meeting turquoise sea — Zanzibar" },
   { seed: "sitmeir_real_14", tall: true, cat: "Ocean", alt: "Palm silhouette over a golden beach sunset — Zanzibar" },
 
-  // Stone Town — doors, alleys, baths, markets, waterfront
+  // Stone Town
   { seed: "zanzibar_ai_01", tall: true, cat: "Stone Town", alt: "Hamamni Persian Baths — Stone Town arches and fountain" },
   { seed: "zanzibar_ai_02", cat: "Stone Town", alt: "Carved Zanzibar door in Stone Town alley" },
   { seed: "zanzibar_ai_03", tall: true, cat: "Stone Town", alt: "Narrow Stone Town alley in morning light" },
@@ -34,7 +35,7 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_13", cat: "Stone Town", alt: "Stone Town rooftop and sea view" },
   { seed: "zanzibar_ai_14", cat: "Stone Town", alt: "Old Fort, Stone Town" },
 
-  // Ocean — Mnemba, Safari Blue, dhows, sandbanks, reef
+  // Ocean
   { seed: "zanzibar_ai_06", cat: "Ocean", alt: "Dhow at sunset off Zanzibar" },
   { seed: "zanzibar_ai_08", tall: true, cat: "Ocean", alt: "Mnemba Island — turquoise water and white sandbank" },
   { seed: "zanzibar_ai_09", cat: "Ocean", alt: "Safari Blue — dhow sailing Menai Bay" },
@@ -47,14 +48,14 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_15", cat: "Ocean", alt: "Beach and palm — south coast Zanzibar" },
   { seed: "zanzibar_ai_20", cat: "Ocean", alt: "Ocean horizon — Kendwa beach" },
 
-  // Culture — markets, mosques, history
+  // Culture
   { seed: "zanzibar_ai_23", cat: "Culture", alt: "Stone Town street — Swahili life" },
   { seed: "zanzibar_ai_24", tall: true, cat: "Culture", alt: "Forodhani night market — Zanzibar" },
   { seed: "zanzibar_ai_25", cat: "Culture", alt: "Old mosque and arch — Stone Town" },
   { seed: "zanzibar_ai_26", cat: "Culture", alt: "House of Wonders — Stone Town" },
   { seed: "zanzibar_ai_27", cat: "Culture", alt: "Taarab musician — Stone Town culture" },
 
-  // Food / Spice — farms, tasting, harvest (6)
+  // Food
   { seed: "zanzibar_ai_04", cat: "Food", alt: "Zanzibar spice — clove and vanilla tasting" },
   { seed: "zanzibar_ai_05", tall: true, cat: "Food", alt: "Spice farm — harvest in Zanzibar" },
   { seed: "gallery-spice-farm", cat: "Food", alt: "Spice farm — see, smell, taste" },
@@ -62,7 +63,7 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_28", cat: "Food", alt: "Spice selection — cinnamon, cardamom" },
   { seed: "zanzibar_ai_29", cat: "Food", alt: "Seafood lunch — Safari Blue beach" },
 
-  // Nature — Jozani, mangroves, wildlife (7)
+  // Nature
   { seed: "zanzibar_ai_16", tall: true, cat: "Nature", alt: "Jozani Forest — mangrove boardwalk" },
   { seed: "zanzibar_ai_17", cat: "Nature", alt: "Red colobus monkey — Jozani" },
   { seed: "zanzibar_ai_18", cat: "Nature", alt: "Jozani forest canopy — green" },
@@ -71,13 +72,13 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_31", cat: "Nature", alt: "Wildlife — Zanzibar forest" },
   { seed: "zanzibar_ai_32", tall: true, cat: "Nature", alt: "Baobab and coast — Zanzibar nature" },
 
-  // People — guide, guests, village (4)
+  // People
   { seed: "zanzibar_ai_35", cat: "People", alt: "Local guide with guests — Stone Town" },
   { seed: "zanzibar_ai_36", tall: true, cat: "People", alt: "Guide explaining — spice farm" },
   { seed: "zanzibar_ai_37", cat: "People", alt: "Fisherman — Nungwi beach" },
   { seed: "zanzibar_ai_38", cat: "People", alt: "Village children — Zanzibar" },
 
-  // Experiences — mixed, tour moments (5)
+  // Experiences
   { seed: "zanzibar_ai_33", cat: "Experiences", alt: "Tour experience — dhow deck at sunset" },
   { seed: "zanzibar_ai_34", tall: true, cat: "Experiences", alt: "Guests on safari blue — sailing" },
   { seed: "zanzibar_ai_39", cat: "Experiences", alt: "Stone Town walking tour — group" },
@@ -87,38 +88,17 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_22", tall: true, cat: "Experiences", alt: "Island picnic — Safari Blue" },
 ];
 
-const cats = ["All", "Stone Town", "Ocean", "Culture", "Food", "Nature", "People", "Experiences"];
-
 export default function GalleryClient() {
-  const [activeCat, setActiveCat] = useState("All");
   const [open, setOpen] = useState<number | null>(null);
 
-  const filtered = activeCat === "All" ? photos : photos.filter((p) => p.cat === activeCat);
-  const current = open !== null ? filtered[open] : null;
-
-  const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % filtered.length));
-  const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + filtered.length) % filtered.length));
+  const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % photos.length));
+  const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + photos.length) % photos.length));
+  const current = open !== null ? photos[open] : null;
 
   return (
     <>
-      <div className="flex flex-wrap gap-2 mb-8">
-        {cats.map((c) => {
-          const count = c === "All" ? photos.length : photos.filter((p) => p.cat === c).length;
-          return (
-            <button
-              key={c}
-              onClick={() => setActiveCat(c)}
-              aria-pressed={activeCat === c}
-              className={`rounded-full px-4 py-2 text-sm font-medium border transition-colors inline-flex items-center gap-1.5 ${activeCat === c ? "bg-clove-600 text-white border-clove-600 shadow-soft" : "bg-white border-stone-300 text-stone-700 hover:border-clove-300 hover:text-clove-700"}`}
-            >
-              {c} <span className={`text-xs px-1.5 py-0.5 rounded-full ${activeCat === c ? "bg-white/20 text-white" : "bg-stone-100 text-stone-500"}`}>{count}</span>
-            </button>
-          );
-        })}
-      </div>
-
       <div className="columns-2 md:columns-3 gap-4 space-y-4">
-        {filtered.map((p, idx) => (
+        {photos.map((p, idx) => (
           <button
             key={`${p.seed}-${idx}`}
             onClick={() => setOpen(idx)}
@@ -136,15 +116,11 @@ export default function GalleryClient() {
         ))}
       </div>
 
-      {filtered.length === 0 && (
-        <p className="mt-10 text-center text-sm text-stone-500">No photos in this category yet.</p>
-      )}
-
       {open !== null && current && (
         <div className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label="Gallery lightbox">
           <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
             <p className="text-sm">
-              {current.alt} — {open + 1} / {filtered.length}
+              {current.alt} — {open + 1} / {photos.length}
             </p>
             <button onClick={() => setOpen(null)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
               <X size={18} />
@@ -159,7 +135,7 @@ export default function GalleryClient() {
               <ChevronRight size={20} />
             </button>
           </div>
-          <div className="px-6 pb-6 text-center text-xs text-stone-300">{current.cat} · {current.alt}</div>
+          <div className="px-6 pb-6 text-center text-xs text-stone-300">{current.alt}</div>
         </div>
       )}
     </>
