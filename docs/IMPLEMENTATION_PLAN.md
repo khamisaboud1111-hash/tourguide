@@ -65,3 +65,16 @@ Run supabase/migrations/0003_security_crm_availability.sql in Supabase SQL Edito
    (profile row auto-creates on first login via trigger)
 3. Set env vars from .env.example in Vercel (incl. FLUTTERWAVE_WEBHOOK_SECRET_HASH)
 4. Point Flutterwave webhook to /api/webhooks/flutterwave with the same secret hash
+
+## Phase 4/6 update (this commit)
+- guideName: Abdul Hamid (owner, matches Facebook/email credentials) — configurable in lib/constants.ts
+- lib/reviews.ts: getPublishedReviews + aggregateRating (real reviews only)
+- Tour page: real reviews section (approved only), aggregate rating in title row only when genuine, empty state
+- lib/analytics.ts: track() — dataLayer/gtag-ready events (tour_view, booking_completed, whatsapp_clicked, payment_*)
+- StructuredData: TouristTrip + provider + sameAs socials; BreadcrumbJsonLd on tour pages
+- WhatsApp click + booking_completed tracking wired
+- Quality gate: build 26 routes OK, vitest 22/22, tsc 0, lint 0 errors
+
+## Remaining (future)
+- GTM/GA4 script tag when the owner provides an ID
+- Journal CMS expansion (draft slots ready in lib/journal.ts)

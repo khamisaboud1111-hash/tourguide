@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 
 export default function WhatsAppButton() {
   const pathname = usePathname();
@@ -26,6 +27,7 @@ export default function WhatsAppButton() {
 
   return (
     <a
+      onClick={() => track("whatsapp_clicked", { page: pathname ?? "unknown" })}
       href={waLink(text)}
       target="_blank"
       rel="noopener noreferrer"

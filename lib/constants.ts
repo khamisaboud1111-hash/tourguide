@@ -6,7 +6,7 @@
 export const business = {
   name: "Sitmeir Tours and Travel",
   tagline: "See Zanzibar the way locals do",
-  guideName: "Your Guide's Name",
+  guideName: "Abdul Hamid", // owner — matches Facebook account; change here to rename site-wide
   guideBioShort:
     "A licensed Zanzibar tour guide with years of experience showing visitors the real island — its old town, its spice farms, and its reefs.",
   whatsappNumber: "255674804477", // 0674804477 — digits only, country code first, no + or spaces

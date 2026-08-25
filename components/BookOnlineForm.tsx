@@ -5,6 +5,7 @@ import { CheckCircle2, Calendar, Users, User, Mail, ArrowRight, ArrowLeft, Credi
 import { createBooking } from "@/app/actions/bookings";
 import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 
 type TourOption = { id: string; slug: string; title: string; priceUsd: number; duration: string; groupSize: string };
 
@@ -56,6 +57,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
     startTransition(async () => {
       const res = await createBooking(formData);
       setResult(res.ok ? { ok: true, bookingId: res.bookingId } : { ok: false, error: res.error });
+      if (res.ok) track("booking_completed", { tour: selected?.title ?? "" });
     });
   }
 

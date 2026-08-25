@@ -5,6 +5,7 @@ import { CheckCircle2, CreditCard, ArrowRight, ArrowLeft, Calendar, Users, User,
 import { createBooking } from "@/app/actions/bookings";
 import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
+import { track } from "@/lib/analytics";
 import { PICKUP_LOCATIONS } from "@/lib/validations";
 import { calculateBookingPrice } from "@/lib/pricing";
 
@@ -62,7 +63,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
 
     startTransition(async () => {
       const res = await createBooking(formData);
-      if (res.ok) setResult({ ok: true, bookingId: res.bookingId, reference: res.reference });
+      if (res.ok) { setResult({ ok: true, bookingId: res.bookingId, reference: res.reference }); track("booking_completed", { tour: tourTitle }); }
       else setResult({ ok: false, error: res.error });
     });
   }

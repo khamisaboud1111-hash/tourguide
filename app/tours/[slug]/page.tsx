@@ -13,6 +13,8 @@ import ImageGallery from "@/components/ImageGallery";
 import StickyBookingBar from "@/components/StickyBookingBar";
 import TourCard from "@/components/TourCard";
 import { getLang, tServer } from "@/lib/i18n/server";
+import { getPublishedReviews, aggregateRating } from "@/lib/reviews";
+import { TourJsonLd, BreadcrumbJsonLd } from "@/components/StructuredData";
 
 export const dynamic = "force-dynamic";
 
@@ -103,6 +105,10 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
   const whatToBringList = tour.whatToBring && tour.whatToBring.length > 0 ? tour.whatToBring : ["Comfortable shoes", "Sunscreen, water, camera", "Light scarf for Stone Town"];
   const cancellationText = tour.cancellationPolicy || t("cancellationDesc");
 
+  // Real reviews only — aggregate shown only when genuine reviews exist
+  const reviews = await getPublishedReviews(tour.id);
+  const rating = aggregateRating(reviews);
+
   return (
     <div className="pb-20 md:pb-0">
       {/* Breadcrumb */}
@@ -126,6 +132,12 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           <span className="inline-flex items-center gap-1.5"><Clock size={14} /> {tour.duration}</span>
           <span className="inline-flex items-center gap-1.5"><Users size={14} /> {tour.groupSize}</span>
           <span className="inline-flex items-center gap-1.5"><Gauge size={14} /> {tour.difficulty}</span>
+          {rating && (
+            <span className="inline-flex items-center gap-1.5">
+              <Star size={14} className="text-saffron-500 fill-saffron-500" />
+              <span className="font-medium text-stone-900">{rating.average}</span> ({rating.count} {rating.count === 1 ? "review" : "reviews"})
+            </span>
+          )}
         </div>
       </div>
 
@@ -248,6 +260,31 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
                 </details>
               ))}
             </div>
+          </div>
+
+          {/* Reviews — real, moderated only */}
+          <div>
+            <h3 className="font-display text-xl font-semibold mb-3">
+              {t("whatGuestsSay")}{rating ? ` — ${rating.average}/5 · ${rating.count}` : ""}
+            </h3>
+            {reviews.length === 0 ? (
+              <p className="text-sm text-stone-500 rounded-2xl bg-stone-50 border border-dashed border-stone-300 p-5">
+                No published reviews for this tour yet — after your tour we&apos;d love to hear how it went.
+              </p>
+            ) : (
+              <div className="grid sm:grid-cols-2 gap-4">
+                {reviews.map((r) => (
+                  <figure key={r.id} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
+                    <div className="text-saffron-500 text-sm" aria-label={`${r.rating} out of 5`}>{"★".repeat(r.rating)}<span className="text-stone-300">{"★".repeat(5 - r.rating)}</span></div>
+                    <blockquote className="mt-2 text-sm text-stone-700 leading-relaxed">“{r.review}”</blockquote>
+                    <figcaption className="mt-3 text-xs text-stone-500">
+                      <span className="font-medium text-stone-700">{r.customer_name}</span>
+                      {r.country ? ` · ${r.country}` : ""} · {new Date(r.created_at).toLocaleDateString("en-GB", { month: "short", year: "numeric" })}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Related */}
