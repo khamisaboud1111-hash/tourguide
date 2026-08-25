@@ -1,0 +1,79 @@
+import { createClient } from "@/lib/supabase/server";
+import { setAvailabilityAction } from "@/lib/availability";
+
+const inputClasses =
+  "rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-clove-500";
+
+export default async function AdminAvailabilityPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tour?: string }>;
+}) {
+  const { tour: tourId } = await searchParams;
+  const supabase = await createClient();
+  const { data: tours } = await supabase.from("tours").select("id, title").eq("is_published", true).order("title");
+
+  const selected = tourId || tours?.[0]?.id || "";
+  const today = new Date().toISOString().slice(0, 10);
+  const in30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+
+  const { data: rows } = selected
+    ? await supabase.from("tour_availability").select("*").eq("tour_id", selected).gte("date", today).lte("date", in30).order("date")
+    : { data: [] };
+
+  // Generate next 30 days grid
+  const days: string[] = [];
+  for (let i = 0; i < 30; i++) {
+    days.push(new Date(Date.now() + i * 86400000).toISOString().slice(0, 10));
+  }
+  const availMap = new Map((rows ?? []).map((r) => [r.date, r]));
+
+  return (
+    <div>
+      <h1 className="font-display text-2xl font-semibold mb-6">Availability</h1>
+
+      <form method="get" className="mb-6">
+        <label className="block text-sm font-medium text-stone-700 mb-1.5">Tour</label>
+        <select name="tour" defaultValue={selected} className={`${inputClasses} w-full max-w-md`}>
+          {(tours ?? []).map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
+        </select>
+        <button className="ml-2 rounded-xl bg-clove-600 text-white px-4 py-2 text-sm font-medium hover:bg-clove-700 transition-colors">Load</button>
+      </form>
+
+      {selected && (
+        <>
+          <p className="text-sm text-stone-500 mb-4">Next 30 days. Set a date to <strong>unavailable</strong> (blocked) or adjust capacity. Booked counts update automatically from bookings.</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            {days.map((d) => {
+              const row = availMap.get(d);
+              const status = row?.status ?? "available";
+              const booked = row?.booked ?? 0;
+              const cap = row?.capacity ?? 8;
+              const color =
+                status === "unavailable" ? "border-clove-300 bg-clove-50" :
+                booked >= cap ? "bg-stone-200" :
+                booked > 0 ? "bg-saffron-50 border-saffron-200" :
+                "border-stone-200 bg-white";
+              return (
+                <form key={d} action={setAvailabilityAction} className={`rounded-2xl border p-3 ${color}`}>
+                  <input type="hidden" name="tourId" value={selected} />
+                  <input type="hidden" name="date" value={d} />
+                  <p className="text-xs font-medium text-stone-700">{new Date(d + "T00:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</p>
+                  <p className="text-[11px] text-stone-500 mb-2">{booked}/{cap} booked</p>
+                  <select name="status" defaultValue={status} className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1 text-xs" onChange={(e) => e.currentTarget.form?.requestSubmit()}>
+                    <option value="available">Available</option>
+                    <option value="limited">Limited</option>
+                    <option value="full">Full</option>
+                    <option value="unavailable">Blocked</option>
+                  </select>
+                  <noscript><button className="mt-1 text-[11px] underline">Save</button></noscript>
+                </form>
+              );
+            })}
+          </div>
+        </>
+      )}
+      {!selected && <p className="text-sm text-stone-500">Add a published tour first.</p>}
+    </div>
+  );
+}

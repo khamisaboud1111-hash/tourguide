@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink } from "lucide-react";
+import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/tours", label: "Tours", icon: MapPin },
   { href: "/admin/bookings", label: "Bookings", icon: Inbox },
+  { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/availability", label: "Availability", icon: CalendarDays },
+  { href: "/admin/tours", label: "Tours", icon: MapPin },
 ];
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {

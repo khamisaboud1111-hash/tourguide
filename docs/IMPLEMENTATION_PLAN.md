@@ -40,3 +40,15 @@ Run supabase/migrations/0003_security_crm_availability.sql in Supabase SQL Edito
 - Customers CRM page
 - Reviews moderation UI
 - booking/confirmed page: use payments table for verification
+
+## Phase 2/3 update (this commit)
+- lib/availability.ts: upsertAvailability + setAvailabilityAction (staff-guarded via RLS)
+- /admin/availability: 30-day grid per tour — block dates, set status, see booked/capacity
+- /admin/customers: CRM list with bookings/completed/deposits/outstanding per customer
+- Admin nav: Bookings, Customers, Availability, Tours
+- 25 routes, build OK, tests 22/22
+
+## Remaining
+- booking/confirmed page: switch verification to payments table (webhook already authoritative)
+- Reviews moderation UI
+- Analytics events
