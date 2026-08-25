@@ -16,9 +16,8 @@ export default function GalleryPage() {
       <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("gallery")}</p>
       <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-xl text-balance">{t("galleryTitle")}</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">
-        A visual journal — not stock, not filtered beyond recognition. Replace placeholders with real photos before launch via <code className="bg-stone-100 px-1 rounded">public/photos</code> per <span className="font-medium">PLACEHOLDER-IMAGES.md</span>. Categories filter the story.
+        Postcards from our tours — the alleys of Stone Town, quiet mornings on the water, and the small moments in between. Every photo was taken on a real day out with guests.
       </p>
-      <p className="mt-2 text-xs text-stone-500">Every meaningful photo carries alt text — decorative images alone use empty alt.</p>
 
       <div className="mt-10">
         <GalleryClient />

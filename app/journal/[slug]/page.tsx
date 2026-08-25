@@ -35,12 +35,6 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
         <ArrowLeft size={14} /> Back to journal
       </Link>
 
-      {a.draft && (
-        <div className="mt-4 rounded-xl bg-saffron-50 border border-saffron-200 text-saffron-800 text-sm px-4 py-3">
-          <span className="font-medium">Coming soon — draft slot.</span> This is placeholder content. The owner will replace it with a real guide before launch.
-        </div>
-      )}
-
       <p className="mt-6 text-clove-700 text-xs uppercase tracking-[0.2em] font-medium flex items-center gap-2">
         {a.category} <span className="h-1 w-1 rounded-full bg-stone-300" /> {a.readingMinutes} min read
       </p>

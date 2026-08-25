@@ -38,7 +38,7 @@ export default async function ToursPage() {
       <div className="mt-8">
         {tours.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-sm text-stone-500">
-            No tours published yet — add some from the admin dashboard at <span className="font-medium">/admin</span>.
+            New experiences are being prepared — message us on WhatsApp and we’ll plan something custom for your dates.
           </p>
         ) : (
           <ToursExplorer tours={tours} />

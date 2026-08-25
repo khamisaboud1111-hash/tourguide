@@ -181,7 +181,7 @@ export default async function HomePage() {
         </div>
         {signature.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-sm text-stone-500">
-            No experiences yet — <Link href="/admin" className="text-clove-600 underline">/admin</Link>.
+            New experiences are on the way — ask us on WhatsApp what’s possible for your dates.
           </p>
         ) : (
           <div className="grid md:grid-cols-3 gap-5 md:gap-6">
@@ -221,7 +221,7 @@ export default async function HomePage() {
         <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreMapTitle")} description={t("exploreMapDesc")} />
         <div className="mt-8 grid lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 h-[420px] md:h-[480px] rounded-2xl overflow-hidden border border-stone-200 shadow-card">
-            {tours.length > 0 ? <ExploreMapLoader tours={tours} /> : <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">No tours yet — add them in /admin.</div>}
+            {tours.length > 0 ? <ExploreMapLoader tours={tours} /> : <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">Our tour map is being updated — ask us on WhatsApp for current routes.</div>}
           </div>
           <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5 md:p-6">
             <h3 className="font-display font-semibold text-stone-900">{t("whereWeGo")}</h3>
