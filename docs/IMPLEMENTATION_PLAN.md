@@ -52,3 +52,16 @@ Run supabase/migrations/0003_security_crm_availability.sql in Supabase SQL Edito
 - booking/confirmed page: switch verification to payments table (webhook already authoritative)
 - Reviews moderation UI
 - Analytics events
+
+## Phase 7 Final (this commit)
+- booking/confirmed: reflects payments-table state (webhook is source of truth; processing/success/failed states)
+- /admin/reviews: moderation (publish/hide), authorizeStaff guarded
+- Admin nav + Reviews
+- Quality gate: tsc 0, lint 0 errors, vitest 22/22, build 26 routes OK
+
+## Deployment checklist
+1. Run migrations 0001, 0002, 0003 in Supabase SQL editor
+2. Promote admin: update profiles set role='"'"'admin'"'"' where email='"'"'<admin-email>'"'"';
+   (profile row auto-creates on first login via trigger)
+3. Set env vars from .env.example in Vercel (incl. FLUTTERWAVE_WEBHOOK_SECRET_HASH)
+4. Point Flutterwave webhook to /api/webhooks/flutterwave with the same secret hash

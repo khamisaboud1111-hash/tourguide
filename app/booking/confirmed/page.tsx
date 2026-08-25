@@ -1,65 +1,77 @@
 import Link from "next/link";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/service";
 
 function bookingIdFromTxRef(txRef: string): string | null {
-  const match = txRef.match(/^booking-(.+)-\d+$/);
+  const match = txRef.match(/^booking-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-\d+(-[0-9a-f]+)?$/i);
   return match ? match[1] : null;
 }
+
+export const dynamic = "force-dynamic";
 
 export default async function BookingConfirmedPage({
   searchParams,
 }: {
   searchParams: Promise<{ status?: string; tx_ref?: string; transaction_id?: string }>;
 }) {
-  const { status, tx_ref, transaction_id } = await searchParams;
+  const { status, tx_ref } = await searchParams;
 
-  let verified = false;
-  let message = "We couldn't confirm this payment.";
+  // The webhook is the source of truth. This page just reflects DB state.
+  // If the webhook hasn't landed yet, show "processing" and let the user refresh.
+  let state: "successful" | "failed" | "processing" = "processing";
+  let bookingRef: string | null = null;
 
-  if (status === "successful" && tx_ref && transaction_id && process.env.FLUTTERWAVE_SECRET_KEY) {
-    const verifyRes = await fetch(
-      `https://api.flutterwave.com/v3/transactions/${transaction_id}/verify`,
-      { headers: { Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}` } }
-    );
-    const verifyJson = await verifyRes.json();
+  if (tx_ref) {
+    const supabase = createServiceClient();
+    const { data: payment } = await supabase
+      .from("payments")
+      .select("status, booking_id")
+      .eq("tx_ref", tx_ref)
+      .maybeSingle();
 
-    if (verifyJson?.data?.status === "successful" && verifyJson?.data?.tx_ref === tx_ref) {
-      verified = true;
-      message = "Your deposit is confirmed.";
-
-      const bookingId = bookingIdFromTxRef(tx_ref);
-      if (bookingId) {
-        const supabase = createServiceClient();
-        await supabase
-          .from("bookings")
-          .update({ payment_status: "deposit_paid" })
-          .eq("id", bookingId)
-          .eq("payment_ref", tx_ref);
-      }
+    if (payment) {
+      bookingRef = `ZKT-${payment.booking_id.slice(0, 8).toUpperCase()}`;
+      if (payment.status === "successful") state = "successful";
+      else if (payment.status === "failed") state = "failed";
+      else if (status === "cancelled") state = "failed";
+    } else if (status === "cancelled") {
+      state = "failed";
     }
-  } else if (status === "cancelled") {
-    message = "Payment was cancelled — no charge was made.";
   }
 
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
-        {verified ? (
-          <CheckCircle2 className="mx-auto text-lagoon-600 mb-4" size={48} />
+        {state === "successful" ? (
+          <>
+            <CheckCircle2 className="mx-auto text-lagoon-600 mb-4" size={48} />
+            <h1 className="font-display text-2xl font-semibold mb-2">Payment received</h1>
+            <p className="text-stone-600 mb-1">
+              {bookingRef ? <>Your booking <span className="font-mono font-semibold">{bookingRef}</span> is confirmed.</> : "Your payment is confirmed."}
+            </p>
+            <p className="text-sm text-stone-500 mb-8">The guide has been updated and will share the meeting point.</p>
+          </>
+        ) : state === "failed" ? (
+          <>
+            <XCircle className="mx-auto text-clove-500 mb-4" size={48} />
+            <h1 className="font-display text-2xl font-semibold mb-2">Payment not completed</h1>
+            <p className="text-stone-600 mb-8">No charge was made. You can try again or arrange payment on the day.</p>
+          </>
         ) : (
-          <XCircle className="mx-auto text-clove-500 mb-4" size={48} />
+          <>
+            <Clock className="mx-auto text-saffron-500 mb-4" size={48} />
+            <h1 className="font-display text-2xl font-semibold mb-2">Processing your payment…</h1>
+            <p className="text-stone-600 mb-8">This page updates when the payment settles — refresh in a moment.</p>
+          </>
         )}
-        <h1 className="font-display text-2xl font-semibold mb-2">
-          {verified ? "Payment received" : "Payment not completed"}
-        </h1>
-        <p className="text-stone-600 mb-8">{message}</p>
-        <Link
-          href="/tours"
-          className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 transition-colors text-stone-50 px-6 py-3 font-medium"
-        >
-          Back to tours
-        </Link>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 transition-colors text-white px-6 py-3 font-medium">
+            Back to tours
+          </Link>
+          <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium hover:border-clove-300 transition-colors">
+            Contact us
+          </Link>
+        </div>
       </div>
     </div>
   );

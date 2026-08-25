@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays } from "lucide-react";
+import { LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays, Star } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
 
