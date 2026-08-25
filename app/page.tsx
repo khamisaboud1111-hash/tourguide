@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 import ExploreMapLoader from "@/components/ExploreMapLoader";
+import HillsBackdrop from "@/components/HillsBackdrop";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 export const revalidate = 60;
@@ -351,17 +352,22 @@ export default async function HomePage() {
 
       <DoorMotifDivider tone="onLight" />
 
-      {/* Final CTA */}
-      <section className="container-page py-12 md:py-16 text-center">
-        <h2 className="font-display italic text-3xl md:text-5xl font-medium max-w-2xl mx-auto text-balance">{t("readyTitle")}</h2>
-        <p className="mt-3 text-stone-600 max-w-xl mx-auto">{t("readyDesc")}</p>
-        <div className="mt-8 flex flex-wrap gap-3 justify-center">
-          <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 active:bg-clove-800 transition-colors text-stone-50 px-7 py-3.5 font-medium shadow-soft">
-            {t("explore")} <ArrowRight size={18} />
-          </Link>
-          <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-stone-300 hover:border-clove-300 hover:text-clove-700 transition-colors bg-white px-7 py-3.5 font-medium">
-            {t("getInTouch")}
-          </Link>
+      {/* Final CTA — layered hills backdrop */}
+      <section className="relative overflow-hidden bg-lagoon-900 text-center">
+        <div className="absolute inset-0">
+          <HillsBackdrop className="opacity-90" />
+        </div>
+        <div className="relative container-page py-20 md:py-28">
+          <h2 className="font-display italic text-3xl md:text-5xl font-medium max-w-2xl mx-auto text-balance text-stone-50">{t("readyTitle")}</h2>
+          <p className="mt-3 text-stone-200 max-w-xl mx-auto">{t("readyDesc")}</p>
+          <div className="mt-8 flex flex-wrap gap-3 justify-center">
+            <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 active:bg-clove-800 transition-colors text-stone-50 px-7 py-3.5 font-medium shadow-floating">
+              {t("explore")} <ArrowRight size={18} />
+            </Link>
+            <Link href="/contact" className="inline-flex items-center gap-2 rounded-full bg-stone-50 text-stone-900 hover:bg-white transition-colors px-7 py-3.5 font-medium shadow-card">
+              {t("getInTouch")}
+            </Link>
+          </div>
         </div>
       </section>
     </>
