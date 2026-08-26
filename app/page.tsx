@@ -11,6 +11,8 @@ import { rowToTour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 import ExploreMapLoader from "@/components/ExploreMapLoader";
 import HillsBackdrop from "@/components/HillsBackdrop";
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
+import { HeroIntro, HeroItem } from "@/components/motion/HeroIntro";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 export const revalidate = 60;
@@ -73,36 +75,50 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/88 via-indigo-900/30 to-indigo-900/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-transparent to-transparent hidden md:block" />
         <div className="relative h-full container-page flex flex-col justify-end pb-10 md:pb-14">
-          <p className="font-body text-saffron-300 tracking-[0.2em] text-[11px] md:text-xs uppercase mb-3 md:mb-4">{t("heroKicker")}</p>
-          <h1 className="font-display italic font-medium text-[2.6rem] leading-[0.95] md:text-6xl lg:text-[4.75rem] text-stone-50 max-w-3xl text-balance">
-            {t("heroTitle1")}<br />
-            <span className="not-italic font-semibold">{t("heroTitle2")}</span>
-          </h1>
-          <p className="mt-4 md:mt-5 max-w-xl text-stone-200 text-[15px] md:text-lg leading-relaxed">{t("heroDesc")}</p>
-          <div className="mt-7 flex flex-wrap gap-3 md:gap-4">
-            <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 active:bg-clove-800 transition-colors text-stone-50 px-6 md:px-7 py-3.5 font-medium shadow-floating">
-              {t("explore")} <ArrowRight size={18} />
-            </Link>
-            <a href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-stone-50 text-stone-900 hover:bg-white transition-colors px-6 md:px-7 py-3.5 font-medium shadow-card">
-              <MessageCircle size={18} /> {t("chatWhatsApp")}
-            </a>
-          </div>
-          <div className="mt-8 md:mt-10 flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm">
-            <span className="inline-flex items-center gap-2 rounded-full bg-stone-50/10 backdrop-blur border border-stone-50/20 text-stone-100 px-3.5 py-2">
-              <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-white"><ShieldCheck size={14} /></span>
-              {t("licensedLocal")}
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-stone-50/10 backdrop-blur border border-stone-50/20 text-stone-100 px-3.5 py-2">
-              <Users size={14} className="text-saffron-300" /> {t("smallGroups")}
-            </span>
-            <span className="inline-flex items-center gap-2 rounded-full bg-stone-50/10 backdrop-blur border border-stone-50/20 text-stone-100 px-3.5 py-2">
-              <Star size={14} className="text-saffron-300 fill-saffron-300" /> {t("directContact")}
-            </span>
-          </div>
-          <div className="hidden md:flex mt-8 items-center gap-2 text-stone-300/70 text-xs tracking-wide">
-            <span className="h-8 w-px bg-stone-50/25" />
-            {lang === "en" ? "Scroll to discover" : t("explore")}
-          </div>
+          <HeroIntro>
+            <HeroItem>
+              <p className="font-body text-saffron-300 tracking-[0.2em] text-[11px] md:text-xs uppercase mb-3 md:mb-4">{t("heroKicker")}</p>
+            </HeroItem>
+            <HeroItem>
+              <h1 className="font-display italic font-medium text-[2.6rem] leading-[0.95] md:text-6xl lg:text-[4.75rem] text-stone-50 max-w-3xl text-balance">
+                {t("heroTitle1")}<br />
+                <span className="not-italic font-semibold">{t("heroTitle2")}</span>
+              </h1>
+            </HeroItem>
+            <HeroItem>
+              <p className="mt-4 md:mt-5 max-w-xl text-stone-200 text-[15px] md:text-lg leading-relaxed">{t("heroDesc")}</p>
+            </HeroItem>
+            <HeroItem>
+              <div className="mt-7 flex flex-wrap gap-3 md:gap-4">
+                <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 active:bg-clove-800 transition-colors text-stone-50 px-6 md:px-7 py-3.5 font-medium shadow-floating">
+                  {t("explore")} <ArrowRight size={18} />
+                </Link>
+                <a href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-stone-50 text-stone-900 hover:bg-white transition-colors px-6 md:px-7 py-3.5 font-medium shadow-card">
+                  <MessageCircle size={18} /> {t("chatWhatsApp")}
+                </a>
+              </div>
+            </HeroItem>
+            <HeroItem>
+              <div className="mt-8 md:mt-10 flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-sm">
+                <span className="inline-flex items-center gap-2 rounded-full bg-stone-50/10 backdrop-blur border border-stone-50/20 text-stone-100 px-3.5 py-2">
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/15 text-white"><ShieldCheck size={14} /></span>
+                  {t("licensedLocal")}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-stone-50/10 backdrop-blur border border-stone-50/20 text-stone-100 px-3.5 py-2">
+                  <Users size={14} className="text-saffron-300" /> {t("smallGroups")}
+                </span>
+                <span className="inline-flex items-center gap-2 rounded-full bg-stone-50/10 backdrop-blur border border-stone-50/20 text-stone-100 px-3.5 py-2">
+                  <Star size={14} className="text-saffron-300 fill-saffron-300" /> {t("directContact")}
+                </span>
+              </div>
+            </HeroItem>
+            <HeroItem>
+              <div className="hidden md:flex mt-8 items-center gap-2 text-stone-300/70 text-xs tracking-wide">
+                <span className="h-8 w-px bg-stone-50/25" />
+                {lang === "en" ? "Scroll to discover" : t("explore")}
+              </div>
+            </HeroItem>
+          </HeroIntro>
         </div>
       </section>
 
@@ -185,12 +201,12 @@ export default async function HomePage() {
             New experiences are on the way — ask us on WhatsApp what’s possible for your dates.
           </p>
         ) : (
-          <div className="grid md:grid-cols-3 gap-5 md:gap-6">
-            {signature[0] && <TourCard tour={signature[0]} featured />}
+          <Stagger className="grid md:grid-cols-3 gap-5 md:gap-6">
+            {signature[0] && <StaggerItem><TourCard tour={signature[0]} featured /></StaggerItem>}
             {signature.slice(1, 6).map((t) => (
-              <TourCard key={t.slug} tour={t} />
+              <StaggerItem key={t.slug}><TourCard tour={t} /></StaggerItem>
             ))}
-          </div>
+          </Stagger>
         )}
         <div className="md:hidden mt-6 text-center">
           <Link href="/tours" className="inline-flex items-center gap-1.5 text-clove-700 font-medium text-sm">{t("viewAll")} <ArrowRight size={16} /></Link>

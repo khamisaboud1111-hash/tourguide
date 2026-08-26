@@ -6,11 +6,21 @@ import { createBooking } from "@/app/actions/bookings";
 import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
 import { track } from "@/lib/analytics";
+import { AnimatePresence, motion } from "motion/react";
+import { PICKUP_LOCATIONS } from "@/lib/validations";
+import { calculateBookingPrice } from "@/lib/pricing";
 
 type TourOption = { id: string; slug: string; title: string; priceUsd: number; duration: string; groupSize: string };
 
 const inputBase =
   "w-full rounded-xl border bg-stone-50 px-4 py-3 text-sm outline-none focus:border-clove-500 focus:ring-2 focus:ring-clove-500/15 transition-colors";
+
+const stepMotion = {
+  initial: { opacity: 0, x: 24 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -24 },
+  transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const },
+};
 
 export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -22,13 +32,16 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
   const [tourId, setTourId] = useState(tours[0]?.id ?? "");
   const [requestedDate, setRequestedDate] = useState("");
   const [partySize, setPartySize] = useState("2");
+  const [pickupLocation, setPickupLocation] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [message, setMessage] = useState("");
 
   const selected = tours.find((t) => t.id === tourId);
-  const deposit = selected ? Math.max(1, Math.round(selected.priceUsd * business.depositPercent)) : null;
-  const remaining = selected && deposit ? selected.priceUsd - deposit : null;
+  const travelers = Math.max(1, parseInt(partySize) || 1);
+  const preview = selected ? calculateBookingPrice(selected.priceUsd, travelers, business.depositPercent) : null;
+  const deposit = preview?.deposit ?? null;
+  const remaining = preview?.remaining ?? null;
   const ref = result?.bookingId ? `ZKT-${result.bookingId.slice(0, 8).toUpperCase()}` : "";
 
   const canStep1 = tourId && partySize && parseInt(partySize) >= 1;
@@ -52,7 +65,8 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
     formData.set("customerName", customerName);
     formData.set("customerContact", customerContact);
     formData.set("requestedDate", requestedDate);
-    formData.set("partySize", partySize);
+    formData.set("partySize", String(travelers));
+    formData.set("pickupLocation", pickupLocation);
     formData.set("message", message);
     startTransition(async () => {
       const res = await createBooking(formData);
@@ -132,8 +146,9 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
         ))}
       </div>
 
+      <AnimatePresence mode="wait" initial={false}>
       {step === 1 && (
-        <div className="space-y-4 animate-fade-in">
+        <motion.div key="s1" {...stepMotion} className="space-y-4">
           <div>
             <label htmlFor="tour" className="block text-sm font-medium text-stone-700 mb-1.5">Choose your experience</label>
             <select id="tour" value={tourId} onChange={(e) => setTourId(e.target.value)} className={inputBase}>
@@ -145,7 +160,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label htmlFor="date" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Calendar size={14} className="text-clove-600" /> Preferred date</label>
-              <input id="date" type="date" value={requestedDate} onChange={(e) => setRequestedDate(e.target.value)} className={inputBase} />
+              <input id="date" type="date" required min={new Date().toISOString().slice(0, 10)} value={requestedDate} onChange={(e) => setRequestedDate(e.target.value)} className={inputBase} />
               <p className="text-xs text-stone-500 mt-1">Flexible? Pick any date — adjust later free.</p>
             </div>
             <div>
@@ -154,9 +169,16 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
               {selected && <p className="text-xs text-stone-500 mt-1">Group size: {selected.groupSize}</p>}
             </div>
           </div>
+          <div>
+            <label htmlFor="pickup" className="block text-sm font-medium text-stone-700 mb-1.5">Pickup area (optional)</label>
+            <select id="pickup" value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)} className={inputBase}>
+              <option value="">Not sure yet</option>
+              {PICKUP_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
+            </select>
+          </div>
           {selected && deposit !== null && (
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 text-sm">
-              <div className="flex justify-between"><span className="text-stone-600">Total</span><span className="font-semibold">${selected.priceUsd} / person</span></div>
+              <div className="flex justify-between"><span className="text-stone-600">Subtotal ({travelers} × ${selected.priceUsd})</span><span className="font-semibold">${preview?.subtotal}</span></div>
               <div className="flex justify-between"><span className="text-stone-600">Deposit online</span><span className="font-semibold">${deposit}</span></div>
               <div className="flex justify-between"><span className="text-stone-600">Remaining on the day</span><span className="font-semibold">${remaining}</span></div>
             </div>
@@ -164,11 +186,13 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
           <button type="button" disabled={!canStep1} onClick={() => setStep(2)} className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3.5 font-medium hover:bg-clove-700 disabled:opacity-50 transition-colors shadow-soft">
             Continue <ArrowRight size={16} />
           </button>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
+      <AnimatePresence mode="wait" initial={false}>
       {step === 2 && (
-        <div className="space-y-4 animate-fade-in">
+        <motion.div key="s2" {...stepMotion} className="space-y-4">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><User size={14} className="text-clove-600" /> Your name</label>
             <input id="name" required value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Jane Traveler" className={inputBase} />
@@ -189,11 +213,13 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
               Review booking <ArrowRight size={16} />
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
+      <AnimatePresence mode="wait" initial={false}>
       {step === 3 && (
-        <div className="space-y-4 animate-fade-in">
+        <motion.div key="s3" {...stepMotion} className="space-y-4">
           <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 space-y-2 text-sm">
             <div className="flex justify-between gap-4"><span className="text-stone-500">Tour</span><span className="font-medium text-stone-900 text-right">{selected?.title}</span></div>
             {requestedDate && <div className="flex justify-between"><span className="text-stone-500">Date</span><span>{requestedDate}</span></div>}
@@ -214,8 +240,9 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
             </button>
           </div>
           <p className="text-xs text-stone-500 text-center">No payment now — your guide confirms first. Free cancellation until confirmed.</p>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </form>
   );
 }

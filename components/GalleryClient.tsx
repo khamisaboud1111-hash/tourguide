@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { placeholderPhoto } from "@/lib/placeholder";
 
 type Photo = { seed: string; tall?: boolean; cat: string; alt: string };
@@ -116,8 +117,14 @@ export default function GalleryClient() {
         ))}
       </div>
 
+      <AnimatePresence>
       {open !== null && current && (
-        <div className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label="Gallery lightbox">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label="Gallery lightbox">
           <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
             <p className="text-sm">
               {current.alt} — {open + 1} / {photos.length}
@@ -136,8 +143,9 @@ export default function GalleryClient() {
             </button>
           </div>
           <div className="px-6 pb-6 text-center text-xs text-stone-300">{current.alt}</div>
-        </div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 }

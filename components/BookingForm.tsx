@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { CheckCircle2, CreditCard, ArrowRight, ArrowLeft, Calendar, Users, User, Mail, MessageCircle, MapPin } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { createBooking } from "@/app/actions/bookings";
 import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
-import { track } from "@/lib/analytics";
 import { PICKUP_LOCATIONS } from "@/lib/validations";
 import { calculateBookingPrice } from "@/lib/pricing";
 
@@ -15,7 +15,15 @@ type Props = {
   priceUsd?: number;
 };
 
+const stepMotion = {
+  initial: { opacity: 0, x: 24 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: -24 },
+  transition: { duration: 0.28, ease: [0.16, 1, 0.3, 1] as const },
+};
+
 export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
+  const reduce = useReducedMotion();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isPending, startTransition] = useTransition();
   const [isPayPending, startPayTransition] = useTransition();
@@ -30,7 +38,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
   const [customerContact, setCustomerContact] = useState("");
   const [message, setMessage] = useState("");
 
-  // Client preview only — server recalculates authoritatively via calculateBookingPrice
   const travelers = Math.max(1, parseInt(partySize) || 1);
   const preview = priceUsd ? calculateBookingPrice(priceUsd, travelers, business.depositPercent) : null;
 
@@ -63,15 +70,21 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
 
     startTransition(async () => {
       const res = await createBooking(formData);
-      if (res.ok) { setResult({ ok: true, bookingId: res.bookingId, reference: res.reference }); track("booking_completed", { tour: tourTitle }); }
-      else setResult({ ok: false, error: res.error });
+      if (res.ok) {
+        setResult({ ok: true, bookingId: res.bookingId, reference: res.reference });
+        import("@/lib/analytics").then(({ track }) => track("booking_completed", { tour: tourTitle }));
+      } else setResult({ ok: false, error: res.error });
     });
   }
+
+  const inputBase = "w-full rounded-xl border bg-stone-50 px-4 py-3 text-sm outline-none focus:border-clove-500 focus:ring-2 focus:ring-clove-500/15 transition-colors";
+  const err = result && !result.ok ? result.error : null;
+  const anim = reduce ? {} : stepMotion;
 
   if (result?.ok) {
     const ref = result.reference ?? "";
     return (
-      <div className="rounded-2xl border border-lagoon-200 bg-lagoon-50 p-5 space-y-4 animate-fade-in">
+      <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="rounded-2xl border border-lagoon-200 bg-lagoon-50 p-5 space-y-4">
         <div className="flex gap-3">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-lagoon-600 text-white shrink-0">
             <CheckCircle2 size={18} />
@@ -109,19 +122,17 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
           <span className="text-stone-300">·</span>
           <a href="/tours" className="text-lagoon-700 hover:text-lagoon-800">Back to tours</a>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
-  const inputBase = "w-full rounded-xl border bg-stone-50 px-4 py-3 text-sm outline-none focus:border-clove-500 focus:ring-2 focus:ring-clove-500/15 transition-colors";
-  const err = result && !result.ok ? result.error : null;
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Step indicator */}
       <div className="flex items-center gap-2">
         {[1, 2, 3].map((s) => (
           <div key={s} className="flex items-center gap-2 flex-1">
-            <span className={`h-7 w-7 rounded-full inline-flex items-center justify-center text-xs font-medium border ${step >= s ? "bg-clove-600 text-white border-clove-600" : "bg-stone-100 text-stone-500 border-stone-200"}`}>
+            <span className={`h-7 w-7 rounded-full inline-flex items-center justify-center text-xs font-medium border transition-colors ${step >= s ? "bg-clove-600 text-white border-clove-600" : "bg-stone-100 text-stone-500 border-stone-200"}`}>
               {s}
             </span>
             <span className={`hidden sm:block text-xs ${step === s ? "text-clove-700 font-medium" : "text-stone-500"}`}>
@@ -132,106 +143,108 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
         ))}
       </div>
 
-      {step === 1 && (
-        <div className="space-y-3 animate-fade-in">
-          <div>
-            <label htmlFor="requestedDate" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
-              <Calendar size={14} className="text-clove-600" /> When would you like to go?
-            </label>
-            <input id="requestedDate" type="date" required value={requestedDate} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setRequestedDate(e.target.value)} className={inputBase} />
-          </div>
-          <div>
-            <label htmlFor="partySize" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
-              <Users size={14} className="text-clove-600" /> Travelers
-            </label>
-            <input id="partySize" type="number" min={1} max={20} required value={partySize} onChange={(e) => setPartySize(e.target.value)} className={inputBase} />
-          </div>
-          <div>
-            <label htmlFor="pickup" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
-              <MapPin size={14} className="text-clove-600" /> Pickup area (optional)
-            </label>
-            <select id="pickup" value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)} className={inputBase}>
-              <option value="">Not sure yet</option>
-              {PICKUP_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
-            </select>
-            {pickupLocation === "Other" && (
-              <input value={pickupNotes} onChange={(e) => setPickupNotes(e.target.value)} placeholder="Hotel / area name…" className={`${inputBase} mt-2`} />
+      <AnimatePresence mode="wait" initial={false}>
+        {step === 1 && (
+          <motion.div key="s1" {...anim} className="space-y-3">
+            <div>
+              <label htmlFor="requestedDate" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
+                <Calendar size={14} className="text-clove-600" /> When would you like to go?
+              </label>
+              <input id="requestedDate" type="date" required value={requestedDate} min={new Date().toISOString().slice(0, 10)} onChange={(e) => setRequestedDate(e.target.value)} className={inputBase} />
+            </div>
+            <div>
+              <label htmlFor="partySize" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
+                <Users size={14} className="text-clove-600" /> Travelers
+              </label>
+              <input id="partySize" type="number" min={1} max={20} required value={partySize} onChange={(e) => setPartySize(e.target.value)} className={inputBase} />
+            </div>
+            <div>
+              <label htmlFor="pickup" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5">
+                <MapPin size={14} className="text-clove-600" /> Pickup area (optional)
+              </label>
+              <select id="pickup" value={pickupLocation} onChange={(e) => setPickupLocation(e.target.value)} className={inputBase}>
+                <option value="">Not sure yet</option>
+                {PICKUP_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
+              </select>
+              {pickupLocation === "Other" && (
+                <input value={pickupNotes} onChange={(e) => setPickupNotes(e.target.value)} placeholder="Hotel / area name…" className={`${inputBase} mt-2`} />
+              )}
+            </div>
+
+            {preview && (
+              <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs leading-relaxed">
+                <div className="flex justify-between"><span className="text-stone-600">{preview.travelers} × ${preview.pricePerPerson}</span><span className="font-medium">${preview.subtotal}</span></div>
+                <div className="flex justify-between"><span className="text-stone-600">Deposit (online)</span><span className="font-medium">${preview.deposit}</span></div>
+                <div className="flex justify-between"><span className="text-stone-600">Remaining on day</span><span className="font-medium">${preview.remaining}</span></div>
+              </div>
             )}
-          </div>
 
-          {preview && (
-            <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs leading-relaxed">
-              <div className="flex justify-between"><span className="text-stone-600">{preview.travelers} × ${preview.pricePerPerson}</span><span className="font-medium">${preview.subtotal}</span></div>
-              <div className="flex justify-between"><span className="text-stone-600">Deposit (online)</span><span className="font-medium">${preview.deposit}</span></div>
-              <div className="flex justify-between"><span className="text-stone-600">Remaining on day</span><span className="font-medium">${preview.remaining}</span></div>
+            <button type="button" onClick={() => setStep(2)} className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 text-stone-50 px-6 py-3 font-medium hover:bg-stone-800 transition-colors">
+              Continue <ArrowRight size={16} />
+            </button>
+          </motion.div>
+        )}
+
+        {step === 2 && (
+          <motion.div key="s2" {...anim} className="space-y-3">
+            <div>
+              <label htmlFor="customerName" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><User size={14} className="text-clove-600" /> Your name</label>
+              <input id="customerName" required value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Jane Traveler" className={inputBase} />
             </div>
-          )}
-
-          <button type="button" onClick={() => setStep(2)} className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 text-stone-50 px-6 py-3 font-medium hover:bg-stone-800 transition-colors">
-            Continue <ArrowRight size={16} />
-          </button>
-        </div>
-      )}
-
-      {step === 2 && (
-        <div className="space-y-3 animate-fade-in">
-          <div>
-            <label htmlFor="customerName" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><User size={14} className="text-clove-600" /> Your name</label>
-            <input id="customerName" required value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Jane Traveler" className={inputBase} />
-          </div>
-          <div>
-            <label htmlFor="customerContact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> Email or phone</label>
-            <input id="customerContact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255…" className={inputBase} />
-          </div>
-          <div>
-            <label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1.5">Notes (optional)</label>
-            <textarea id="message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Hotel name, special requests, questions…" className={inputBase} />
-          </div>
-
-          <div className="flex gap-2">
-            <button type="button" onClick={() => setStep(1)} className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium hover:border-clove-300 transition-colors">
-              <ArrowLeft size={14} /> Back
-            </button>
-            <button type="button" disabled={!canContinueStep2()} onClick={() => setStep(3)} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 text-stone-50 px-6 py-3 font-medium hover:bg-stone-800 transition-colors disabled:opacity-60">
-              Review <ArrowRight size={16} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
-        <div className="space-y-4 animate-fade-in">
-          <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 space-y-2 text-sm">
-            <div className="flex justify-between"><span className="text-stone-500">Tour</span><span className="font-medium text-stone-900">{tourTitle}</span></div>
-            {requestedDate && <div className="flex justify-between"><span className="text-stone-500">Date</span><span>{requestedDate}</span></div>}
-            <div className="flex justify-between"><span className="text-stone-500">Travelers</span><span>{travelers}</span></div>
-            {pickupLocation && <div className="flex justify-between"><span className="text-stone-500">Pickup</span><span>{pickupLocation}</span></div>}
-            <div className="flex justify-between"><span className="text-stone-500">Name</span><span>{customerName}</span></div>
-            <div className="flex justify-between"><span className="text-stone-500">Contact</span><span className="truncate max-w-[160px]">{customerContact}</span></div>
-            {message && <div><span className="text-stone-500">Notes</span><p className="mt-1 text-stone-700 bg-white rounded-lg border border-stone-200 p-2">{message}</p></div>}
-          </div>
-
-          {preview && (
-            <div className="rounded-xl bg-white border border-stone-200 p-3 text-sm">
-              <div className="flex justify-between"><span>Subtotal ({preview.travelers} × ${preview.pricePerPerson})</span><span className="font-display font-semibold">${preview.subtotal}</span></div>
-              <div className="flex justify-between text-stone-600"><span>Deposit</span><span>${preview.deposit}</span></div>
-              <div className="flex justify-between text-stone-600"><span>Remaining</span><span>${preview.remaining}</span></div>
+            <div>
+              <label htmlFor="customerContact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> Email or phone</label>
+              <input id="customerContact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255…" className={inputBase} />
             </div>
-          )}
+            <div>
+              <label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1.5">Notes (optional)</label>
+              <textarea id="message" rows={3} value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Hotel name, special requests, questions…" className={inputBase} />
+            </div>
 
-          {err && <p className="rounded-lg bg-clove-50 text-clove-700 text-sm px-3 py-2">{err}</p>}
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setStep(1)} className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium hover:border-clove-300 transition-colors">
+                <ArrowLeft size={14} /> Back
+              </button>
+              <button type="button" disabled={!canContinueStep2()} onClick={() => setStep(3)} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 text-stone-50 px-6 py-3 font-medium hover:bg-stone-800 transition-colors disabled:opacity-60">
+                Review <ArrowRight size={16} />
+              </button>
+            </div>
+          </motion.div>
+        )}
 
-          <div className="flex gap-2">
-            <button type="button" onClick={() => setStep(2)} className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium hover:border-clove-300 transition-colors">
-              <ArrowLeft size={14} /> Back
-            </button>
-            <button type="submit" disabled={isPending} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3 font-medium hover:bg-clove-700 disabled:opacity-60 transition-colors shadow-soft">
-              {isPending ? "Sending…" : "Confirm request"} <ArrowRight size={16} />
-            </button>
-          </div>
-          <p className="text-xs text-stone-500 text-center">No charge now — confirm details with your guide on WhatsApp.</p>
-        </div>
-      )}
+        {step === 3 && (
+          <motion.div key="s3" {...anim} className="space-y-4">
+            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 space-y-2 text-sm">
+              <div className="flex justify-between"><span className="text-stone-500">Tour</span><span className="font-medium text-stone-900">{tourTitle}</span></div>
+              {requestedDate && <div className="flex justify-between"><span className="text-stone-500">Date</span><span>{requestedDate}</span></div>}
+              <div className="flex justify-between"><span className="text-stone-500">Travelers</span><span>{travelers}</span></div>
+              {pickupLocation && <div className="flex justify-between"><span className="text-stone-500">Pickup</span><span>{pickupLocation}</span></div>}
+              <div className="flex justify-between"><span className="text-stone-500">Name</span><span>{customerName}</span></div>
+              <div className="flex justify-between"><span className="text-stone-500">Contact</span><span className="truncate max-w-[160px]">{customerContact}</span></div>
+              {message && <div><span className="text-stone-500">Notes</span><p className="mt-1 text-stone-700 bg-white rounded-lg border border-stone-200 p-2">{message}</p></div>}
+            </div>
+
+            {preview && (
+              <div className="rounded-xl bg-white border border-stone-200 p-3 text-sm">
+                <div className="flex justify-between"><span>Subtotal ({preview.travelers} × ${preview.pricePerPerson})</span><span className="font-display font-semibold">${preview.subtotal}</span></div>
+                <div className="flex justify-between text-stone-600"><span>Deposit</span><span>${preview.deposit}</span></div>
+                <div className="flex justify-between text-stone-600"><span>Remaining</span><span>${preview.remaining}</span></div>
+              </div>
+            )}
+
+            {err && <p className="rounded-lg bg-clove-50 text-clove-700 text-sm px-3 py-2">{err}</p>}
+
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setStep(2)} className="inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-5 py-3 text-sm font-medium hover:border-clove-300 transition-colors">
+                <ArrowLeft size={14} /> Back
+              </button>
+              <button type="submit" disabled={isPending} className="flex-1 inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3 font-medium hover:bg-clove-700 disabled:opacity-60 transition-colors shadow-soft">
+                {isPending ? "Sending…" : "Confirm request"} <ArrowRight size={16} />
+              </button>
+            </div>
+            <p className="text-xs text-stone-500 text-center">No charge now — confirm details with your guide on WhatsApp.</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </form>
   );
 }
