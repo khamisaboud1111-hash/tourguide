@@ -121,7 +121,6 @@ export default function ExploreMap({ tours }: { tours: Tour[] }) {
       scrollWheelZoom={false}
       zoomControl={true}
       className="leaflet-container-full"
-      style={{ height: "100%", width: "100%", background: "#dfe9e5" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

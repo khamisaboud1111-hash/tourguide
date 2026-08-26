@@ -135,6 +135,17 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  /* Leaflet map container — ensure full size rendering */
+  .leaflet-container-full {
+    height: 100%;
+    width: 100%;
+    background: #dfe9e5;
+  }
+  .leaflet-container-full .leaflet-container {
+    height: 100%;
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
