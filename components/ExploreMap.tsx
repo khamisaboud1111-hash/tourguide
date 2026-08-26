@@ -8,17 +8,16 @@ import Link from "next/link";
 import type { Tour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 
-function useLeafletIconFix() {
-  useEffect(() => {
-    // @ts-expect-error — private Leaflet internal
-    delete L.Icon.Default.prototype._getIconUrl;
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-      iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-      shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-    });
-  }, []);
-}
+// Self-hosted marker icons — no CDN dependency (unpkg can fail/blank in some regions)
+const ICON = L.icon({
+  iconUrl: "/leaflet/images/marker-icon.png",
+  iconRetinaUrl: "/leaflet/images/marker-icon-2x.png",
+  shadowUrl: "/leaflet/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 // Real Zanzibar tourism sites (well-known public locations)
 type Site = {
@@ -57,16 +56,24 @@ function ScrollZoomOnClick() {
   return null;
 }
 
-/** Fit the view to every marker on mount. */
-function FitToMarkers({ points }: { points: [number, number][] }) {
+/** Fit the view to every marker on mount + re-render tiles on container resize. */
+function MapSetup({ points }: { points: [number, number][] }) {
   const map = useMap();
   useEffect(() => {
+    // Leaflet sometimes initializes before the container settles — invalidate after paint
+    const t1 = setTimeout(() => map.invalidateSize(), 150);
+    const t2 = setTimeout(() => map.invalidateSize(), 600);
     if (points.length > 1) {
       map.fitBounds(L.latLngBounds(points).pad(0.12));
     } else if (points.length === 1) {
       map.setView(points[0], 12);
     }
+    return () => { clearTimeout(t1); clearTimeout(t2); };
   }, [map, points]);
+  useMapEvents({
+    click: () => map.scrollWheelZoom.enable(),
+    mouseout: () => map.scrollWheelZoom.disable(),
+  });
   return null;
 }
 
@@ -99,8 +106,6 @@ function SitePopup({ site, tour }: { site: Site; tour?: Tour }) {
 }
 
 export default function ExploreMap({ tours }: { tours: Tour[] }) {
-  useLeafletIconFix();
-
   const tourBySlug = useMemo(() => new Map(tours.map((t) => [t.slug, t])), [tours]);
   const allPoints = useMemo<[number, number][]>(
     () => [...SITES.map((s) => s.coords), ...tours.map((t) => [t.coords.lat, t.coords.lng] as [number, number])],
@@ -115,19 +120,18 @@ export default function ExploreMap({ tours }: { tours: Tour[] }) {
       maxZoom={17}
       scrollWheelZoom={false}
       zoomControl={true}
-      className="h-full w-full z-0"
-      style={{ borderRadius: "inherit" }}
+      className="leaflet-container-full"
+      style={{ height: "100%", width: "100%", background: "#dfe9e5" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <ScrollZoomOnClick />
-      <FitToMarkers points={allPoints} />
+      <MapSetup points={allPoints} />
 
       {/* Tourism site pins */}
       {SITES.map((s) => (
-        <Marker key={`site-${s.name}`} position={s.coords} title={s.name}>
+        <Marker key={`site-${s.name}`} position={s.coords} title={s.name} icon={ICON}>
           <Popup maxWidth={260}>
             <SitePopup site={s} tour={s.tourSlug ? tourBySlug.get(s.tourSlug) : undefined} />
           </Popup>

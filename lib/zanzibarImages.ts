@@ -19,6 +19,27 @@ export const zanzibarImageMap: Record<string, string> = {
   "sitmeir_real_13": `photos/sitmeir_real_13.jpg`,
   "sitmeir_real_14": `photos/sitmeir_real_14.jpg`,
 
+  // ── Stone Town culture/history set (19 owner photos) ──
+  "stonetown_real_01": `photos/stonetown_real_01.jpg`, // carved arch door, kids playing
+  "stonetown_real_02": `photos/stonetown_real_02.jpg`, // market stall at carved door
+  "stonetown_real_03": `photos/stonetown_real_03.jpg`, // Gizenga Street alley shops
+  "stonetown_real_04": `photos/stonetown_real_04.jpg`, // Old Fort entrance + clock tower
+  "stonetown_real_05": `photos/stonetown_real_05.jpg`, // Old Fort walls + gardens
+  "stonetown_real_06": `photos/stonetown_real_06.jpg`, // Old Fort courtyard shops
+  "stonetown_real_07": `photos/stonetown_real_07.jpg`, // Old Fort amphitheatre aerial
+  "stonetown_real_08": `photos/stonetown_real_08.jpg`, // rooftops aerial with fort
+  "stonetown_real_09": `photos/stonetown_real_09.jpg`, // Forodhani beach boats aerial
+  "stonetown_real_10": `photos/stonetown_real_10.jpg`, // moody alley
+  "stonetown_real_11": `photos/stonetown_real_11.jpg`, // rooftop café sunset
+  "stonetown_real_12": `photos/stonetown_real_12.jpg`, // rooftop restaurant, cathedral towers
+  "stonetown_real_13": `photos/stonetown_real_13.jpg`, // St. Joseph's Cathedral tower
+  "stonetown_real_14": `photos/stonetown_real_14.jpg`, // cathedral facade
+  "stonetown_real_15": `photos/stonetown_real_15.jpg`, // cathedral with passers-by
+  "stonetown_real_16": `photos/stonetown_real_16.jpg`, // carved door brass spikes closeup
+  "stonetown_real_17": `photos/stonetown_real_17.jpg`, // waterfront palm promenade
+  "stonetown_real_18": `photos/stonetown_real_18.jpg`, // old cannons on waterfront
+  "stonetown_real_19": `photos/stonetown_real_19.jpg`, // fort courtyard wide
+
   // ── Hero & editorial — owner local ──────────────────
   "hero-dhow-sunset": `photos/sitmeir_real_14.jpg`, // real palm-sunset beach shot
   "hero-zanzibar": `photos/sitmeir_real_01.jpg`, // turquoise lagoon aerial
@@ -27,12 +48,16 @@ export const zanzibarImageMap: Record<string, string> = {
   "guide-portrait-2": `photos/sitmeir_real_07.jpg`,
 
   // ── Tours (DB photo_seed values) ───────────────────
-  "stonetown-1": `photos/sitmeir_real_12.jpg`, // carved door alley
+  "stonetown-1": `photos/stonetown_real_01.jpg`, // carved arch door — Culture & History
   "spicefarm-1": `photos/zanzibar_ai_04.jpg`,
   "safariblue-1": `photos/sitmeir_real_01.jpg`, // turquoise lagoon pier
   "jozani-1": `photos/zanzibar_ai_16.jpg`,
   "sunset-dhow-1": `photos/sitmeir_real_14.jpg`, // real sunset beach
   "prisonisland-1": `photos/sitmeir_real_10.jpg`, // Stone Town waterfront boats
+  // variants used by gallery detail (tourSeed + "-2" etc)
+  "stonetown-1-2": `photos/stonetown_real_02.jpg`,
+  "stonetown-1-3": `photos/stonetown_real_03.jpg`,
+  "stonetown-1-4": `photos/stonetown_real_04.jpg`,
 
   // variants used by gallery detail (tourSeed + "-2" etc)
   "stonetown-1-2": `photos/zanzibar_stone_town.webp`,
