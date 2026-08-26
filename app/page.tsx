@@ -233,29 +233,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Map */}
-      <section className="container-page py-12 md:py-16">
-        <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreMapTitle")} description={t("exploreMapDesc")} />
-        <div className="mt-8 grid lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 h-[420px] md:h-[480px] rounded-2xl overflow-hidden border border-stone-200 shadow-card">
-            {tours.length > 0 ? <ExploreMapLoader tours={tours} /> : <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">Our tour map is being updated — ask us on WhatsApp for current routes.</div>}
-          </div>
-          <div className="bg-stone-50 rounded-2xl border border-stone-200 p-5 md:p-6">
-            <h3 className="font-display font-semibold text-stone-900">{t("whereWeGo")}</h3>
-            <ul className="mt-4 space-y-3">
-              {tours.slice(0, 6).map((t) => (
-                <li key={t.slug} className="flex items-start gap-3">
-                  <span className="mt-1 inline-flex h-2 w-2 rounded-full bg-clove-600 shrink-0" />
-                  <div>
-                    <Link href={`/tours/${t.slug}`} className="text-sm font-medium text-stone-900 hover:text-clove-600 transition-colors">{t.title}</Link>
-                    <p className="text-xs text-stone-500">{t.category} · {t.duration} · {t.meetingPoint}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <Link href="/tours" className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-clove-700 hover:gap-2.5 transition-all">
-              {t("viewAll")} <ArrowRight size={16} />
-            </Link>
+      {/* Map — full box, zoomable, tourism site pins */}
+      <section className="container-wide py-12 md:py-16">
+        <div className="container-page">
+          <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreMapTitle")} description={t("exploreMapDesc")} />
+        </div>
+        <div className="mt-8 rounded-2xl overflow-hidden border border-stone-200 shadow-card h-[480px] md:h-[600px] relative z-0">
+          {tours.length > 0 ? (
+            <ExploreMapLoader tours={tours} />
+          ) : (
+            <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">Our tour map is being updated — ask us on WhatsApp for current routes.</div>
+          )}
+        </div>
+        <div className="container-page">
+          <p className="mt-3 text-xs text-stone-500">
+            Tap a pin to explore each site — scroll or pinch to zoom, drag to move around the island. Pins with a tour link take you straight to booking.
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {["Stone Town", "Spice Farms", "Jozani Forest", "Prison Island", "Safari Blue", "Nungwi", "Kendwa", "Paje", "Mnemba"].map((s) => (
+              <span key={s} className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-xs text-stone-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-clove-600" /> {s}
+              </span>
+            ))}
           </div>
         </div>
       </section>

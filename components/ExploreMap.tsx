@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect, useMemo } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import type { Tour } from "@/lib/tours";
+import { placeholderPhoto } from "@/lib/placeholder";
 
 function useLeafletIconFix() {
   useEffect(() => {
@@ -19,35 +20,132 @@ function useLeafletIconFix() {
   }, []);
 }
 
+// Real Zanzibar tourism sites (well-known public locations)
+type Site = {
+  name: string;
+  coords: [number, number];
+  category: string;
+  desc: string;
+  seed: string;
+  tourSlug?: string;
+};
+
+const SITES: Site[] = [
+  { name: "Stone Town", coords: [-6.163, 39.1892], category: "Culture", desc: "UNESCO old town — carved doors, bazaars, House of Wonders, Forodhani night market.", seed: "sitmeir_real_11", tourSlug: "stone-town-walking-tour" },
+  { name: "Darajani Market", coords: [-6.1633, 39.1948], category: "Culture", desc: "The island's busiest bazaar — spices, fabrics, and daily Zanzibar life.", seed: "gallery-market" },
+  { name: "Forodhani Gardens", coords: [-6.1618, 39.1908], category: "Food", desc: "Waterfront gardens famous for the evening street-food market.", seed: "zanzibar_ai_24" },
+  { name: "Spice Farms (Kizimbani)", coords: [-6.1273, 39.2544], category: "Food", desc: "Clove, vanilla, cinnamon and nutmeg — the original Spice Island farms.", seed: "zanzibar_ai_04", tourSlug: "spice-farm-tour" },
+  { name: "Jozani Forest", coords: [-6.2664, 39.3903], category: "Nature", desc: "Zanzibar's only national park — red colobus monkeys and mangrove boardwalks.", seed: "zanzibar_ai_16", tourSlug: "jozani-forest-tour" },
+  { name: "Prison Island (Changuu)", coords: [-6.0622, 39.1722], category: "Ocean", desc: "Short boat ride from Stone Town — giant Aldabra tortoises and snorkeling.", seed: "zanzibar_ai_11", tourSlug: "prison-island-tour" },
+  { name: "Nakupenda Sandbank", coords: [-6.095, 39.185], category: "Ocean", desc: "Blinding white sandbank that appears at low tide — swimming and seafood.", seed: "gallery-beach-sandbank" },
+  { name: "Fumba (Safari Blue)", coords: [-6.3036, 39.3231], category: "Ocean", desc: "Departure point for the full-day dhow, snorkeling and sandbank safari.", seed: "zanzibar_ai_08", tourSlug: "safari-blue" },
+  { name: "Mnemba Atoll", coords: [-5.815, 39.3853], category: "Ocean", desc: "Protected atoll with the island's best reef snorkeling and dolphins.", seed: "zanzibar_mnemba_island" },
+  { name: "Kendwa", coords: [-5.7472, 39.2889], category: "Beach", desc: "Famous for full-moon parties and a swim-friendly beach at any tide.", seed: "sitmeir_real_08" },
+  { name: "Nungwi", coords: [-5.7258, 39.2997], category: "Beach", desc: "North-coast village — dhow builders, sunset cruises and calm swimming water.", seed: "sitmeir_real_01", tourSlug: "sunset-dhow-cruise" },
+  { name: "Paje", coords: [-6.3164, 39.3553], category: "Beach", desc: "Kitesurfing capital on the southeast coast, with a laid-back beach scene.", seed: "sitmeir_real_03" },
+  { name: "Jambiani", coords: [-6.3828, 39.3664], category: "Beach", desc: "Quiet fishing village with long white beaches and seaweed farms.", seed: "zanzibar_ai_15" },
+  { name: "Kizimkazi", coords: [-6.4528, 39.3492], category: "Ocean", desc: "Southern fishing village — dolphin tours and the 12th-century mosque.", seed: "zanzibar_ai_13" },
+];
+
+/** Enable scroll-zoom after the user clicks/touches the map once. */
+function ScrollZoomOnClick() {
+  const map = useMap();
+  useMapEvents({
+    click: () => map.scrollWheelZoom.enable(),
+    mouseout: () => map.scrollWheelZoom.disable(),
+  });
+  return null;
+}
+
+/** Fit the view to every marker on mount. */
+function FitToMarkers({ points }: { points: [number, number][] }) {
+  const map = useMap();
+  useEffect(() => {
+    if (points.length > 1) {
+      map.fitBounds(L.latLngBounds(points).pad(0.12));
+    } else if (points.length === 1) {
+      map.setView(points[0], 12);
+    }
+  }, [map, points]);
+  return null;
+}
+
+function SitePopup({ site, tour }: { site: Site; tour?: Tour }) {
+  return (
+    <div className="w-[240px]">
+      <div className="relative h-28 w-full rounded-lg overflow-hidden mb-2 bg-stone-100">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={placeholderPhoto(site.seed, 480, 270)} alt={site.name} className="h-full w-full object-cover" loading="lazy" />
+        <span className="absolute top-1.5 left-1.5 rounded-full bg-white/95 px-2 py-0.5 text-[10px] font-medium text-stone-700 border border-stone-200">
+          {site.category}
+        </span>
+      </div>
+      <p className="font-semibold text-stone-900 text-sm">{site.name}</p>
+      <p className="text-stone-600 text-xs mt-1 leading-relaxed">{site.desc}</p>
+      {tour ? (
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <span className="text-xs text-stone-500">{tour.duration} · From ${tour.priceUsd}</span>
+          <Link href={`/tours/${tour.slug}`} className="inline-flex items-center gap-1 rounded-full bg-clove-600 text-white px-3 py-1 text-xs font-medium hover:bg-clove-700 transition-colors">
+            View tour
+          </Link>
+        </div>
+      ) : (
+        <Link href="/tours" className="inline-flex items-center gap-1 text-clove-600 text-xs font-medium mt-2 hover:underline">
+          Find a tour here →
+        </Link>
+      )}
+    </div>
+  );
+}
+
 export default function ExploreMap({ tours }: { tours: Tour[] }) {
   useLeafletIconFix();
 
-  // Zanzibar center — fit all tour markers
-  const center: [number, number] = [-6.1659, 39.2026];
+  const tourBySlug = useMemo(() => new Map(tours.map((t) => [t.slug, t])), [tours]);
+  const allPoints = useMemo<[number, number][]>(
+    () => [...SITES.map((s) => s.coords), ...tours.map((t) => [t.coords.lat, t.coords.lng] as [number, number])],
+    [tours]
+  );
 
   return (
     <MapContainer
-      center={center}
+      center={[-6.1659, 39.2026]}
       zoom={10}
+      minZoom={8}
+      maxZoom={17}
       scrollWheelZoom={false}
-      className="h-full w-full"
+      zoomControl={true}
+      className="h-full w-full z-0"
+      style={{ borderRadius: "inherit" }}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+      <ScrollZoomOnClick />
+      <FitToMarkers points={allPoints} />
+
+      {/* Tourism site pins */}
+      {SITES.map((s) => (
+        <Marker key={`site-${s.name}`} position={s.coords} title={s.name}>
+          <Popup maxWidth={260}>
+            <SitePopup site={s} tour={s.tourSlug ? tourBySlug.get(s.tourSlug) : undefined} />
+          </Popup>
+        </Marker>
+      ))}
+
+      {/* Tour meeting points (from the database) */}
       {tours.map((t) => (
-        <Marker key={t.slug} position={[t.coords.lat, t.coords.lng]}>
-          <Popup>
-            <div className="text-sm min-w-[180px]">
+        <Marker key={`tour-${t.slug}`} position={[t.coords.lat, t.coords.lng]} title={t.title} opacity={0.85}>
+          <Popup maxWidth={240}>
+            <div className="text-sm w-[210px]">
               <p className="font-semibold text-stone-900">{t.title}</p>
-              <p className="text-stone-600 text-xs mt-1">{t.category} · {t.duration} · From ${t.priceUsd}</p>
-              <p className="text-stone-600 text-xs mt-1 line-clamp-2">{t.summary}</p>
+              <p className="text-stone-600 text-xs mt-1">Meeting point · {t.duration} · From ${t.priceUsd}</p>
               <Link
                 href={`/tours/${t.slug}`}
                 className="inline-flex items-center gap-1 text-clove-600 text-xs font-medium mt-2 hover:underline"
               >
-                View experience â†’
+                View experience →
               </Link>
             </div>
           </Popup>
