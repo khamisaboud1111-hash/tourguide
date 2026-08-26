@@ -58,11 +58,6 @@ export const zanzibarImageMap: Record<string, string> = {
   "stonetown-1-2": `photos/stonetown_real_02.jpg`,
   "stonetown-1-3": `photos/stonetown_real_03.jpg`,
   "stonetown-1-4": `photos/stonetown_real_04.jpg`,
-
-  // variants used by gallery detail (tourSeed + "-2" etc)
-  "stonetown-1-2": `photos/zanzibar_stone_town.webp`,
-  "stonetown-1-3": `photos/zanzibar_ai_02.jpg`,
-  "stonetown-1-4": `photos/zanzibar_ai_03.jpg`,
   "spicefarm-1-2": `photos/zanzibar_ai_05.jpg`,
   "spicefarm-1-3": `photos/zanzibar_mnemba_island.jpg`,
   "spicefarm-1-4": `photos/zanzibar_ai_07.jpg`,

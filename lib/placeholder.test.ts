@@ -10,7 +10,7 @@ describe("placeholderPhoto", () => {
     expect(url).toMatch(/^\/photos\/.+\.jpg$/);
   });
   it("returns mapped local photo for stonetown seed", () => {
-    expect(placeholderPhoto("stonetown-1")).toBe("/photos/sitmeir_real_12.jpg");
+    expect(placeholderPhoto("stonetown-1")).toBe("/photos/stonetown_real_01.jpg");
   });
   it("falls back to picsum for unknown", () => {
     expect(placeholderPhoto("unknown-xyz")).toContain("picsum.photos");
