@@ -41,11 +41,11 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_08", tall: true, cat: "Ocean", alt: "Mnemba Island — turquoise water and white sandbank" },
   { seed: "zanzibar_ai_09", cat: "Ocean", alt: "Safari Blue — dhow sailing Menai Bay" },
   { seed: "zanzibar_ai_10", tall: true, cat: "Ocean", alt: "Reef snorkeling off Zanzibar" },
-  { seed: "zanzibar_ai_11", cat: "Ocean", alt: "Prison Island beach — Aldabra tortoise coast" },
+  { seed: "zanzibar_ai_11", cat: "Nature", alt: "Prison Island beach — Aldabra tortoise coast" },
   { seed: "zanzibar_ai_12", cat: "Ocean", alt: "Traditional dhow on Indian Ocean" },
   { seed: "zanzibar_mnemba_island", tall: true, cat: "Ocean", alt: "Mnemba atoll — crystal water" },
   { seed: "gallery-beach-sandbank", tall: true, cat: "Ocean", alt: "White sandbank at low tide" },
-  { seed: "gallery-dhow-sailing", cat: "Ocean", alt: "Dhow sailing Safari Blue" },
+  { seed: "gallery-dhow-sailing", cat: "Experiences", alt: "Dhow sailing Safari Blue" },
   { seed: "zanzibar_ai_15", cat: "Ocean", alt: "Beach and palm — south coast Zanzibar" },
   { seed: "zanzibar_ai_20", cat: "Ocean", alt: "Ocean horizon — Kendwa beach" },
 
@@ -64,14 +64,14 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_28", cat: "Food", alt: "Spice selection — cinnamon, cardamom" },
   { seed: "zanzibar_ai_29", cat: "Food", alt: "Seafood lunch — Safari Blue beach" },
 
-  // Nature
-  { seed: "zanzibar_ai_16", tall: true, cat: "Nature", alt: "Jozani Forest — mangrove boardwalk" },
-  { seed: "zanzibar_ai_17", cat: "Nature", alt: "Red colobus monkey — Jozani" },
-  { seed: "zanzibar_ai_18", cat: "Nature", alt: "Jozani forest canopy — green" },
-  { seed: "zanzibar_ai_19", tall: true, cat: "Nature", alt: "Mangrove — Jozani Chwaka Bay" },
-  { seed: "zanzibar_ai_30", cat: "Nature", alt: "Forest trail — Jozani" },
-  { seed: "zanzibar_ai_31", cat: "Nature", alt: "Wildlife — Zanzibar forest" },
-  { seed: "zanzibar_ai_32", tall: true, cat: "Nature", alt: "Baobab and coast — Zanzibar nature" },
+  // Experiences
+  { seed: "zanzibar_ai_16", tall: true, cat: "Experiences", alt: "Jozani Forest — mangrove boardwalk" },
+  { seed: "zanzibar_ai_17", cat: "Experiences", alt: "Red colobus monkey — Jozani" },
+  { seed: "zanzibar_ai_18", cat: "Experiences", alt: "Jozani forest canopy — green" },
+  { seed: "zanzibar_ai_19", tall: true, cat: "Experiences", alt: "Mangrove — Jozani Chwaka Bay" },
+  { seed: "zanzibar_ai_30", cat: "Experiences", alt: "Forest trail — Jozani" },
+  { seed: "zanzibar_ai_31", cat: "Experiences", alt: "Wildlife — Zanzibar forest" },
+  { seed: "zanzibar_ai_32", tall: true, cat: "Experiences", alt: "Baobab and coast — Zanzibar nature" },
 
   // People
   { seed: "zanzibar_ai_35", cat: "People", alt: "Local guide with guests — Stone Town" },
