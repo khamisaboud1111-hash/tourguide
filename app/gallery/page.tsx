@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { business } from "@/lib/constants";
 import GalleryClient from "@/components/GalleryClient";
+import GalleryAccordion from "@/components/GalleryAccordion";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function GalleryPage() {
       </p>
 
       <div className="mt-10">
+        <GalleryAccordion />
         <GalleryClient />
       </div>
     </div>

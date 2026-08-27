@@ -8,6 +8,7 @@ import { business, waLink } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
 import { getLang, tServer } from "@/lib/i18n/server";
+import CursorTrailContact from "@/components/CursorTrailContact";
 
 export const metadata: Metadata = {
   title: `Contact — ${business.name}`,
@@ -24,7 +25,9 @@ export default async function ContactPage() {
   const tours = (data ?? []).map(rowToTour);
 
   return (
-    <div className="container-page py-10 md:py-14">
+    <div>
+      <CursorTrailContact />
+      <div className="container-page py-10 md:py-14">
       <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("contact")}</p>
       <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">{t("readyTitle")}</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">Message directly — no agency, no forms that vanish. WhatsApp is fastest and you&apos;ll talk to your guide in person.</p>
@@ -117,6 +120,7 @@ export default async function ContactPage() {
           <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium flex items-center gap-1">Cancellation <ArrowRight size={12} className="opacity-50" /></p><p className="text-stone-600 mt-1">Flexible until confirmed. Message to adjust for weather.</p></div>
         </div>
       </section>
+      </div>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MessageCircle, BadgeCheck, Languages, MapPin, ArrowRight, Heart, Compass, Users, Clock, Shield, Phone } from "lucide-react";
 import { FacebookIcon, InstagramIcon, TikTokIcon } from "@/components/SocialIcons";
 import DoorMotifDivider from "@/components/DoorMotifDivider";
+import UiverseSocials from "@/components/UiverseSocials";
 import { business, waLink } from "@/lib/constants";
 import { placeholderPhoto } from "@/lib/placeholder";
 import { getLang, tServer } from "@/lib/i18n/server";
@@ -181,6 +182,12 @@ export default function AboutPage() {
       </section>
 
       <DoorMotifDivider tone="onLight" />
+
+      {/* Uiverse — animated social icons */}
+      <section className="container-page py-10 md:py-14">
+        <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-4">Follow along</p>
+        <UiverseSocials />
+      </section>
     </div>
   );
 }

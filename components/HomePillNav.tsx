@@ -3,11 +3,11 @@
 import PillNav from "@/components/react-bits/PillNav/PillNav";
 
 const items = [
-  { href: "#discover", label: "Why local" },
+  { href: "#why-local", label: "Why local" },
   { href: "#signature", label: "Experiences" },
   { href: "#destinations", label: "Destinations" },
-  { href: "#guide", label: "Guide" },
-  { href: "#jump-gallery", label: "Gallery" },
+  { href: "#meet-guide", label: "Guide" },
+  { href: "#to-gallery", label: "Gallery" },
 ];
 
 /**
@@ -17,8 +17,8 @@ const items = [
  */
 export default function HomePillNav() {
   return (
-    <div className="hidden md:block pointer-events-none">
-      <div className="pointer-events-auto" style={{ marginTop: "6.25rem" }}>
+    <div className="pointer-events-none">
+      <div className="pointer-events-auto">
         <PillNav
           logoText="Sitmeir"
           items={items}

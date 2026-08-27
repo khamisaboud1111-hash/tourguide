@@ -11,6 +11,7 @@ import { rowToTour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 import ExploreMapLoader from "@/components/ExploreMapLoader";
 import HillsBackdrop from "@/components/HillsBackdrop";
+import HomePillNav from "@/components/HomePillNav";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
 import { HeroIntro, HeroItem } from "@/components/motion/HeroIntro";
 import { getLang, tServer } from "@/lib/i18n/server";
@@ -71,6 +72,10 @@ export default async function HomePage() {
     <>
       {/* Hero */}
       <section className="relative h-[92vh] min-h-[580px] w-full overflow-hidden -mt-[72px] pt-[72px]">
+        {/* React Bits PillNav — floating section-jump bar */}
+        <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
+          <HomePillNav />
+        </div>
         <Image src={placeholderPhoto("hero-dhow-sunset", 1920, 1200)} alt="Traditional dhow sailing off Zanzibar at sunset" fill priority sizes="100vw" className="object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/88 via-indigo-900/30 to-indigo-900/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-transparent to-transparent hidden md:block" />
@@ -158,7 +163,7 @@ export default async function HomePage() {
       <DoorMotifDivider tone="onLight" className="mt-6" />
 
       {/* Why local */}
-      <section className="container-page py-12 md:py-20">
+      <section id="why-local" className="container-page py-12 md:py-20">
         <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-start">
           <div className="md:col-span-5">
             <SectionHeading kicker={t("whyKicker")} title={t("whyTitle")} description={t("whyDesc")} />
@@ -189,7 +194,7 @@ export default async function HomePage() {
       </section>
 
       {/* Signature */}
-      <section className="container-page py-6 md:py-12">
+      <section id="signature" className="container-page py-6 md:py-12">
         <div className="flex items-end justify-between gap-4 mb-8">
           <SectionHeading kicker={t("signatureKicker")} title={t("signatureTitle")} description={t("signatureDesc")} />
           <Link href="/tours" className="hidden md:inline-flex items-center gap-1.5 text-clove-700 font-medium text-sm hover:gap-2.5 transition-all shrink-0">
@@ -214,7 +219,7 @@ export default async function HomePage() {
       </section>
 
       {/* Destinations */}
-      <section className="bg-stone-100 py-12 md:py-16">
+      <section id="destinations" className="bg-stone-100 py-12 md:py-16">
         <div className="container-page">
           <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreIslandTitle")} align="center" className="mb-8 md:mb-10" />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
@@ -290,7 +295,7 @@ export default async function HomePage() {
       )}
 
       {/* Guide */}
-      <section className="container-page py-12 md:py-20">
+      <section id="meet-guide" className="container-page py-12 md:py-20">
         <div className="grid md:grid-cols-5 gap-8 md:gap-12 items-center">
           <div className="md:col-span-2 relative aspect-[4/5] rounded-2xl overflow-hidden shadow-card">
             <Image src={placeholderPhoto("guide-portrait", 800, 1000)} alt={business.guideName} fill sizes="(min-width:768px) 40vw, 100vw" className="object-cover" />
@@ -325,7 +330,7 @@ export default async function HomePage() {
       </section>
 
       {/* Journal */}
-      <section className="container-page py-12 md:py-16">
+      <section id="to-gallery" className="container-page py-12 md:py-16">
         <div className="flex items-end justify-between gap-4 mb-8">
           <SectionHeading kicker={t("journalKicker")} title={t("journalTitle")} description={t("journalDesc")} />
           <Link href="/gallery" className="hidden md:inline-flex items-center gap-1.5 text-clove-700 font-medium text-sm hover:gap-2.5 transition-all shrink-0">{t("viewGallery")} <ArrowRight size={16} /></Link>
