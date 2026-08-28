@@ -104,7 +104,7 @@ export default async function ContactPage() {
 
         <div className="rounded-2xl border border-stone-200 bg-white shadow-card p-6 md:p-8">
           <h3 className="font-display text-xl font-semibold">Send a message</h3>
-          <p className="text-sm text-stone-600 mt-1">This opens WhatsApp with your message ready to send — nothing is stored on this site unless you submit a booking request.</p>
+          <p className="text-sm text-stone-600 mt-1">This opens WhatsApp with your message ready to send — nothing here is stored unless you submit a booking request.</p>
           <div className="mt-6">
             <ContactForm tours={tours} />
           </div>

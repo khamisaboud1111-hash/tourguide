@@ -95,7 +95,7 @@ export default function ContactForm({ tours }: { tours: Tour[] }) {
         Send via WhatsApp
       </button>
       <p className="text-xs text-stone-500 text-center">
-        This opens WhatsApp with your message ready to send — nothing is stored on this site.
+        This opens WhatsApp with your message ready to send — nothing here is stored.
       </p>
     </form>
   );

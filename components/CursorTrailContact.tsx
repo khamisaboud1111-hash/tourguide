@@ -184,12 +184,6 @@ export default function CursorTrailContact() {
         className="reveal relative z-10 flex flex-wrap items-center justify-between gap-4 px-6 pb-9 sm:px-12"
         style={{ fontFamily: "'Geist Mono', ui-monospace, monospace", fontSize: "0.75rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "rgba(255,255,255,0.4)", ["--reveal-delay" as any]: "0.45s" }}
       >
-        <div className="flex gap-7">
-          <a href="#" className="transition-colors hover:text-white">Instagram</a>
-          <a href="#" className="transition-colors hover:text-white">Are.na</a>
-          <a href="#" className="transition-colors hover:text-white">GitHub</a>
-        </div>
-        <p className="hidden sm:block">( move your cursor )</p>
       </footer>
 
       <style jsx>{`
