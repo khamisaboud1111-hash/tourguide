@@ -15,6 +15,7 @@ import HomePillNav from "@/components/HomePillNav";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
 import { HeroIntro, HeroItem } from "@/components/motion/HeroIntro";
 import { getLang, tServer } from "@/lib/i18n/server";
+import WaterRippleImage from "@/components/ui/water-ripple-image";
 
 export const revalidate = 60;
 
@@ -76,7 +77,15 @@ export default async function HomePage() {
         <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
           <HomePillNav />
         </div>
-        <Image src={placeholderPhoto("hero-dhow-sunset", 1920, 1200)} alt="Traditional dhow sailing off Zanzibar at sunset" fill priority sizes="100vw" className="object-cover" />
+        <WaterRippleImage
+          blueish={0.4}
+          scale={7}
+          illumination={0.18}
+          surfaceDistortion={0.05}
+          waterDistortion={0.03}
+          src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1920"
+          className="absolute inset-0"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/88 via-indigo-900/30 to-indigo-900/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-transparent to-transparent hidden md:block" />
         <div className="relative h-full container-page flex flex-col justify-end pb-10 md:pb-14">
