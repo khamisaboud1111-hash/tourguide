@@ -70,8 +70,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — full-page water-ripple */}
-      <section className="relative h-screen min-h-[640px] w-full overflow-hidden -mt-[72px] pt-[72px]">
+      {/* Hero — full-page water-ripple (image fills whole screen, behind the transparent navbar) */}
+      <section className="relative h-screen min-h-[640px] w-full overflow-hidden -mt-[72px]">
         {/* React Bits PillNav — floating section-jump bar */}
         <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
           <HomePillNav />
@@ -87,10 +87,10 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/88 via-indigo-900/30 to-indigo-900/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-transparent to-transparent hidden md:block" />
-        <div className="relative h-full container-page flex flex-col justify-end pb-10 md:pb-14">
+        <div className="relative h-full container-page flex flex-col justify-end pt-[72px] pb-10 md:pb-14">
           <HeroIntro>
             <HeroItem>
-              <p className="font-display italic text-2xl md:text-4xl font-semibold text-saffron-300 mb-3 md:mb-4">{business.name}</p>
+              <p className="font-display italic text-2xl md:text-4xl lg:text-5xl font-semibold text-saffron-300 mb-3 md:mb-4 drop-shadow">{business.name}</p>
             </HeroItem>
             <HeroItem>
               <p className="font-body text-saffron-200 tracking-[0.2em] text-[11px] md:text-xs uppercase mb-3 md:mb-4">{t("heroKicker")}</p>
