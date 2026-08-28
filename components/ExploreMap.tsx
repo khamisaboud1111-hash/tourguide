@@ -8,11 +8,11 @@ import Link from "next/link";
 import type { Tour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 
-// Self-hosted marker icons — no CDN dependency (unpkg can fail/blank in some regions)
+// Self-hosted marker icons failed in some regions; use the CDN copies (allowed by CSP).
 const ICON = L.icon({
-  iconUrl: "/leaflet/images/marker-icon.png",
-  iconRetinaUrl: "/leaflet/images/marker-icon-2x.png",
-  shadowUrl: "/leaflet/images/marker-shadow.png",
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
   iconSize: [25, 41],
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
