@@ -21,11 +21,11 @@ const credentials = [
 ];
 
 const pillars = [
-  { n: "01", title: "Local knowledge", body: "Places beyond the standard route — a quiet alley, a farm at the right hour, a calm sea only locals know." },
-  { n: "02", title: "Personal attention", body: "Small groups, private options, and timing that bends to you — not the other way around." },
-  { n: "03", title: "Flexible experiences", body: "Half-day, full-day, sunrise or sunset — shaped around your stay, hotel, and interests." },
-  { n: "04", title: "Authentic experiences", body: "Culture, food, history and nature — introduced by someone who lives it." },
-  { n: "05", title: "Direct communication", body: "Message the guide directly. No agency, no markups, no scripts." },
+  { n: "01", title: "Licensed local guide", body: "Born and raised in Stone Town, licensed, and fluent in English and Swahili. I know the island without a script." },
+  { n: "02", title: "Small groups, private-friendly", body: "Usually 1–8 travelers with private options — the pace and route bend to you, never to a crowd." },
+  { n: "03", title: "Timed to the island", body: "Tours are planned around the tide, the light, and the farm hours — the details that turn a good day into a great one." },
+  { n: "04", title: "Real, local experiences", body: "Culture, food, history and nature introduced by someone who lives here — not read from a guidebook." },
+  { n: "05", title: "You talk straight to your guide", body: "No agency, no middlemen, no markups. Message me directly and I answer you in person." },
 ];
 
 const favoritePlaces = [
@@ -87,12 +87,6 @@ export default function AboutPage() {
 
           <div className="mt-6 space-y-4 text-stone-700 leading-relaxed max-w-xl text-[15px]">
             <p className="font-display text-lg text-stone-900 leading-snug">{business.guideBioShort}</p>
-            <p>
-              This is where the guide&apos;s personal story lives — where you grew up, how long you&apos;ve been guiding, and what first made you want to show this island to visitors. Specifics travel well: the first tour you ever led, a favorite spice, a particular alley you never tire of.
-            </p>
-            <p className="text-stone-600 text-sm border-l-2 border-saffron-300 pl-4 italic">
-              Tip: use first-person, keep it human. One honest paragraph beats corporate marketing. Replace this placeholder with your own words — guests book people, not brochures.
-            </p>
             <p>
               What guests can expect: unhurried pace, room for questions, and the kind of small details a guidebook won&apos;t tell you — the best hour for a spice farm, which sandbank is calmest today, where the light hits the doors at sunset.
             </p>
@@ -159,7 +153,6 @@ export default function AboutPage() {
               </div>
             ))}
           </div>
-          <p className="mt-6 text-xs text-stone-500 max-w-3xl">Claims are kept factual — no invented awards or certifications. If you add a verifiable credential (license number, years active), it appears here automatically via <code>lib/constants.ts</code>.</p>
         </div>
       </section>
 
