@@ -329,32 +329,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Journal */}
-      <section id="to-gallery" className="container-page py-12 md:py-16">
-        <div className="flex items-end justify-between gap-4 mb-8">
-          <SectionHeading kicker={t("journalKicker")} title={t("journalTitle")} description={t("journalDesc")} />
-          <Link href="/gallery" className="hidden md:inline-flex items-center gap-1.5 text-clove-700 font-medium text-sm hover:gap-2.5 transition-all shrink-0">{t("viewGallery")} <ArrowRight size={16} /></Link>
-        </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          {[
-            { title: lang === "en" ? "Best time to visit Zanzibar" : t("journalTitle"), excerpt: lang === "en" ? "Seasons, tides and when each tour shines." : t("journalDesc"), seed: "journal-season" },
-            { title: lang === "en" ? "What to pack for a spice farm" : t("journalTitle"), excerpt: lang === "en" ? "Shoes, sun and the small things guides notice." : t("journalDesc"), seed: "journal-pack" },
-            { title: lang === "en" ? "Stone Town in half a day" : t("journalTitle"), excerpt: lang === "en" ? "A slow walk — doors, markets, rooftops." : t("journalDesc"), seed: "journal-stonetown" },
-          ].map((a) => (
-            <div key={a.title} className="rounded-2xl bg-white border border-stone-200 overflow-hidden shadow-soft hover:shadow-card-hover transition-shadow">
-              <div className="relative aspect-[16/10] overflow-hidden">
-                <Image src={placeholderPhoto(a.seed, 800, 500)} alt={a.title} fill className="object-cover" sizes="(min-width:768px) 33vw, 100vw" />
-              </div>
-              <div className="p-5">
-                <p className="text-clove-700 text-[11px] uppercase tracking-[0.12em] font-medium">{t("comingSoon")}</p>
-                <h3 className="font-display font-semibold mt-1">{a.title}</h3>
-                <p className="text-stone-600 text-sm mt-1.5 leading-relaxed">{a.excerpt}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* Confidence */}
       <section className="container-page py-10 md:py-14">
         <div className="rounded-2xl bg-lagoon-50 border border-lagoon-200 p-6 md:p-8 grid md:grid-cols-3 gap-6 md:gap-8">

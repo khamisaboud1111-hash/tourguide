@@ -7,7 +7,7 @@ const items = [
   { href: "#signature", label: "Experiences" },
   { href: "#destinations", label: "Destinations" },
   { href: "#meet-guide", label: "Guide" },
-  { href: "#to-gallery", label: "Gallery" },
+  { href: "/gallery", label: "Gallery" },
 ];
 
 /**

@@ -64,15 +64,6 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_28", cat: "Food", alt: "Spice selection — cinnamon, cardamom" },
   { seed: "zanzibar_ai_29", cat: "Food", alt: "Seafood lunch — Safari Blue beach" },
 
-  // Nature — Jozani Forest & Red Colobus Monkeys (Images 16-32)
-  { seed: "zanzibar_nature_16", tall: true, cat: "Nature", alt: "Jozani Forest — mangrove boardwalk" },
-  { seed: "zanzibar_nature_17", cat: "Nature", alt: "Red colobus monkey — Jozani" },
-  { seed: "zanzibar_nature_18", cat: "Nature", alt: "Jozani forest canopy — green" },
-  { seed: "zanzibar_nature_19", tall: true, cat: "Nature", alt: "Mangrove — Jozani Chwaka Bay" },
-  { seed: "zanzibar_nature_30", cat: "Nature", alt: "Forest trail — Jozani" },
-  { seed: "zanzibar_nature_31", cat: "Nature", alt: "Wildlife — Zanzibar forest" },
-  { seed: "zanzibar_nature_32", tall: true, cat: "Nature", alt: "Baobab and coast — Zanzibar nature" },
-
   // People
   { seed: "zanzibar_ai_35", cat: "People", alt: "Local guide with guests — Stone Town" },
   { seed: "zanzibar_ai_36", tall: true, cat: "People", alt: "Guide explaining — spice farm" },
