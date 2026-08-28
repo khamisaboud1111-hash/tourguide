@@ -96,8 +96,8 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         </div>
       </header>
       <div className="container-page flex gap-6 py-6 items-start">
-        {/* Sidebar */}
-        <aside className="hidden lg:block w-56 shrink-0">
+        {/* Sidebar (desktop) */}
+        <aside className="hidden lg:block w-56 shrink-0 sticky top-20">
           <nav className="space-y-6">
             {navGroups.map((group) => (
               <div key={group.title}>
@@ -118,9 +118,9 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
           </nav>
         </aside>
 
-        {/* Mobile nav */}
-        <div className="lg:hidden w-full">
-          <nav className="flex flex-wrap gap-1.5 mb-4">
+        <main className="flex-1 min-w-0">
+          {/* Mobile nav (chips) */}
+          <nav className="lg:hidden flex flex-wrap gap-1.5 mb-4">
             {flattened.map((item) => (
               <Link
                 key={item.href}
@@ -131,11 +131,8 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
               </Link>
             ))}
           </nav>
-          <main className="w-full">{children}</main>
-        </div>
-
-        {/* Desktop content */}
-        <main className="flex-1 min-w-0 hidden lg:block">{children}</main>
+          {children}
+        </main>
       </div>
     </div>
   );
