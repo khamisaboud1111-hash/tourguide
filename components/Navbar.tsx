@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, MessageCircle, ArrowRight } from "lucide-react";
+import { Menu, X, MessageCircle, ArrowRight, ShieldCheck } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -109,6 +109,12 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-3">
             <LanguageSwitcher variant={isHome && !scrolled ? "light" : "dark"} />
+            <Link
+              href="/admin"
+              className={`inline-flex items-center gap-1.5 text-sm ${linkColor} transition-colors`}
+            >
+              <ShieldCheck size={16} /> Admin
+            </Link>
             <a
               href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)}
               target="_blank"
@@ -179,6 +185,14 @@ export default function Navbar() {
             <div className="mt-4">
               <LanguageSwitcher variant="dark" />
             </div>
+
+            <Link
+              href="/admin"
+              onClick={() => setOpen(false)}
+              className="mt-6 inline-flex items-center gap-2 text-sm text-stone-500 hover:text-clove-600 transition-colors"
+            >
+              <ShieldCheck size={15} /> Admin
+            </Link>
 
             <div className="mt-8 grid gap-3">
               <a
