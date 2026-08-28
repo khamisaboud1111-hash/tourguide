@@ -21,6 +21,7 @@ export default function Navbar() {
   const links = [
     { href: "/tours", label: t("experiences") },
     { href: "/book", label: "Book Online" },
+    { href: "/map", label: "Map" },
     { href: "/journal", label: t("journal") },
     { href: "/about", label: t("about") },
     { href: "/gallery", label: t("gallery") },

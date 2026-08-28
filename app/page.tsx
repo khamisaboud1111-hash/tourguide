@@ -9,7 +9,6 @@ import { business, waLink } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
-import ExploreMapLoader from "@/components/ExploreMapLoader";
 import HillsBackdrop from "@/components/HillsBackdrop";
 import HomePillNav from "@/components/HomePillNav";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
@@ -71,8 +70,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative h-[92vh] min-h-[580px] w-full overflow-hidden -mt-[72px] pt-[72px]">
+      {/* Hero — full-page water-ripple */}
+      <section className="relative h-screen min-h-[640px] w-full overflow-hidden -mt-[72px] pt-[72px]">
         {/* React Bits PillNav — floating section-jump bar */}
         <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
           <HomePillNav />
@@ -91,7 +90,10 @@ export default async function HomePage() {
         <div className="relative h-full container-page flex flex-col justify-end pb-10 md:pb-14">
           <HeroIntro>
             <HeroItem>
-              <p className="font-body text-saffron-300 tracking-[0.2em] text-[11px] md:text-xs uppercase mb-3 md:mb-4">{t("heroKicker")}</p>
+              <p className="font-display italic text-2xl md:text-4xl font-semibold text-saffron-300 mb-3 md:mb-4">{business.name}</p>
+            </HeroItem>
+            <HeroItem>
+              <p className="font-body text-saffron-200 tracking-[0.2em] text-[11px] md:text-xs uppercase mb-3 md:mb-4">{t("heroKicker")}</p>
             </HeroItem>
             <HeroItem>
               <h1 className="font-display italic font-medium text-[2.6rem] leading-[0.95] md:text-6xl lg:text-[4.75rem] text-stone-50 max-w-3xl text-balance">
@@ -242,32 +244,6 @@ export default async function HomePage() {
                   <span className="inline-flex items-center gap-1 text-saffron-300 text-xs font-medium mt-3">{t("explore")} <ArrowRight size={14} /></span>
                 </div>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Map — full box, zoomable, tourism site pins */}
-      <section className="container-wide py-12 md:py-16">
-        <div className="container-page">
-          <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreMapTitle")} description={t("exploreMapDesc")} />
-        </div>
-        <div className="mt-8 rounded-2xl overflow-hidden border border-stone-200 shadow-card h-[480px] md:h-[600px] relative z-0">
-          {tours.length > 0 ? (
-            <ExploreMapLoader tours={tours} />
-          ) : (
-            <div className="h-full w-full bg-stone-100 flex items-center justify-center text-sm text-stone-500 p-6 text-center">Our tour map is being updated — ask us on WhatsApp for current routes.</div>
-          )}
-        </div>
-        <div className="container-page">
-          <p className="mt-3 text-xs text-stone-500">
-            Tap a pin to explore each site — scroll or pinch to zoom, drag to move around the island. Pins with a tour link take you straight to booking.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {["Stone Town", "Spice Farms", "Jozani Forest", "Prison Island", "Safari Blue", "Nungwi", "Kendwa", "Paje", "Mnemba"].map((s) => (
-              <span key={s} className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-xs text-stone-600">
-                <span className="h-1.5 w-1.5 rounded-full bg-clove-600" /> {s}
-              </span>
             ))}
           </div>
         </div>
