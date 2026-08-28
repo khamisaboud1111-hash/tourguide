@@ -156,3 +156,38 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Loader: Uiverse "spinner-fzua35" (PriyanshuGupta28) ──
+   Ten dots orbit around a centre point, each offset 36° and
+   fading in sequence to create a rotating shimmer. */
+.spinner {
+  position: relative;
+  width: 9px;
+  height: 9px;
+  transform: scale(1.6);
+}
+.spinner > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--color-clove);
+  animation: spinner-fzua35 1.4s ease-in-out infinite;
+}
+.spinner > div:nth-child(1)  { transform: rotate(0deg)     translateX(16px); animation-delay: 0s; }
+.spinner > div:nth-child(2)  { transform: rotate(36deg)    translateX(16px); animation-delay: 0.14s; }
+.spinner > div:nth-child(3)  { transform: rotate(72deg)    translateX(16px); animation-delay: 0.28s; }
+.spinner > div:nth-child(4)  { transform: rotate(108deg)   translateX(16px); animation-delay: 0.42s; }
+.spinner > div:nth-child(5)  { transform: rotate(144deg)   translateX(16px); animation-delay: 0.56s; }
+.spinner > div:nth-child(6)  { transform: rotate(180deg)   translateX(16px); animation-delay: 0.7s; }
+.spinner > div:nth-child(7)  { transform: rotate(216deg)   translateX(16px); animation-delay: 0.84s; }
+.spinner > div:nth-child(8)  { transform: rotate(252deg)   translateX(16px); animation-delay: 0.98s; }
+.spinner > div:nth-child(9)  { transform: rotate(288deg)   translateX(16px); animation-delay: 1.12s; }
+.spinner > div:nth-child(10) { transform: rotate(324deg)   translateX(16px); animation-delay: 1.26s; }
+
+@keyframes spinner-fzua35 {
+  0%, 100% { opacity: 0.15; }
+  50%      { opacity: 1; }
+}

@@ -1,14 +1,11 @@
 export default function Loading() {
   return (
-    <div className="container-page py-16 animate-pulse">
-      <div className="h-6 w-24 bg-stone-200 rounded-full" />
-      <div className="h-10 w-64 bg-stone-200 rounded-xl mt-4" />
-      <div className="h-4 w-96 bg-stone-200 rounded mt-4" />
-      <div className="mt-10 grid md:grid-cols-3 gap-6">
-        <div className="h-64 bg-stone-200 rounded-2xl" />
-        <div className="h-64 bg-stone-200 rounded-2xl" />
-        <div className="h-64 bg-stone-200 rounded-2xl" />
+    <div className="container-page py-24 flex flex-col items-center justify-center gap-6" aria-busy="true" role="status" aria-label="Loading">
+      <div className="spinner" aria-hidden="true">
+        <div /><div /><div /><div /><div />
+        <div /><div /><div /><div /><div />
       </div>
+      <p className="text-sm text-stone-500">Loading…</p>
     </div>
   );
 }
