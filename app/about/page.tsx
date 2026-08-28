@@ -64,7 +64,7 @@ export default function AboutPage() {
           </ul>
 
           <div className="mt-6 rounded-2xl bg-lagoon-50 border border-lagoon-200 p-5">
-            <h3 className="font-display font-semibold text-lagoon-900 flex items-center gap-2"><Heart size={16} /> Favorite corners of the island</h3>
+            <h3 className="font-display font-semibold text-lagoon-900 flex items-center gap-2"><Heart size={16} /> {t("favoriteCorners")}</h3>
             <ul className="mt-3 space-y-3">
               {favoritePlaces.map((p) => (
                 <li key={p.name} className="text-sm">
@@ -80,7 +80,7 @@ export default function AboutPage() {
           <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("aboutGuide")}</p>
           <h1 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-balance">{business.guideName}</h1>
           <p className="mt-2 text-lagoon-700 font-medium text-sm flex flex-wrap gap-2 items-center">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-stone-700 text-xs"><Shield size={12} /> Licensed</span>
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-stone-700 text-xs"><Shield size={12} /> {t("licensed")}</span>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-stone-700 text-xs"><Languages size={12} /> EN · SW</span>
             <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-stone-700 text-xs"><Users size={12} /> 1â€“8 guests</span>
           </p>
@@ -93,26 +93,26 @@ export default function AboutPage() {
           </div>
 
           <div className="mt-8 grid sm:grid-cols-3 gap-3 text-sm">
-            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Compass size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">Real routes</span><br /><span className="text-stone-600">Not scripts</span></p></div>
-            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Clock size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">Flexible</span><br /><span className="text-stone-600">Your pace</span></p></div>
-            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Users size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">Small groups</span><br /><span className="text-stone-600">Private ok</span></p></div>
+            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Compass size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">{t("realRoutes")}</span><br /><span className="text-stone-600">{t("notScripts")}</span></p></div>
+            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Clock size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">{t("flexible")}</span><br /><span className="text-stone-600">{t("yourPace")}</span></p></div>
+            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 flex gap-3"><Users size={16} className="text-clove-600 mt-0.5" /><p><span className="font-medium">{t("smallGroupsShort")}</span><br /><span className="text-stone-600">{t("privateOk")}</span></p></div>
           </div>
 
           <div className="mt-6 rounded-2xl bg-stone-50 border border-stone-200 p-5">
-            <h3 className="font-display text-sm font-semibold text-stone-900 flex items-center gap-2"><Phone size={14} className="text-clove-600" /> Direct contact</h3>
+            <h3 className="font-display text-sm font-semibold text-stone-900 flex items-center gap-2"><Phone size={14} className="text-clove-600" /> {t("directContactTitle")}</h3>
             <div className="mt-3 flex flex-wrap gap-3">
               <a href={`tel:${business.phoneDisplay.replace(/\s/g, "")}`} className="inline-flex items-center gap-2 rounded-full bg-white border border-stone-300 px-5 py-2.5 text-sm font-medium hover:border-clove-300 hover:text-clove-700 transition-colors">
                 <Phone size={16} /> {business.phoneDisplay}
               </a>
               <a href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-lagoon-700 text-white px-5 py-2.5 text-sm font-medium hover:bg-lagoon-800 transition-colors shadow-soft">
-                <MessageCircle size={16} /> WhatsApp
+                <MessageCircle size={16} /> {t("whatsapp")}
               </a>
             </div>
-            <p className="text-xs text-stone-500 mt-2">Fastest reply on WhatsApp — {business.phoneDisplay}</p>
+            <p className="text-xs text-stone-500 mt-2">{t("fastestReply")} — {business.phoneDisplay}</p>
 
             {/* Socials */}
             <div className="mt-4 pt-4 border-t border-stone-200">
-              <p className="text-xs font-medium text-stone-700 mb-2">Follow us</p>
+              <p className="text-xs font-medium text-stone-700 mb-2">{t("followUs")}</p>
               <div className="flex flex-wrap gap-2">
                 <a href={business.facebook} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white border border-stone-200 px-3.5 py-1.5 text-xs font-medium hover:border-clove-300 hover:text-clove-700 transition-colors">
                   <FacebookIcon size={13} /> Facebook · Abdul Hamid
@@ -124,16 +124,16 @@ export default function AboutPage() {
                   <InstagramIcon size={13} /> @sitmeirtourtravel
                 </a>
               </div>
-              <p className="text-xs text-stone-500 mt-2">Email — <a href={`mailto:${business.email}`} className="underline hover:text-clove-600">{business.email}</a></p>
+              <p className="text-xs text-stone-500 mt-2">{t("emailDash")} <a href={`mailto:${business.email}`} className="underline hover:text-clove-600">{business.email}</a></p>
             </div>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <a href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 transition-colors text-white px-6 py-3.5 font-medium shadow-soft">
-              <MessageCircle size={18} /> Say hello on WhatsApp
+              <MessageCircle size={18} /> {t("sayHelloWhatsApp")}
             </a>
             <Link href="/tours" className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3.5 font-medium hover:border-clove-300 hover:text-clove-700 transition-colors">
-              See experiences <ArrowRight size={16} />
+              {t("seeExperiences")} <ArrowRight size={16} />
             </Link>
           </div>
         </div>
@@ -178,7 +178,7 @@ export default function AboutPage() {
 
       {/* Uiverse — animated social icons */}
       <section className="container-page py-10 md:py-14">
-        <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-4">Follow along</p>
+        <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-4">{t("followAlong")}</p>
         <UiverseSocials />
       </section>
     </div>

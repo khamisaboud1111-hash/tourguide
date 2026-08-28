@@ -7,6 +7,7 @@ import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import type { Tour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
+import { useLang } from "@/lib/i18n/context";
 
 // Self-hosted marker icons failed in some regions; use the CDN copies (allowed by CSP).
 const ICON = L.icon({
@@ -78,6 +79,7 @@ function MapSetup({ points }: { points: [number, number][] }) {
 }
 
 function SitePopup({ site, tour }: { site: Site; tour?: Tour }) {
+  const { t } = useLang();
   return (
     <div className="w-[240px]">
       <div className="relative h-28 w-full rounded-lg overflow-hidden mb-2 bg-stone-100">
@@ -91,14 +93,14 @@ function SitePopup({ site, tour }: { site: Site; tour?: Tour }) {
       <p className="text-stone-600 text-xs mt-1 leading-relaxed">{site.desc}</p>
       {tour ? (
         <div className="mt-2 flex items-center justify-between gap-2">
-          <span className="text-xs text-stone-500">{tour.duration} · From ${tour.priceUsd}</span>
+          <span className="text-xs text-stone-500">{tour.duration} · {t("fromPriceDot").replace("{price}", String(tour.priceUsd))}</span>
           <Link href={`/tours/${tour.slug}`} className="inline-flex items-center gap-1 rounded-full bg-clove-600 text-white px-3 py-1 text-xs font-medium hover:bg-clove-700 transition-colors">
-            View tour
+            {t("viewTourLink")}
           </Link>
         </div>
       ) : (
         <Link href="/tours" className="inline-flex items-center gap-1 text-clove-600 text-xs font-medium mt-2 hover:underline">
-          Find a tour here →
+          {t("findTourHere")}
         </Link>
       )}
     </div>
@@ -106,6 +108,7 @@ function SitePopup({ site, tour }: { site: Site; tour?: Tour }) {
 }
 
 export default function ExploreMap({ tours }: { tours: Tour[] }) {
+  const { t } = useLang();
   const tourBySlug = useMemo(() => new Map(tours.map((t) => [t.slug, t])), [tours]);
   const allPoints = useMemo<[number, number][]>(
     () => [...SITES.map((s) => s.coords), ...tours.map((t) => [t.coords.lat, t.coords.lng] as [number, number])],
@@ -138,17 +141,17 @@ export default function ExploreMap({ tours }: { tours: Tour[] }) {
       ))}
 
       {/* Tour meeting points (from the database) */}
-      {tours.map((t) => (
-        <Marker key={`tour-${t.slug}`} position={[t.coords.lat, t.coords.lng]} title={t.title} opacity={0.85}>
+      {tours.map((tour) => (
+        <Marker key={`tour-${tour.slug}`} position={[tour.coords.lat, tour.coords.lng]} title={tour.title} opacity={0.85}>
           <Popup maxWidth={240}>
             <div className="text-sm w-[210px]">
-              <p className="font-semibold text-stone-900">{t.title}</p>
-              <p className="text-stone-600 text-xs mt-1">Meeting point · {t.duration} · From ${t.priceUsd}</p>
+              <p className="font-semibold text-stone-900">{tour.title}</p>
+              <p className="text-stone-600 text-xs mt-1">{t("meetingPointDot").replace("{duration}", tour.duration).replace("{price}", String(tour.priceUsd))}</p>
               <Link
-                href={`/tours/${t.slug}`}
+                href={`/tours/${tour.slug}`}
                 className="inline-flex items-center gap-1 text-clove-600 text-xs font-medium mt-2 hover:underline"
               >
-                View experience →
+                {t("viewExperienceArrow")}
               </Link>
             </div>
           </Popup>

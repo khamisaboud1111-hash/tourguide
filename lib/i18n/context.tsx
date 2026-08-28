@@ -16,8 +16,8 @@ export function useLang() {
   return useContext(I18nCtx);
 }
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("en");
+export function LanguageProvider({ children, initialLang = "en" }: { children: React.ReactNode; initialLang?: Lang }) {
+  const [lang, setLangState] = useState<Lang>(initialLang);
   const router = useRouter();
 
   useEffect(() => {

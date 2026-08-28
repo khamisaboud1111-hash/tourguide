@@ -30,7 +30,7 @@ export default async function ContactPage() {
       <div className="container-page py-10 md:py-14">
       <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("contact")}</p>
       <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">{t("readyTitle")}</h1>
-      <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">Message directly — no agency, no forms that vanish. WhatsApp is fastest and you&apos;ll talk to your guide in person.</p>
+      <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">{t("messageDirectly")}</p>
 
       <div className="mt-10 grid md:grid-cols-2 gap-8 md:gap-12">
         <div className="space-y-6">
@@ -41,7 +41,7 @@ export default async function ContactPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-full bg-lagoon-700 hover:bg-lagoon-800 transition-colors text-white px-6 py-3.5 font-medium shadow-soft"
             >
-              <MessageCircle size={18} /> Fastest: chat on WhatsApp
+              <MessageCircle size={18} /> {t("fastestWhatsapp")}
             </a>
             <ul className="mt-6 space-y-3 text-sm text-stone-700">
               <li className="flex items-center gap-3">
@@ -58,13 +58,13 @@ export default async function ContactPage() {
               </li>
               <li className="flex items-center gap-3">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white border border-stone-200 shrink-0"><Clock size={14} className="text-clove-600" /></span>
-                Replies usually within a few hours (Zanzibar time)
+                {t("repliesWithinHours")}
               </li>
             </ul>
 
             {/* Socials */}
             <div className="mt-6 pt-5 border-t border-lagoon-200">
-              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-stone-500 mb-2">Follow us</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.08em] text-stone-500 mb-2">{t("followUs")}</p>
               <div className="flex flex-wrap gap-2">
                 <a href={business.facebook} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-full bg-white border border-stone-200 px-3.5 py-1.5 text-xs font-medium hover:border-lagoon-300 hover:text-lagoon-700 transition-colors">
                   <FacebookIcon size={13} /> Facebook · Abdul Hamid
@@ -76,35 +76,35 @@ export default async function ContactPage() {
                   <InstagramIcon size={13} /> @sitmeirtourtravel
                 </a>
               </div>
-              <p className="text-xs text-stone-500 mt-2">Email — <a href={`mailto:${business.email}`} className="underline hover:text-lagoon-700">{business.email}</a></p>
+              <p className="text-xs text-stone-500 mt-2">{t("emailDash")} <a href={`mailto:${business.email}`} className="underline hover:text-lagoon-700">{business.email}</a></p>
               <div className="mt-3">
-                <Link href="/book" className="text-xs font-medium text-lagoon-700 hover:underline">Prefer to book online? → Book your experience</Link>
+                <Link href="/book" className="text-xs font-medium text-lagoon-700 hover:underline">{t("preferBookOnline")}</Link>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="font-display font-semibold mb-2">Where we meet</h3>
-            <p className="text-sm text-stone-600 mb-3">{business.location} — exact meeting point per tour is shown on its page with a map.</p>
+            <h3 className="font-display font-semibold mb-2">{t("whereWeMeet")}</h3>
+            <p className="text-sm text-stone-600 mb-3">{t("meetingPointCopy").replace("{location}", business.location)}</p>
             <div className="h-64 md:h-72 rounded-2xl overflow-hidden border border-stone-200 shadow-soft">
               <TourMapLoader lat={business.mapCenter.lat} lng={business.mapCenter.lng} label={business.location} zoom={12} />
             </div>
           </div>
 
           <div className="rounded-2xl bg-stone-100 border border-stone-200 p-5">
-            <h3 className="font-display font-semibold text-sm">What to include in your message</h3>
+            <h3 className="font-display font-semibold text-sm">{t("whatToInclude")}</h3>
             <ul className="mt-2 text-sm text-stone-600 list-disc list-inside space-y-1">
-              <li>Dates you&apos;re in Zanzibar</li>
-              <li>How many travelers</li>
-              <li>Any must-sees (Stone Town, spice, reef, Jozani)</li>
-              <li>Hotel name if you need pickup advice</li>
+              <li>{t("datesYoureIn")}</li>
+              <li>{t("howManyTravelers")}</li>
+              <li>{t("anyMustSees")}</li>
+              <li>{t("hotelForPickup")}</li>
             </ul>
           </div>
         </div>
 
         <div className="rounded-2xl border border-stone-200 bg-white shadow-card p-6 md:p-8">
-          <h3 className="font-display text-xl font-semibold">Send a message</h3>
-          <p className="text-sm text-stone-600 mt-1">This opens WhatsApp with your message ready to send — nothing here is stored unless you submit a booking request.</p>
+          <h3 className="font-display text-xl font-semibold">{t("sendMessage")}</h3>
+          <p className="text-sm text-stone-600 mt-1">{t("contactNoStore")}</p>
           <div className="mt-6">
             <ContactForm tours={tours} />
           </div>
@@ -113,11 +113,11 @@ export default async function ContactPage() {
 
       {/* FAQ quick */}
       <section className="mt-14 rounded-2xl bg-stone-50 border border-stone-200 p-6 md:p-8">
-        <h3 className="font-display text-xl font-semibold">Quick answers</h3>
+        <h3 className="font-display text-xl font-semibold">{t("quickAnswers")}</h3>
         <div className="mt-4 grid md:grid-cols-3 gap-4 text-sm">
-          <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium">Can we customize?</p><p className="text-stone-600 mt-1">Yes — group size, timing and pace are flexible. Just ask.</p></div>
-          <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium">Private tours?</p><p className="text-stone-600 mt-1">Available for most experiences — note &quot;private&quot; on WhatsApp.</p></div>
-          <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium flex items-center gap-1">Cancellation <ArrowRight size={12} className="opacity-50" /></p><p className="text-stone-600 mt-1">Flexible until confirmed. Message to adjust for weather.</p></div>
+          <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium">{t("faqCustomize")}</p><p className="text-stone-600 mt-1">{t("faqCustomizeA")}</p></div>
+          <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium">{t("faqPrivate")}</p><p className="text-stone-600 mt-1">{t("faqPrivateA")}</p></div>
+          <div className="rounded-xl bg-white border border-stone-200 p-4"><p className="font-medium flex items-center gap-1">{t("faqCancellation")} <ArrowRight size={12} className="opacity-50" /></p><p className="text-stone-600 mt-1">{t("faqCancellationA")}</p></div>
         </div>
       </section>
       </div>

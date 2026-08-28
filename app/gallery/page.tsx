@@ -17,7 +17,7 @@ export default function GalleryPage() {
       <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("gallery")}</p>
       <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-xl text-balance">{t("galleryTitle")}</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">
-        Postcards from our tours — the alleys of Stone Town, quiet mornings on the water, and the small moments in between. Every photo was taken on a real day out with guests.
+        {t("postcardsFromTours")}
       </p>
 
       <div className="mt-10">

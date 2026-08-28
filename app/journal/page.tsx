@@ -45,7 +45,7 @@ export default async function JournalPage() {
       <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("journalKicker")}</p>
       <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">{t("journalTitle")}</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">
-        Short, useful reads for planning your days on the island — written from years of showing guests around.
+        {t("shortUsefulReads")}
       </p>
 
       <div className="mt-10 grid md:grid-cols-3 gap-5 md:gap-6">
@@ -60,12 +60,12 @@ export default async function JournalPage() {
             </div>
             <div className="p-5">
               <p className="text-[11px] uppercase tracking-[0.08em] text-stone-500 flex items-center gap-2">
-                {a.category} <span className="h-1 w-1 rounded-full bg-stone-300" /> <Clock size={12} /> {a.readingMinutes} min
+                {a.category} <span className="h-1 w-1 rounded-full bg-stone-300" /> <Clock size={12} /> {a.readingMinutes} {t("minRead")}
               </p>
               <h2 className="font-display font-semibold mt-1 text-stone-900 group-hover:text-clove-700 transition-colors">{a.title}</h2>
               <p className="text-sm text-stone-600 leading-relaxed mt-1.5 line-clamp-2">{a.excerpt}</p>
               <span className="inline-flex items-center gap-1 text-sm font-medium text-clove-700 mt-3 group-hover:gap-1.5 transition-all">
-                Read <ArrowRight size={14} />
+                {t("read")} <ArrowRight size={14} />
               </span>
             </div>
           </Link>

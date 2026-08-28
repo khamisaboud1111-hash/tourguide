@@ -24,9 +24,9 @@ export default async function BookPage() {
   return (
     <div className="container-page py-10 md:py-14">
       <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-3">{t("planTrip")}</p>
-      <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">Book your experience online</h1>
+      <h1 className="font-display text-4xl md:text-5xl font-semibold max-w-2xl text-balance">{t("bookOnlinePageTitle")}</h1>
       <p className="mt-3 text-stone-600 max-w-xl leading-relaxed">
-        Pick a tour, choose your date and travelers, and send the request. {business.guideName} confirms availability personally — no payment needed now, free cancellation until confirmed.
+        {t("bookOnlinePageDesc").replace("{name}", business.guideName)}
       </p>
 
       <div className="mt-10 grid lg:grid-cols-5 gap-8 lg:gap-12">
@@ -40,13 +40,13 @@ export default async function BookPage() {
         {/* Trust sidebar */}
         <aside className="lg:col-span-2 space-y-5">
           <div className="rounded-2xl bg-lagoon-50 border border-lagoon-200 p-6">
-            <h3 className="font-display font-semibold text-lagoon-900 flex items-center gap-2"><ShieldCheck size={18} /> How booking works</h3>
+            <h3 className="font-display font-semibold text-lagoon-900 flex items-center gap-2"><ShieldCheck size={18} /> {t("howBookingWorks")}</h3>
             <ol className="mt-4 space-y-3 text-sm text-stone-700">
               {[
-                "Choose your tour, date, and number of travelers.",
-                "Add your name and email or phone.",
-                "Send the request — no payment now.",
-                `Your guide confirms availability and meeting point.`,
+                t("stepBook1"),
+                t("stepBook2"),
+                t("stepBook3"),
+                t("stepBook4").replace("{name}", business.guideName),
                 `Pay the ${business.depositPercent * 100}% deposit online or the full amount on the day.`,
               ].map((s, i) => (
                 <li key={i} className="flex gap-3">
@@ -58,26 +58,26 @@ export default async function BookPage() {
           </div>
 
           <div className="rounded-2xl bg-stone-50 border border-stone-200 p-6">
-            <h3 className="font-display font-semibold text-sm">Included in every booking</h3>
+            <h3 className="font-display font-semibold text-sm">{t("includedEveryBooking")}</h3>
             <ul className="mt-3 space-y-2 text-sm text-stone-600">
-              {["Licensed local guide", "Free date changes until confirmed", "Direct WhatsApp support", "Meeting point with map"].map((x) => (
+              {[t("incLicensedGuide"), t("incFreeChanges"), t("incWhatsapp"), t("incMeetingPoint")].map((x) => (
                 <li key={x} className="flex items-start gap-2"><Check size={15} className="text-lagoon-600 mt-0.5 shrink-0" /> {x}</li>
               ))}
             </ul>
           </div>
 
           <div className="rounded-2xl bg-white border border-stone-200 p-6">
-            <h3 className="font-display font-semibold text-sm">Prefer to chat first?</h3>
-            <p className="text-sm text-stone-600 mt-1">Ask anything before booking — replies usually within a few hours.</p>
+            <h3 className="font-display font-semibold text-sm">{t("preferToChatFirst")}</h3>
+            <p className="text-sm text-stone-600 mt-1">{t("chatReplyFast")}</p>
             <a href={waLink(`Hi ${business.guideName}, I'd like to ask about booking a tour.`)} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 rounded-full bg-lagoon-700 text-white px-5 py-2.5 text-sm font-medium hover:bg-lagoon-800 transition-colors shadow-soft">
-              <MessageCircle size={16} /> WhatsApp {business.phoneDisplay}
+              <MessageCircle size={16} /> {t("whatsappLabel").replace("{phone}", business.phoneDisplay)}
             </a>
           </div>
 
           <div className="rounded-2xl bg-white border border-stone-200 p-6">
-            <h3 className="font-display font-semibold text-sm">Not sure which tour?</h3>
+            <h3 className="font-display font-semibold text-sm">{t("notSureWhichTour")}</h3>
             <Link href="/tours" className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-clove-700 hover:gap-2.5 transition-all">
-              Browse all experiences <ArrowRight size={15} />
+              {t("browseAllExperiences")} <ArrowRight size={15} />
             </Link>
           </div>
         </aside>

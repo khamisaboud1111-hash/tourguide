@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { placeholderPhoto } from "@/lib/placeholder";
+import { useLang } from "@/lib/i18n/context";
 
 type Photo = { seed: string; tall?: boolean; cat: string; alt: string };
 
@@ -81,6 +82,7 @@ const photos: Photo[] = [
 ];
 
 export default function GalleryClient() {
+  const { t } = useLang();
   const [open, setOpen] = useState<number | null>(null);
 
   const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % photos.length));
@@ -95,7 +97,7 @@ export default function GalleryClient() {
             key={`${p.seed}-${idx}`}
             onClick={() => setOpen(idx)}
             className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid group text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"}`}
-            aria-label={`Open ${p.alt}`}
+            aria-label={t("openPhoto").replace("{alt}", p.alt)}
           >
             <Image
               src={placeholderPhoto(p.seed, 700, p.tall ? 900 : 700)}
@@ -115,21 +117,21 @@ export default function GalleryClient() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label="Gallery lightbox">
+          className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label={t("galleryLightbox")}>
           <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
             <p className="text-sm">
               {current.alt} — {open + 1} / {photos.length}
             </p>
-            <button onClick={() => setOpen(null)} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
+            <button onClick={() => setOpen(null)} aria-label={t("close")} className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
               <X size={18} />
             </button>
           </div>
           <div className="flex-1 relative flex items-center justify-center p-4">
             <Image src={placeholderPhoto(current.seed, 1600, 1200)} alt={current.alt} fill className="object-contain p-4 md:p-10" sizes="100vw" />
-            <button onClick={prev} aria-label="Previous" className="absolute left-4 md:left-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
+            <button onClick={prev} aria-label={t("previous")} className="absolute left-4 md:left-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
               <ChevronLeft size={20} />
             </button>
-            <button onClick={next} aria-label="Next" className="absolute right-4 md:right-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
+            <button onClick={next} aria-label={t("next")} className="absolute right-4 md:right-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
               <ChevronRight size={20} />
             </button>
           </div>

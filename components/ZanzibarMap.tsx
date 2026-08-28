@@ -5,6 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "re
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { placeholderPhoto } from "@/lib/placeholder";
+import { useLang } from "@/lib/i18n/context";
 
 const ICON = L.icon({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -248,6 +249,7 @@ const STREET_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 const SATELLITE_TILES = "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 export default function ZanzibarMap() {
+  const { t } = useLang();
   const [base, setBase] = useState<"street" | "satellite">("street");
 
   const counts = useMemo(() => {
@@ -292,8 +294,8 @@ export default function ZanzibarMap() {
       <div className="absolute top-4 left-4 z-[500] flex flex-col gap-1 rounded-xl bg-white/95 backdrop-blur border border-stone-200 shadow-card p-1">
         {(
           [
-            { key: "street", label: "Map" },
-            { key: "satellite", label: "Satellite" },
+            { key: "street", label: t("mapToggle") },
+            { key: "satellite", label: t("satellite") },
           ] as const
         ).map((b) => (
           <button
@@ -311,7 +313,7 @@ export default function ZanzibarMap() {
 
       {/* Legend */}
       <div className="absolute bottom-5 left-4 z-[500] hidden md:block rounded-xl bg-white/95 backdrop-blur border border-stone-200 shadow-card p-3 text-xs text-stone-700">
-        <p className="font-semibold text-stone-900 mb-1.5">Attractions on Unguja</p>
+        <p className="font-semibold text-stone-900 mb-1.5">{t("attractionsUnguja")}</p>
         <ul className="space-y-1">
           {Object.entries(counts).map(([cat, n]) => (
             <li key={cat} className="flex items-center gap-2">
@@ -319,7 +321,7 @@ export default function ZanzibarMap() {
             </li>
           ))}
         </ul>
-        <p className="mt-2 text-stone-500">Tap a pin for photos · drag or pinch to move</p>
+        <p className="mt-2 text-stone-500">{t("tapPinHint")}</p>
       </div>
     </div>
   );

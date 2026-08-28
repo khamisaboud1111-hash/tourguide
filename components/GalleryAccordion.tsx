@@ -2,6 +2,7 @@
 
 import AccordionGallery from "@/components/react-bits/AccordionGallery/AccordionGallery";
 import { placeholderPhoto } from "@/lib/placeholder";
+import { useLang } from "@/lib/i18n/context";
 
 type Item = { image: string; label: string };
 
@@ -14,9 +15,10 @@ const items: Item[] = [
 ];
 
 export default function GalleryAccordion() {
+  const { t } = useLang();
   return (
     <div className="mb-4">
-      <p className="text-[11px] uppercase tracking-[0.2em] font-medium text-stone-400 mb-3">Featured moments — hover to expand</p>
+      <p className="text-[11px] uppercase tracking-[0.2em] font-medium text-stone-400 mb-3">{t("featuredMoments")}</p>
       <AccordionGallery items={items} trigger="hover" gap={10} height={340} />
     </div>
   );

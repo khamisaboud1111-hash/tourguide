@@ -19,22 +19,29 @@ function parseDurationToMinutes(s: string): number {
   return 180;
 }
 
-const categories = ["All", "Culture & History", "Culture & Nature", "Ocean & Sailing", "Nature & Wildlife", "Ocean & Wildlife"];
-const durations: { label: string; test: (t: Tour) => boolean }[] = [
-  { label: "All durations", test: () => true },
-  { label: "2â€“3 hours", test: (t) => parseDurationToMinutes(t.duration) <= 180 },
-  { label: "Half day", test: (t) => parseDurationToMinutes(t.duration) > 180 && parseDurationToMinutes(t.duration) <= 300 },
-  { label: "Full day", test: (t) => parseDurationToMinutes(t.duration) > 300 },
-];
-const difficulties: { label: string; value: Tour["difficulty"] | "All" }[] = [
-  { label: "All levels", value: "All" },
-  { label: "Easy", value: "Easy" },
-  { label: "Moderate", value: "Moderate" },
-  { label: "Active", value: "Active" },
-];
-
 export default function ToursExplorer({ tours }: { tours: Tour[] }) {
   const { t } = useLang();
+
+  const categories: { value: string; label: string }[] = [
+    { value: "All", label: t("catAll") },
+    { value: "Culture & History", label: t("catCultureHistory") },
+    { value: "Culture & Nature", label: t("catCultureNature") },
+    { value: "Ocean & Sailing", label: t("catOceanSailing") },
+    { value: "Nature & Wildlife", label: t("catNatureWildlife") },
+    { value: "Ocean & Wildlife", label: t("catOceanWildlife") },
+  ];
+  const durations: { value: string; label: string; test: (t: Tour) => boolean }[] = [
+    { value: "All durations", label: t("allDurations"), test: () => true },
+    { value: "2–3 hours", label: t("hoursShort"), test: (tour) => parseDurationToMinutes(tour.duration) <= 180 },
+    { value: "Half day", label: t("halfDay"), test: (tour) => parseDurationToMinutes(tour.duration) > 180 && parseDurationToMinutes(tour.duration) <= 300 },
+    { value: "Full day", label: t("fullDay"), test: (tour) => parseDurationToMinutes(tour.duration) > 300 },
+  ];
+  const difficulties: { label: string; value: Tour["difficulty"] | "All" }[] = [
+    { label: t("allLevels"), value: "All" },
+    { label: t("easy"), value: "Easy" },
+    { label: t("moderate"), value: "Moderate" },
+    { label: t("active"), value: "Active" },
+  ];
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("All");
   const [dur, setDur] = useState("All durations");
@@ -49,7 +56,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
       const hitQ = !q || [t.title, t.category, t.summary, t.description, t.meetingPoint].join(" ").toLowerCase().includes(q);
       const hitCat = cat === "All" || t.category === cat;
       const hitDiff = diff === "All" || t.difficulty === diff;
-      const durObj = durations.find((d) => d.label === dur);
+      const durObj = durations.find((d) => d.value === dur);
       const hitDur = durObj ? durObj.test(t) : true;
       const hitPrice = maxPrice === null || t.priceUsd <= maxPrice;
       return hitQ && hitCat && hitDiff && hitDur && hitPrice;
@@ -87,7 +94,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               aria-label={t("searchTours")}
             />
             {query && (
-              <button onClick={() => setQuery("")} aria-label="Clear search" className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
+              <button onClick={() => setQuery("")} aria-label={t("clearSearch")} className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600">
                 <X size={16} />
               </button>
             )}
@@ -98,12 +105,12 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
               className="rounded-xl border border-stone-300 bg-stone-50 px-3 py-3 text-sm outline-none focus:border-clove-500"
-              aria-label="Sort tours"
+              aria-label={t("sortTours")}
             >
-              <option value="recommended">Recommended</option>
-              <option value="price-asc">Price: low to high</option>
-              <option value="price-desc">Price: high to low</option>
-              <option value="duration">Duration</option>
+              <option value="recommended">{t("recommended")}</option>
+              <option value="price-asc">{t("priceLowHigh")}</option>
+              <option value="price-desc">{t("priceHighLow")}</option>
+              <option value="duration">{t("sortDuration")}</option>
             </select>
 
             <button
@@ -111,7 +118,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               aria-expanded={showFilters}
               className={`inline-flex items-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-colors ${showFilters || hasActiveFilter ? "bg-clove-50 border-clove-200 text-clove-700" : "bg-stone-50 border-stone-300 text-stone-700 hover:border-clove-300"}`}
             >
-              <SlidersHorizontal size={16} /> Filters {hasActiveFilter && <span className="h-2 w-2 rounded-full bg-clove-600" />}
+              <SlidersHorizontal size={16} /> {t("filters")} {hasActiveFilter && <span className="h-2 w-2 rounded-full bg-clove-600" />}
             </button>
           </div>
         </div>
@@ -119,23 +126,23 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
         {showFilters && (
           <div className="mt-4 grid md:grid-cols-4 gap-4 border-t border-stone-100 pt-4 animate-fade-in">
             <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">Experience type</span>
+              <span className="block text-xs font-medium text-stone-700">{t("experienceType")}</span>
               <select value={cat} onChange={(e) => setCat(e.target.value)} className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm outline-none focus:border-clove-500">
                 {categories.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c.value} value={c.value}>{c.label}</option>
                 ))}
               </select>
             </label>
             <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">Duration</span>
+              <span className="block text-xs font-medium text-stone-700">{t("duration")}</span>
               <select value={dur} onChange={(e) => setDur(e.target.value)} className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm outline-none focus:border-clove-500">
                 {durations.map((d) => (
-                  <option key={d.label} value={d.label}>{d.label}</option>
+                  <option key={d.value} value={d.value}>{d.label}</option>
                 ))}
               </select>
             </label>
             <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">Difficulty</span>
+              <span className="block text-xs font-medium text-stone-700">{t("difficulty")}</span>
               <select value={diff} onChange={(e) => setDiff(e.target.value as Tour["difficulty"] | "All")} className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm outline-none focus:border-clove-500">
                 {difficulties.map((d) => (
                   <option key={d.label} value={d.value}>{d.label}</option>
@@ -143,7 +150,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               </select>
             </label>
             <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">Max price — {maxPrice ? `$${maxPrice}` : "Any"}</span>
+              <span className="block text-xs font-medium text-stone-700">{maxPrice ? t("maxPriceAny").replace(/\{price\}/, `$${maxPrice}`) : t("any")}</span>
               <input
                 type="range"
                 min={20}
@@ -160,9 +167,9 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
 
         {hasActiveFilter && (
           <div className="mt-3 flex items-center gap-2 text-sm">
-            <span className="text-stone-500">{filtered.length} result{filtered.length !== 1 ? "s" : ""}</span>
+            <span className="text-stone-500">{filtered.length === 1 ? t("resultCountOne") : t("resultCount").replace(/\{n\}/, String(filtered.length))}</span>
             <button onClick={clearAll} className="inline-flex items-center gap-1 rounded-full bg-stone-100 border border-stone-200 px-3 py-1 text-xs font-medium hover:bg-stone-200 transition-colors">
-              Clear all <X size={12} />
+              {t("clearAll")} <X size={12} />
             </button>
           </div>
         )}
@@ -171,10 +178,10 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
       {/* Results */}
       {filtered.length === 0 ? (
         <div className="mt-10 rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 md:p-12 text-center">
-          <p className="font-display text-xl font-semibold">No experiences match your filters.</p>
-          <p className="mt-2 text-stone-600 text-sm max-w-lg mx-auto">Try broadening the search, clearing filters, or message on WhatsApp for a custom suggestion.</p>
+          <p className="font-display text-xl font-semibold">{t("noMatchTours")}</p>
+          <p className="mt-2 text-stone-600 text-sm max-w-lg mx-auto">{t("noMatchToursDesc")}</p>
           <button onClick={clearAll} className="mt-5 inline-flex items-center gap-2 rounded-full bg-clove-600 text-stone-50 px-5 py-2.5 text-sm font-medium hover:bg-clove-700 transition-colors">
-            Clear filters
+            {t("clearFilters")}
           </button>
         </div>
       ) : (

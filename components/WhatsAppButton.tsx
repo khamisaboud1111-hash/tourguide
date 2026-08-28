@@ -4,24 +4,26 @@ import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
 import { track } from "@/lib/analytics";
+import { useLang } from "@/lib/i18n/context";
 
 export default function WhatsAppButton() {
+  const { t } = useLang();
   const pathname = usePathname();
   // Contextual label + message
-  let label = "Chat with your guide";
+  let label = t("chatWithGuide");
   let text = `Hi ${business.guideName}, I'd like to ask about a tour.`;
-  let shortLabel = "WhatsApp";
+  let shortLabel = t("whatsapp");
 
   if (pathname?.startsWith("/tours/") && pathname !== "/tours") {
-    label = "Ask about this tour";
-    shortLabel = "Ask";
+    label = t("askAboutThisTour");
+    shortLabel = t("askShort");
     // slug appears in pathname — use it in message for context
     const slug = pathname.split("/").pop() || "";
     const pretty = slug.replace(/-/g, " ");
     text = `Hi ${business.guideName}, I'm interested in the ${pretty} tour. Is it available?`;
   } else if (pathname?.startsWith("/booking")) {
-    label = "Need help? WhatsApp us";
-    shortLabel = "Help";
+    label = t("needHelpWhatsApp");
+    shortLabel = t("help");
     text = `Hi ${business.guideName}, I have a question about my booking.`;
   }
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/service";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 function bookingIdFromTxRef(txRef: string): string | null {
   const match = txRef.match(/^booking-([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})-\d+(-[0-9a-f]+)?$/i);
@@ -15,6 +16,8 @@ export default async function BookingConfirmedPage({
   searchParams: Promise<{ status?: string; tx_ref?: string; transaction_id?: string }>;
 }) {
   const { status, tx_ref } = await searchParams;
+  const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();
+  const t = (k: string) => tServer(k, lang);
 
   // The webhook is the source of truth. This page just reflects DB state.
   // If the webhook hasn't landed yet, show "processing" and let the user refresh.
@@ -45,7 +48,7 @@ export default async function BookingConfirmedPage({
         {state === "successful" ? (
           <>
             <CheckCircle2 className="mx-auto text-lagoon-600 mb-4" size={48} />
-            <h1 className="font-display text-2xl font-semibold mb-2">Payment received</h1>
+            <h1 className="font-display text-2xl font-semibold mb-2">{t("paymentReceived")}</h1>
             <p className="text-stone-600 mb-1">
               {bookingRef ? <>Your booking <span className="font-mono font-semibold">{bookingRef}</span> is confirmed.</> : "Your payment is confirmed."}
             </p>
@@ -66,10 +69,10 @@ export default async function BookingConfirmedPage({
         )}
         <div className="flex flex-wrap gap-3 justify-center">
           <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 transition-colors text-white px-6 py-3 font-medium">
-            Back to tours
+            {t("backToTours")}
           </Link>
           <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium hover:border-clove-300 transition-colors">
-            Contact us
+            {t("contactUs")}
           </Link>
         </div>
       </div>

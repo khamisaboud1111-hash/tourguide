@@ -7,6 +7,7 @@ import { business } from "@/lib/constants";
 import { getPostBySlug } from "@/lib/journal-db";
 import { journalArticles } from "@/lib/journal";
 import { placeholderPhoto } from "@/lib/placeholder";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function JournalArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();
+  const t = (k: string) => tServer(k, lang);
 
   // CMS first, static fallback (keeps the 3 seeded slots working pre-migration)
   const post = await getPostBySlug(slug);
@@ -47,23 +50,23 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
   const author = post?.author ?? staticArticle!.author;
   const dateISO = post?.published_at ?? post?.created_at ?? staticArticle!.date;
 
-  const date = new Date(dateISO).toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
+  const date = new Date(dateISO).toLocaleDateString(lang === "sw" ? "sw-TZ" : "en-GB", { year: "numeric", month: "long", day: "numeric" });
 
   return (
     <article className="container-page py-8 md:py-12 max-w-3xl">
       <Link href="/journal" className="inline-flex items-center gap-1.5 text-sm text-stone-600 hover:text-clove-600 transition-colors">
-        <ArrowLeft size={14} /> Back to journal
+        <ArrowLeft size={14} /> {t("backToJournal")}
       </Link>
 
       <p className="mt-6 text-clove-700 text-xs uppercase tracking-[0.2em] font-medium flex items-center gap-2">
-        {category} <span className="h-1 w-1 rounded-full bg-stone-300" /> {readingMinutes} min read
+        {category} <span className="h-1 w-1 rounded-full bg-stone-300" /> {readingMinutes} {t("minRead")}
       </p>
       <h1 className="font-display text-3xl md:text-5xl font-semibold mt-2 text-balance">{title}</h1>
       <p className="mt-3 text-stone-600 leading-relaxed">{excerpt}</p>
       <div className="mt-4 flex items-center gap-4 text-xs text-stone-500">
         <span className="inline-flex items-center gap-1.5"><User size={12} /> {author}</span>
         <span className="inline-flex items-center gap-1.5"><Calendar size={12} /> {date}</span>
-        <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {readingMinutes} min</span>
+        <span className="inline-flex items-center gap-1.5"><Clock size={12} /> {readingMinutes} {t("minRead")}</span>
       </div>
 
       <div className="relative aspect-[16/9] rounded-2xl overflow-hidden mt-6 bg-stone-100">
@@ -94,10 +97,10 @@ export default async function JournalArticlePage({ params }: { params: Promise<{
 
       <div className="mt-10 flex flex-wrap gap-3">
         <Link href="/tours" className="inline-flex items-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3 text-sm font-medium hover:bg-clove-700 transition-colors shadow-soft">
-          Explore experiences
+          {t("explore")}
         </Link>
         <Link href="/journal" className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3 text-sm font-medium hover:border-clove-300 transition-colors">
-          More notes
+          {t("moreNotes")}
         </Link>
       </div>
     </article>

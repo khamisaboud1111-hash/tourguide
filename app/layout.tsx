@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { LocalBusinessJsonLd } from "@/components/StructuredData";
 import { LanguageProvider } from "@/lib/i18n/context";
+import { getLang } from "@/lib/i18n/server";
 import { business } from "@/lib/constants";
 
 const fraunces = Fraunces({
@@ -39,12 +40,13 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const lang = getLang();
   return (
-    <html lang="en">
+    <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
       <body
         className={`${fraunces.variable} ${workSans.variable} font-body bg-stone-50 text-stone-900 antialiased`}
       >
-        <LanguageProvider>
+        <LanguageProvider initialLang={lang}>
           <Navbar />
           <main id="main-content">{children}</main>
           <Footer />

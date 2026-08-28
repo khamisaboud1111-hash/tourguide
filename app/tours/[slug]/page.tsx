@@ -115,7 +115,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
       <div className="container-page pt-6 md:pt-8">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-stone-500">
           <Link href="/tours" className="inline-flex items-center gap-1 hover:text-clove-600 transition-colors">
-            <ArrowLeft size={14} /> All tours
+            <ArrowLeft size={14} /> {t("allTours")}
           </Link>
           <ChevronRight size={14} className="opacity-40" />
           <span className="text-stone-700 truncate">{tour.title}</span>
@@ -135,7 +135,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           {rating && (
             <span className="inline-flex items-center gap-1.5">
               <Star size={14} className="text-saffron-500 fill-saffron-500" />
-              <span className="font-medium text-stone-900">{rating.average}</span> ({rating.count} {rating.count === 1 ? "review" : "reviews"})
+              <span className="font-medium text-stone-900">{rating.average}</span> ({rating.count} {rating.count === 1 ? t("review") : t("reviews")})
             </span>
           )}
         </div>
@@ -152,9 +152,9 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           {/* Quick facts */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { label: "Duration", value: tour.duration },
-              { label: "Group", value: tour.groupSize },
-              { label: "Level", value: tour.difficulty },
+              { label: t("duration"), value: tour.duration },
+              { label: t("group"), value: tour.groupSize },
+              { label: t("level"), value: tour.difficulty },
             ].map((f) => (
               <div key={f.label} className="rounded-2xl bg-stone-50 border border-stone-200 p-4 text-center">
                 <p className="text-[11px] uppercase tracking-[0.08em] text-stone-500">{f.label}</p>
@@ -194,7 +194,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
                 </li>
               ))}
             </ol>
-            <p className="mt-3 text-xs text-stone-500">Times are flexible — the guide adjusts to tide and season.</p>
+            <p className="mt-3 text-xs text-stone-500">{t("timesFlexible")}</p>
           </div>
 
           {/* Included / Excluded */}
@@ -234,7 +234,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
             <div className="rounded-2xl bg-white border border-stone-200 p-5">
               <h3 className="font-display text-base font-semibold mb-2 flex items-center gap-2"><MapPin size={16} className="text-clove-600" /> {t("meetingPoint")}</h3>
               <p className="text-sm text-stone-700">{tour.meetingPoint}</p>
-              <p className="text-xs text-stone-500 mt-1">{tour.coords.lat.toFixed(4)}, {tour.coords.lng.toFixed(4)} — copy into maps. Nearby landmark included in confirmation.</p>
+              <p className="text-xs text-stone-500 mt-1">{tour.coords.lat.toFixed(4)}, {tour.coords.lng.toFixed(4)} {t("copyIntoMaps")}</p>
               <div className="mt-3 h-48 rounded-xl overflow-hidden border border-stone-200">
                 <TourMapLoader lat={tour.coords.lat} lng={tour.coords.lng} label={tour.meetingPoint} />
               </div>
@@ -269,7 +269,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
             </h3>
             {reviews.length === 0 ? (
               <p className="text-sm text-stone-500 rounded-2xl bg-stone-50 border border-dashed border-stone-300 p-5">
-                No published reviews for this tour yet — after your tour we&apos;d love to hear how it went.
+                {t("noReviewsYet")}
               </p>
             ) : (
               <div className="grid sm:grid-cols-2 gap-4">
@@ -279,7 +279,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
                     <blockquote className="mt-2 text-sm text-stone-700 leading-relaxed">“{r.review}”</blockquote>
                     <figcaption className="mt-3 text-xs text-stone-500">
                       <span className="font-medium text-stone-700">{r.customer_name}</span>
-                      {r.country ? ` · ${r.country}` : ""} · {new Date(r.created_at).toLocaleDateString("en-GB", { month: "short", year: "numeric" })}
+                      {r.country ? ` · ${r.country}` : ""} · {new Date(r.created_at).toLocaleDateString(lang === "sw" ? "sw-TZ" : "en-GB", { month: "short", year: "numeric" })}
                     </figcaption>
                   </figure>
                 ))}
@@ -304,14 +304,14 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
         <aside className="md:col-span-1" id="booking">
           <div className="sticky top-[88px] rounded-2xl border border-stone-200 bg-white shadow-card p-6 space-y-5">
             <div>
-              <p className="font-display text-3xl font-semibold text-stone-900">${tour.priceUsd} <span className="text-sm font-body font-normal text-stone-500">/ person</span></p>
-              <p className="text-xs text-stone-500 mt-1">Deposit ${deposit} · Remaining ${remaining} on the day · {business.depositPercent * 100}% online</p>
+              <p className="font-display text-3xl font-semibold text-stone-900">${tour.priceUsd} <span className="text-sm font-body font-normal text-stone-500">{t("perPerson")}</span></p>
+              <p className="text-xs text-stone-500 mt-1">{t("deposit")} ${deposit} · {t("remaining")} ${remaining} {t("onTheDay")} · {business.depositPercent * 100}% online</p>
             </div>
 
             <BookingForm tourId={tour.id} tourTitle={tour.title} priceUsd={tour.priceUsd} />
 
             <div className="relative text-center">
-              <span className="relative bg-white px-3 text-xs text-stone-400 uppercase tracking-wide">or</span>
+              <span className="relative bg-white px-3 text-xs text-stone-400 uppercase tracking-wide">{t("tor")}</span>
               <div className="absolute top-1/2 left-0 right-0 border-t border-stone-200 -z-10" />
             </div>
 
@@ -321,10 +321,10 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
               rel="noopener noreferrer"
               className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-lagoon-300 text-lagoon-800 hover:bg-lagoon-50 transition-colors px-6 py-3 font-medium text-sm"
             >
-              <MessageCircle size={18} /> Ask about this tour
+              <MessageCircle size={18} /> {t("askAboutThisTour")}
             </a>
             <p className="text-xs text-stone-500 text-center">
-              No payment now — {business.guideName} will confirm details and dates with you directly.
+              {t("noPaymentNow").replace(/\{name\}/, business.guideName)}
             </p>
           </div>
         </aside>
