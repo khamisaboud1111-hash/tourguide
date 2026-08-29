@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: `Plan your Zanzibar trip with ${business.guideName}. WhatsApp fastest, maps and meeting points included.`,
 };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function ContactPage() {
   const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();

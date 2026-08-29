@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Culture, ocean, nature — every way to see Zanzibar with a local guide. Small groups, flexible days.",
 };
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function ToursPage() {
   const lang = (() => { try { return getLang(); } catch { return "en" as const; } })();

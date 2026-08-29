@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 export default function NotFound() {
   return (

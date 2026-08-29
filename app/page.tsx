@@ -15,7 +15,7 @@ import { Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
 import { HeroIntro, HeroItem } from "@/components/motion/HeroIntro";
 import { getLang, tServer } from "@/lib/i18n/server";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 const testimonials: Testimonial[] = [
   {
