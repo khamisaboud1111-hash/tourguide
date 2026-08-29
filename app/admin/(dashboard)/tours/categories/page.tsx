@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Tag, Trash2 } from "lucide-react";
 import { Button, Badge } from "@/components/admin/AdminForms";
+import { useLang } from "@/lib/i18n/context";
 
 const initialCategories = [
   { id: 1, name: "Safari", slug: "safari", tours: 8, color: "#8B3A2B" },
@@ -14,12 +15,13 @@ const initialCategories = [
 
 export default function AdminTourCategoriesPage() {
   const [categories] = useState(initialCategories);
+  const { t } = useLang();
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-semibold">Tour Categories</h1>
-        <Button icon={<Plus size={16} />}>Add category</Button>
+        <h1 className="font-display text-2xl font-semibold">{t("adminTourCategories")}</h1>
+        <Button icon={<Plus size={16} />}>{t("adminAddCategory")}</Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -33,12 +35,12 @@ export default function AdminTourCategoriesPage() {
                   <p className="text-xs text-stone-400 font-mono">/{c.slug}</p>
                 </div>
               </div>
-              <button className="text-stone-300 hover:text-clove-600 transition-colors" aria-label={`Delete ${c.name}`}>
+              <button className="text-stone-300 hover:text-clove-600 transition-colors" aria-label={t("adminDeleteCategory").replace("{name}", c.name)}>
                 <Trash2 size={16} />
               </button>
             </div>
             <div className="mt-3">
-              <Badge variant="default">{c.tours} tours</Badge>
+              <Badge variant="default">{t("adminToursCount").replace("{count}", String(c.tours))}</Badge>
             </div>
           </div>
         ))}

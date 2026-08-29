@@ -90,6 +90,32 @@
   }
 }
 
+/* ── Dark theme — `.theme-dark` on <html> remaps the dominant surface/ink/
+   border utilities so the whole site flips without editing components. ── */
+html.theme-dark body {
+  background-color: #13110d;
+  color: #ede6d4;
+}
+html.theme-dark .bg-stone-50 { background-color: #13110d; }
+html.theme-dark .bg-stone-100 { background-color: #1d1a15; }
+html.theme-dark .bg-stone-200 { background-color: #2a251e; }
+html.theme-dark .bg-stone-300 { background-color: #3a342b; }
+html.theme-dark .bg-white { background-color: #1c1915; }
+html.theme-dark .bg-black\/50 { background-color: rgba(0, 0, 0, 0.7); }
+
+html.theme-dark .text-stone-900 { color: #ede6d4; }
+html.theme-dark .text-stone-800 { color: #ddd5c1; }
+html.theme-dark .text-stone-700 { color: #c7be9f; }
+html.theme-dark .text-stone-600 { color: #a69c7f; }
+html.theme-dark .text-stone-500 { color: #8a8167; }
+html.theme-dark .text-stone-400 { color: #6e6752; }
+
+html.theme-dark .border-stone-100 { border-color: #262119; }
+html.theme-dark .border-stone-200 { border-color: #2e2920; }
+html.theme-dark .border-stone-300 { border-color: #3a342b; }
+html.theme-dark .divide-stone-100 > :not([hidden]) ~ :not([hidden]) { border-color: #262119; }
+html.theme-dark .divide-stone-200 > :not([hidden]) ~ :not([hidden]) { border-color: #2e2920; }
+
 @layer components {
   /* Reusable focus ring for components that need stronger treatment (cards, dialogs) */
   .focus-ring {

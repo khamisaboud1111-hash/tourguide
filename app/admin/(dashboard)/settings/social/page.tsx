@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Button, Input, Card } from "@/components/admin/AdminForms";
+import { useLang } from "@/lib/i18n/context";
 
 export default function AdminSocialSettingsPage() {
+  const { t } = useLang();
   const [form, setForm] = useState({
     facebook: "https://facebook.com/aktivanz",
     instagram: "https://instagram.com/aktivanz",
@@ -18,18 +20,18 @@ export default function AdminSocialSettingsPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-semibold">Social Links</h1>
-        <Button>Save changes</Button>
+        <h1 className="font-display text-2xl font-semibold">{t("adminSocialLinksTitle")}</h1>
+        <Button>{t("adminSaveChanges")}</Button>
       </div>
 
       <div className="max-w-3xl">
         <Card>
           <div className="space-y-4">
-            <Input label="Facebook" value={form.facebook} onChange={update("facebook")} />
-            <Input label="Instagram" value={form.instagram} onChange={update("instagram")} />
-            <Input label="Twitter / X" value={form.twitter} onChange={update("twitter")} />
-            <Input label="YouTube" value={form.youtube} onChange={update("youtube")} />
-            <Input label="WhatsApp Number" value={form.whatsapp} onChange={update("whatsapp")} />
+            <Input label={t("adminFacebookLabel")} value={form.facebook} onChange={update("facebook")} />
+            <Input label={t("adminInstagramLabel")} value={form.instagram} onChange={update("instagram")} />
+            <Input label={t("adminTwitterLabel")} value={form.twitter} onChange={update("twitter")} />
+            <Input label={t("adminYoutubeLabel")} value={form.youtube} onChange={update("youtube")} />
+            <Input label={t("adminWhatsAppNumberLabel")} value={form.whatsapp} onChange={update("whatsapp")} />
           </div>
         </Card>
       </div>

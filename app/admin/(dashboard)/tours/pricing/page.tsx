@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Button, Input, Card } from "@/components/admin/AdminForms";
+import { useLang } from "@/lib/i18n/context";
 
 export default function AdminTourPricingPage() {
+  const { t } = useLang();
   const [form, setForm] = useState({
     defaultPricing: "per_person",
-    depositPercent: "30",
     vatPercent: "18",
     currency: "USD",
     seasonalEnabled: "true",
@@ -18,29 +19,26 @@ export default function AdminTourPricingPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-semibold">Pricing Settings</h1>
-        <Button>Save changes</Button>
+        <h1 className="font-display text-2xl font-semibold">{t("adminPricingSettings")}</h1>
+        <Button>{t("adminSaveChanges")}</Button>
       </div>
 
       <div className="max-w-3xl space-y-6">
         <Card>
-          <h2 className="font-display text-lg font-semibold mb-4">Default pricing</h2>
+          <h2 className="font-display text-lg font-semibold mb-4">{t("adminDefaultPricing")}</h2>
           <div className="space-y-4">
-            <Input label="Pricing model" value={form.defaultPricing} onChange={update("defaultPricing")} hint="Per person, per group, or per tour" />
-            <div className="grid grid-cols-2 gap-4">
-              <Input label="Currency" value={form.currency} onChange={update("currency")} />
-              <Input label="Default deposit (%)" value={form.depositPercent} onChange={update("depositPercent")} />
-            </div>
-            <Input label="Tax / VAT (%)" value={form.vatPercent} onChange={update("vatPercent")} />
+            <Input label={t("adminPricingModel")} value={form.defaultPricing} onChange={update("defaultPricing")} hint={t("adminPricingModelHint")} />
+            <Input label={t("adminCurrency")} value={form.currency} onChange={update("currency")} />
+            <Input label={t("adminTaxVat")} value={form.vatPercent} onChange={update("vatPercent")} />
           </div>
         </Card>
 
         <Card>
-          <h2 className="font-display text-lg font-semibold mb-4">Seasonal pricing</h2>
+          <h2 className="font-display text-lg font-semibold mb-4">{t("adminSeasonalPricing")}</h2>
           <div className="space-y-4">
-            <Input label="Enable seasonal pricing" value={form.seasonalEnabled} onChange={update("seasonalEnabled")} hint="Set different prices for peak / off-peak seasons" />
+            <Input label={t("adminEnableSeasonalPricing")} value={form.seasonalEnabled} onChange={update("seasonalEnabled")} hint={t("adminSeasonalPricingHint")} />
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-4">
-              <p className="text-sm text-stone-500">Seasonal multipliers can be set per-tour. Configure peak-season surcharges and off-peak discounts here.</p>
+              <p className="text-sm text-stone-500">{t("adminSeasonalMultipliersNote")}</p>
             </div>
           </div>
         </Card>

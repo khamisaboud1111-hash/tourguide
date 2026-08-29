@@ -73,7 +73,7 @@ function itineraryFor(tour: ReturnType<typeof rowToTour>) {
 const faq = [
   { q: "Is hotel pickup included?", a: "Depends on the tour — see 'Not included' for each. Pickup can usually be arranged for a small fee; ask on WhatsApp with your hotel name." },
   { q: "What should I bring?", a: "Comfortable shoes, sun protection, water, camera. The tour page lists specifics per experience." },
-  { q: "Do I pay now?", a: "No — your request is a booking inquiry. The guide confirms availability, then you can pay a small deposit online or the full on the day." },
+  { q: "How do I pay?", a: "Your request is a booking inquiry — no payment is taken online. The guide confirms availability and you settle on the day, usually in cash or via mobile money." },
 ];
 
 export default async function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -89,8 +89,6 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
   const related = (relatedRows ?? []).map(rowToTour);
 
   const bookingMessage = `Hi ${business.guideName}, I'd like to book the ${tour.title} tour.`;
-  const deposit = Math.max(1, Math.round(tour.priceUsd * business.depositPercent));
-  const remaining = tour.priceUsd - deposit;
 
   // Build gallery — seed + 3 variants using same seed family so placeholders stay coherent
   const gallery = [
@@ -305,7 +303,6 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           <div className="sticky top-[88px] rounded-2xl border border-stone-200 bg-white shadow-card p-6 space-y-5">
             <div>
               <p className="font-display text-3xl font-semibold text-stone-900">${tour.priceUsd} <span className="text-sm font-body font-normal text-stone-500">{t("perPerson")}</span></p>
-              <p className="text-xs text-stone-500 mt-1">{t("deposit")} ${deposit} · {t("remaining")} ${remaining} {t("onTheDay")} · {business.depositPercent * 100}% online</p>
             </div>
 
             <BookingForm tourId={tour.id} tourTitle={tour.title} priceUsd={tour.priceUsd} />

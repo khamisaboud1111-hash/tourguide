@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { Button, Input, Select, Textarea } from "@/components/admin/AdminForms";
+import { useLang } from "@/lib/i18n/context";
 
 export default function AdminNewBookingPage() {
+  const { t } = useLang();
   const [form, setForm] = useState({
     customer_name: "",
     customer_contact: "",
@@ -19,31 +21,31 @@ export default function AdminNewBookingPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold mb-6">New Booking</h1>
+      <h1 className="font-display text-2xl font-semibold mb-6">{t("adminNavNewBooking")}</h1>
 
       <div className="max-w-3xl">
         <div className="rounded-2xl border border-stone-200 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold mb-5">Booking details</h2>
+          <h2 className="font-display text-lg font-semibold mb-5">{t("adminBookingDetails")}</h2>
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Customer name" value={form.customer_name} onChange={update("customer_name")} placeholder="e.g. John Doe" required />
-              <Input label="Customer contact (phone/email)" value={form.customer_contact} onChange={update("customer_contact")} placeholder="+255..." required />
+              <Input label={t("adminCustomerName")} value={form.customer_name} onChange={update("customer_name")} placeholder={t("adminCustomerNamePlaceholder")} required />
+              <Input label={t("adminCustomerContact")} value={form.customer_contact} onChange={update("customer_contact")} placeholder="+255..." required />
             </div>
 
-            <Input label="Tour" value={form.tour_title_snapshot} onChange={update("tour_title_snapshot")} placeholder="Select or enter tour name" />
+            <Input label={t("adminTour")} value={form.tour_title_snapshot} onChange={update("tour_title_snapshot")} placeholder={t("adminTourNamePlaceholder")} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Requested date" value={form.requested_date} onChange={update("requested_date")} type="date" />
-              <Input label="Party size" value={form.party_size} onChange={update("party_size")} type="number" min="1" />
+              <Input label={t("adminRequestedDate")} value={form.requested_date} onChange={update("requested_date")} type="date" />
+              <Input label={t("adminPartySize")} value={form.party_size} onChange={update("party_size")} type="number" min="1" />
             </div>
 
-            <Input label="Pickup location" value={form.pickup_location} onChange={update("pickup_location")} placeholder="Optional" />
+            <Input label={t("adminPickupLocation")} value={form.pickup_location} onChange={update("pickup_location")} placeholder={t("adminOptional")} />
 
-            <Textarea label="Notes / message" value={form.message} onChange={update("message")} rows={4} placeholder="Any special requests" />
+            <Textarea label={t("adminNotesMessage")} value={form.message} onChange={update("message")} rows={4} placeholder={t("adminAnySpecialRequests")} />
           </div>
 
           <div className="mt-6 flex justify-end">
-            <Button size="lg">Create booking</Button>
+            <Button size="lg">{t("adminCreateBooking")}</Button>
           </div>
         </div>
       </div>

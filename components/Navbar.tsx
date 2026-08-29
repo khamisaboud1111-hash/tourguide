@@ -7,6 +7,7 @@ import { Menu, X, MessageCircle, ArrowRight } from "lucide-react";
 import { business, waLink } from "@/lib/constants";
 import Logo from "./Logo";
 import LanguageSwitcher from "./LanguageSwitcher";
+import ThemeToggle from "./ThemeToggle";
 import { useLang } from "@/lib/i18n/context";
 
 export default function Navbar() {
@@ -108,6 +109,7 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <LanguageSwitcher variant={isHome && !scrolled ? "light" : "dark"} />
             <a
               href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)}
@@ -176,7 +178,8 @@ export default function Navbar() {
               </Link>
             ))}
 
-            <div className="mt-4">
+            <div className="mt-4 flex items-center gap-3">
+              <ThemeToggle />
               <LanguageSwitcher variant="dark" />
             </div>
 

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { setAvailabilityAction } from "@/lib/availability";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 const inputClasses =
   "rounded-xl border border-stone-300 bg-stone-50 px-3 py-2 text-sm outline-none focus:border-clove-500";
@@ -10,6 +11,7 @@ export default async function AdminAvailabilityPage({
   searchParams: Promise<{ tour?: string }>;
 }) {
   const { tour: tourId } = await searchParams;
+  const lang = getLang();
   const supabase = await createClient();
   const { data: tours } = await supabase.from("tours").select("id, title").eq("is_published", true).order("title");
 
@@ -30,19 +32,19 @@ export default async function AdminAvailabilityPage({
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold mb-6">Availability</h1>
+      <h1 className="font-display text-2xl font-semibold mb-6">{tServer("adminAvailability", lang)}</h1>
 
       <form method="get" className="mb-6">
-        <label className="block text-sm font-medium text-stone-700 mb-1.5">Tour</label>
+        <label className="block text-sm font-medium text-stone-700 mb-1.5">{tServer("adminTourLabel", lang)}</label>
         <select name="tour" defaultValue={selected} className={`${inputClasses} w-full max-w-md`}>
           {(tours ?? []).map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
         </select>
-        <button className="ml-2 rounded-xl bg-clove-600 text-white px-4 py-2 text-sm font-medium hover:bg-clove-700 transition-colors">Load</button>
+        <button className="ml-2 rounded-xl bg-clove-600 text-white px-4 py-2 text-sm font-medium hover:bg-clove-700 transition-colors">{tServer("adminLoad", lang)}</button>
       </form>
 
       {selected && (
         <>
-          <p className="text-sm text-stone-500 mb-4">Next 30 days. Set a date to <strong>unavailable</strong> (blocked) or adjust capacity. Booked counts update automatically from bookings.</p>
+          <p className="text-sm text-stone-500 mb-4">{tServer("adminAvailIntro", lang)}</p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
             {days.map((d) => {
               const row = availMap.get(d);
@@ -59,21 +61,21 @@ export default async function AdminAvailabilityPage({
                   <input type="hidden" name="tourId" value={selected} />
                   <input type="hidden" name="date" value={d} />
                   <p className="text-xs font-medium text-stone-700">{new Date(d + "T00:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}</p>
-                  <p className="text-[11px] text-stone-500 mb-2">{booked}/{cap} booked</p>
+                  <p className="text-[11px] text-stone-500 mb-2">{tServer("adminBookedCount", lang).replace("{booked}", String(booked)).replace("{cap}", String(cap))}</p>
                   <select name="status" defaultValue={status} className="w-full rounded-lg border border-stone-200 bg-white px-2 py-1 text-xs" onChange={(e) => e.currentTarget.form?.requestSubmit()}>
-                    <option value="available">Available</option>
-                    <option value="limited">Limited</option>
-                    <option value="full">Full</option>
-                    <option value="unavailable">Blocked</option>
+                    <option value="available">{tServer("adminStatusAvailable", lang)}</option>
+                    <option value="limited">{tServer("adminStatusLimited", lang)}</option>
+                    <option value="full">{tServer("adminStatusFull", lang)}</option>
+                    <option value="unavailable">{tServer("adminStatusBlocked", lang)}</option>
                   </select>
-                  <noscript><button className="mt-1 text-[11px] underline">Save</button></noscript>
+                  <noscript><button className="mt-1 text-[11px] underline">{tServer("adminSave", lang)}</button></noscript>
                 </form>
               );
             })}
           </div>
         </>
       )}
-      {!selected && <p className="text-sm text-stone-500">Add a published tour first.</p>}
+      {!selected && <p className="text-sm text-stone-500">{tServer("adminAddPublishedTourFirst", lang)}</p>}
     </div>
   );
 }

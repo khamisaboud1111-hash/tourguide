@@ -2,8 +2,10 @@
 
 import { AreaChart, BarChart, DonutChart, MetricCard } from "@/components/admin/Charts";
 import { TrendingUp, Users, CalendarCheck, Star } from "lucide-react";
+import { useLang } from "@/lib/i18n/context";
 
 export default function AdminAnalyticsPage() {
+  const { t } = useLang();
   const revenueData = [
     { label: "Jan", value: 3200 },
     { label: "Feb", value: 4100 },
@@ -43,33 +45,33 @@ export default function AdminAnalyticsPage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold mb-6">Analytics</h1>
+      <h1 className="font-display text-2xl font-semibold mb-6">{t("adminAnalyticsTitle")}</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <MetricCard title="Revenue (YTD)" value="$43,200" change={18} changeLabel="vs last year" icon={<TrendingUp size={20} />} color="clove" />
-        <MetricCard title="Bookings (30d)" value="215" change={12} changeLabel="vs last month" icon={<CalendarCheck size={20} />} color="lagoon" />
-        <MetricCard title="New customers" value="128" change={8} changeLabel="vs last month" icon={<Users size={20} />} color="saffron" />
-        <MetricCard title="Avg. rating" value="4.8/5" change={2} changeLabel="vs last month" icon={<Star size={20} />} color="emerald" />
+        <MetricCard title={t("adminAnalyticsRevenueYtd")} value="$43,200" change={18} changeLabel={t("adminAnalyticsVsLastYear")} icon={<TrendingUp size={20} />} color="clove" />
+        <MetricCard title={t("adminAnalyticsBookings30d")} value="215" change={12} changeLabel={t("adminAnalyticsVsLastMonth")} icon={<CalendarCheck size={20} />} color="lagoon" />
+        <MetricCard title={t("adminAnalyticsNewCustomers")} value="128" change={8} changeLabel={t("adminAnalyticsVsLastMonth")} icon={<Users size={20} />} color="saffron" />
+        <MetricCard title={t("adminAnalyticsAvgRating")} value="4.8/5" change={2} changeLabel={t("adminAnalyticsVsLastMonth")} icon={<Star size={20} />} color="emerald" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="rounded-2xl border border-stone-200 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold mb-4">Revenue Overview</h2>
+          <h2 className="font-display text-lg font-semibold mb-4">{t("adminAnalyticsRevenueOverview")}</h2>
           <AreaChart data={revenueData} color="clove" height={220} />
         </div>
         <div className="rounded-2xl border border-stone-200 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold mb-4">Bookings per Month</h2>
+          <h2 className="font-display text-lg font-semibold mb-4">{t("adminAnalyticsBookingsPerMonth")}</h2>
           <BarChart data={bookingsData} color="lagoon" height={220} />
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="rounded-2xl border border-stone-200 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold mb-4">Booking Sources</h2>
+          <h2 className="font-display text-lg font-semibold mb-4">{t("adminAnalyticsBookingSources")}</h2>
           <DonutChart data={sourcesData} size={180} />
         </div>
         <div className="rounded-2xl border border-stone-200 bg-white p-6">
-          <h2 className="font-display text-lg font-semibold mb-4">Top Tours</h2>
+          <h2 className="font-display text-lg font-semibold mb-4">{t("adminAnalyticsTopTours")}</h2>
           <div className="space-y-4">
             {topTours.map((t, i) => (
               <div key={t.name} className="flex items-center gap-4">

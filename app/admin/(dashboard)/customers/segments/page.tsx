@@ -2,15 +2,16 @@
 
 import { useState } from "react";
 import { Users, Sparkles } from "lucide-react";
+import { useLang } from "@/lib/i18n/context";
 
 type SegmentColor = "clove" | "lagoon" | "saffron" | "emerald" | "stone";
 
-const segments: { name: string; desc: string; count: number; color: SegmentColor }[] = [
-  { name: "New leads", desc: "Booked within last 30 days", count: 42, color: "clove" },
-  { name: "Active travelers", desc: "Booked 2+ tours in 12 months", count: 128, color: "lagoon" },
-  { name: "High spenders", desc: "Lifetime value over $2,000", count: 36, color: "saffron" },
-  { name: "Repeat visitors", desc: "Returned for a second trip", count: 64, color: "emerald" },
-  { name: "Inactive (6mo+)", desc: "No booking in 180 days", count: 210, color: "stone" },
+const segments: { nameKey: string; descKey: string; count: number; color: SegmentColor }[] = [
+  { nameKey: "adminSegmentsNewLeads", descKey: "adminSegmentsNewLeadsDesc", count: 42, color: "clove" },
+  { nameKey: "adminSegmentsActiveTravelers", descKey: "adminSegmentsActiveTravelersDesc", count: 128, color: "lagoon" },
+  { nameKey: "adminSegmentsHighSpenders", descKey: "adminSegmentsHighSpendersDesc", count: 36, color: "saffron" },
+  { nameKey: "adminSegmentsRepeatVisitors", descKey: "adminSegmentsRepeatVisitorsDesc", count: 64, color: "emerald" },
+  { nameKey: "adminSegmentsInactive", descKey: "adminSegmentsInactiveDesc", count: 210, color: "stone" },
 ];
 
 const colorMap = {
@@ -22,16 +23,17 @@ const colorMap = {
 };
 
 export default function AdminCustomerSegmentsPage() {
+  const { t } = useLang();
   const [active, setActive] = useState(segments[0]);
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold mb-6">Customer Segments</h1>
+      <h1 className="font-display text-2xl font-semibold mb-6">{t("adminSegmentsTitle")}</h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         {segments.map((s) => (
           <button
-            key={s.name}
+            key={s.nameKey}
             onClick={() => setActive(s)}
             className="rounded-2xl border border-stone-200 bg-white p-5 text-left hover:border-clove-300 transition-colors"
           >
@@ -41,8 +43,8 @@ export default function AdminCustomerSegmentsPage() {
               </div>
               <span className="text-2xl font-display font-semibold">{s.count}</span>
             </div>
-            <p className="font-medium text-stone-900 mt-3">{s.name}</p>
-            <p className="text-sm text-stone-500">{s.desc}</p>
+            <p className="font-medium text-stone-900 mt-3">{t(s.nameKey)}</p>
+            <p className="text-sm text-stone-500">{t(s.descKey)}</p>
           </button>
         ))}
       </div>
@@ -50,11 +52,10 @@ export default function AdminCustomerSegmentsPage() {
       <div className="rounded-2xl border border-stone-200 bg-white p-5">
         <div className="flex items-center gap-2 mb-4">
           <Sparkles size={18} className="text-clove-600" />
-          <h2 className="font-display text-lg font-semibold">{active.name} — {active.count} customers</h2>
+          <h2 className="font-display text-lg font-semibold">{t("adminSegmentsCustomersCount").replace("{name}", t(active.nameKey)).replace("{count}", String(active.count))}</h2>
         </div>
         <p className="text-sm text-stone-500">
-          Build automated email campaigns and targeted offers for this segment. Configure
-          segmentation rules and triggers to keep this list fresh automatically.
+          {t("adminSegmentsDesc")}
         </p>
       </div>
     </div>

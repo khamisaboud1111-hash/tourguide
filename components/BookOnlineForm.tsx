@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, Calendar, Users, User, Mail, ArrowRight, ArrowLeft, CreditCard, MessageCircle } from "lucide-react";
+import { CheckCircle2, Calendar, Users, User, Mail, ArrowRight, ArrowLeft, MessageCircle } from "lucide-react";
 import { createBooking } from "@/app/actions/bookings";
-import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
 import { track } from "@/lib/analytics";
 import { AnimatePresence, motion } from "motion/react";
@@ -27,9 +26,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
   const { t } = useLang();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isPending, startTransition] = useTransition();
-  const [isPayPending, startPayTransition] = useTransition();
   const [result, setResult] = useState<{ ok: boolean; error?: string; bookingId?: string } | null>(null);
-  const [payError, setPayError] = useState<string | null>(null);
 
   const [tourId, setTourId] = useState(tours[0]?.id ?? "");
   const [requestedDate, setRequestedDate] = useState("");
@@ -41,23 +38,11 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
 
   const selected = tours.find((t) => t.id === tourId);
   const travelers = Math.max(1, parseInt(partySize) || 1);
-  const preview = selected ? calculateBookingPrice(selected.priceUsd, travelers, business.depositPercent) : null;
-  const deposit = preview?.deposit ?? null;
-  const remaining = preview?.remaining ?? null;
+  const preview = selected ? calculateBookingPrice(selected.priceUsd, travelers) : null;
   const ref = result?.bookingId ? `ZKT-${result.bookingId.slice(0, 8).toUpperCase()}` : "";
 
   const canStep1 = tourId && partySize && parseInt(partySize) >= 1;
   const canStep2 = customerName.trim().length >= 2 && customerContact.trim().length >= 3;
-
-  function handlePayDeposit() {
-    if (!result?.bookingId) return;
-    setPayError(null);
-    startPayTransition(async () => {
-      const res = await createPaymentLink(result.bookingId!);
-      if (res.ok) window.location.href = res.link;
-      else setPayError(res.error);
-    });
-  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -95,30 +80,17 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
         <ol className="rounded-xl bg-stone-50 border border-stone-200 p-4 text-sm text-stone-700 list-decimal list-inside space-y-1.5">
           <li>Your request has been received.</li>
           <li>The guide will confirm availability for your date.</li>
-          <li>Pay the deposit online below, or the full amount on the day.</li>
           <li>You&apos;ll get the exact meeting point with the confirmation.</li>
         </ol>
 
-        {selected && deposit !== null && (
+        {selected && (
           <div className="rounded-xl bg-white border border-stone-200 p-4 text-sm">
             <div className="flex justify-between"><span className="text-stone-600">{t("tourField")}</span><span className="font-medium">{selected.title}</span></div>
             {requestedDate && <div className="flex justify-between"><span className="text-stone-600">{t("dateField")}</span><span>{requestedDate}</span></div>}
             <div className="flex justify-between"><span className="text-stone-600">{t("travelersField")}</span><span>{partySize}</span></div>
-            <div className="flex justify-between border-t border-stone-100 mt-2 pt-2"><span className="text-stone-600">{t("total")}</span><span className="font-semibold">${selected.priceUsd} / person</span></div>
-            <div className="flex justify-between"><span className="text-stone-600">{t("depositOnline")} ({business.depositPercent * 100}%)</span><span className="font-semibold">${deposit}</span></div>
-            <div className="flex justify-between"><span className="text-stone-600">{t("remainingOnDay")}</span><span className="font-semibold">${remaining}</span></div>
+            {preview && <div className="flex justify-between border-t border-stone-100 mt-2 pt-2"><span className="text-stone-600">{t("total")}</span><span className="font-semibold">${preview.subtotal}</span></div>}
           </div>
         )}
-
-        <button
-          onClick={handlePayDeposit}
-          disabled={isPayPending}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 hover:bg-clove-700 disabled:opacity-60 transition-colors text-white px-6 py-3.5 font-medium shadow-soft"
-        >
-          <CreditCard size={18} />
-          {isPayPending ? t("openingCheckout") : t("payDepositOnlineNow")}
-        </button>
-        {payError && <p className="rounded-lg bg-clove-50 text-clove-700 text-sm px-3 py-2">{payError}</p>}
 
         <div className="flex flex-wrap gap-3 justify-center text-sm">
           <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ${ref}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-lagoon-700 hover:text-lagoon-800 font-medium">
@@ -178,11 +150,9 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
               {PICKUP_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
             </select>
           </div>
-          {selected && deposit !== null && (
+          {preview && (
             <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 text-sm">
-              <div className="flex justify-between"><span className="text-stone-600">{t("bookSubtotal").replace("{count}", String(travelers)).replace("{price}", `$${selected.priceUsd}`)}</span><span className="font-semibold">${preview?.subtotal}</span></div>
-              <div className="flex justify-between"><span className="text-stone-600">{t("depositOnline")}</span><span className="font-semibold">${deposit}</span></div>
-              <div className="flex justify-between"><span className="text-stone-600">{t("remainingOnDay")}</span><span className="font-semibold">${remaining}</span></div>
+              <div className="flex justify-between"><span className="text-stone-600">{t("bookSubtotal").replace("{count}", String(travelers)).replace("{price}", `$${selected!.priceUsd}`)}</span><span className="font-semibold">${preview.subtotal}</span></div>
             </div>
           )}
           <button type="button" disabled={!canStep1} onClick={() => setStep(2)} className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3.5 font-medium hover:bg-clove-700 disabled:opacity-50 transition-colors shadow-soft">

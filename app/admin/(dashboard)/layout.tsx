@@ -1,71 +1,72 @@
+"use client";
+
 import Link from "next/link";
 import {
   LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays,
-  Star, BookOpen, Settings, Activity, LineChart, Image, Images, Bell, CreditCard,
+  Star, BookOpen, Settings, Activity, LineChart, Image, Images, Bell,
   Tag, Megaphone, UsersRound, CalendarRange, PlusCircle, FolderTree, DollarSign,
   Lock, Search, Share2, Globe, MessageSquare, Phone, FileText, Radio, BarChart3,
-  Wallet, UserPlus, LayoutGrid, PieChart,
+  UserPlus, LayoutGrid, PieChart,
 } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useLang } from "@/lib/i18n/context";
 
-type NavItem = { href: string; label: string; icon: React.ComponentType<{ size?: number | string; className?: string }> };
-type NavGroup = { title: string; items: NavItem[] };
+type NavItem = { href: string; labelKey: string; icon: React.ComponentType<{ size?: number | string; className?: string }> };
+type NavGroup = { titleKey: string; items: NavItem[] };
 
 const navGroups: NavGroup[] = [
   {
-    title: "Main",
+    titleKey: "adminGroupMain",
     items: [
-      { href: "/admin", label: "Overview", icon: LayoutDashboard },
-      { href: "/admin/analytics", label: "Analytics", icon: LineChart },
-      { href: "/admin/activity", label: "Activity Log", icon: Activity },
-      { href: "/admin/notifications", label: "Notifications", icon: Bell },
+      { href: "/admin", labelKey: "adminNavOverview", icon: LayoutDashboard },
+      { href: "/admin/analytics", labelKey: "adminNavAnalytics", icon: LineChart },
+      { href: "/admin/activity", labelKey: "adminNavActivity", icon: Activity },
+      { href: "/admin/notifications", labelKey: "adminNavNotifications", icon: Bell },
     ],
   },
   {
-    title: "Sales",
+    titleKey: "adminGroupSales",
     items: [
-      { href: "/admin/bookings", label: "Bookings", icon: Inbox },
-      { href: "/admin/bookings/calendar", label: "Calendar", icon: CalendarRange },
-      { href: "/admin/bookings/new", label: "New Booking", icon: PlusCircle },
-      { href: "/admin/customers", label: "Customers", icon: Users },
-      { href: "/admin/customers/segments", label: "Segments", icon: UsersRound },
-      { href: "/admin/payments", label: "Payments", icon: CreditCard },
-      { href: "/admin/promotions", label: "Promotions", icon: Megaphone },
+      { href: "/admin/bookings", labelKey: "adminNavBookings", icon: Inbox },
+      { href: "/admin/bookings/calendar", labelKey: "adminNavCalendar", icon: CalendarRange },
+      { href: "/admin/bookings/new", labelKey: "adminNavNewBooking", icon: PlusCircle },
+      { href: "/admin/customers", labelKey: "adminNavCustomers", icon: Users },
+      { href: "/admin/customers/segments", labelKey: "adminNavSegments", icon: UsersRound },
+      { href: "/admin/promotions", labelKey: "adminNavPromotions", icon: Megaphone },
     ],
   },
   {
-    title: "Content",
+    titleKey: "adminGroupContent",
     items: [
-      { href: "/admin/tours", label: "Tours", icon: MapPin },
-      { href: "/admin/tours/categories", label: "Categories", icon: FolderTree },
-      { href: "/admin/tours/pricing", label: "Pricing", icon: DollarSign },
-      { href: "/admin/availability", label: "Availability", icon: CalendarDays },
-      { href: "/admin/reviews", label: "Reviews", icon: Star },
-      { href: "/admin/journal", label: "Journal", icon: BookOpen },
-      { href: "/admin/media", label: "Media", icon: Image },
+      { href: "/admin/tours", labelKey: "adminNavTours", icon: MapPin },
+      { href: "/admin/tours/categories", labelKey: "adminNavCategories", icon: FolderTree },
+      { href: "/admin/tours/pricing", labelKey: "adminNavPricing", icon: DollarSign },
+      { href: "/admin/availability", labelKey: "adminNavAvailability", icon: CalendarDays },
+      { href: "/admin/reviews", labelKey: "adminNavReviews", icon: Star },
+      { href: "/admin/journal", labelKey: "adminNavJournal", icon: BookOpen },
+      { href: "/admin/media", labelKey: "adminNavMedia", icon: Image },
     ],
   },
   {
-    title: "Website",
+    titleKey: "adminGroupWebsite",
     items: [
-      { href: "/admin/website/homepage", label: "Homepage", icon: LayoutGrid },
-      { href: "/admin/website/about", label: "About Page", icon: FileText },
-      { href: "/admin/website/contact", label: "Contact Page", icon: MessageSquare },
-      { href: "/admin/website/footer", label: "Footer", icon: BarChart3 },
-      { href: "/admin/settings/social", label: "Social Links", icon: Share2 },
+      { href: "/admin/website/homepage", labelKey: "adminNavHomepage", icon: LayoutGrid },
+      { href: "/admin/website/about", labelKey: "adminNavAbout", icon: FileText },
+      { href: "/admin/website/contact", labelKey: "adminNavContact", icon: MessageSquare },
+      { href: "/admin/website/footer", labelKey: "adminNavFooter", icon: BarChart3 },
+      { href: "/admin/settings/social", labelKey: "adminNavSocial", icon: Share2 },
     ],
   },
   {
-    title: "Settings",
+    titleKey: "adminGroupSettings",
     items: [
-      { href: "/admin/settings", label: "General", icon: Settings },
-      { href: "/admin/settings/booking", label: "Booking", icon: CalendarDays },
-      { href: "/admin/settings/payments", label: "Payments", icon: Wallet },
-      { href: "/admin/settings/security", label: "Security", icon: Lock },
-      { href: "/admin/settings/seo", label: "SEO", icon: Search },
-      { href: "/admin/team", label: "Team", icon: UserPlus },
+      { href: "/admin/settings", labelKey: "adminNavGeneral", icon: Settings },
+      { href: "/admin/settings/booking", labelKey: "adminNavBookingSettings", icon: CalendarDays },
+      { href: "/admin/settings/security", labelKey: "adminNavSecurity", icon: Lock },
+      { href: "/admin/settings/seo", labelKey: "adminNavSeo", icon: Search },
+      { href: "/admin/team", labelKey: "adminNavTeam", icon: UserPlus },
     ],
   },
 ];
@@ -73,23 +74,46 @@ const navGroups: NavGroup[] = [
 const flattened = navGroups.flatMap((g) => g.items);
 
 export default function AdminDashboardLayout({ children }: { children: React.ReactNode }) {
+  const { lang, setLang, t } = useLang();
+  const title = t("adminTitle").replace("{name}", business.name);
+  const enActive = lang === "en";
+  const swActive = lang === "sw";
+
   return (
     <div className="min-h-screen bg-stone-100">
       <header className="bg-indigo-800 text-stone-100">
         <div className="container-page flex items-center justify-between h-16">
-          <span className="font-display font-semibold">{business.name} — Admin</span>
+          <span className="font-display font-semibold">{title}</span>
           <div className="flex items-center gap-4 text-sm">
+            <div className="hidden sm:flex items-center gap-1 rounded-full border border-white/20 bg-white/10 p-0.5">
+              <button
+                onClick={() => setLang("en")}
+                className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                  enActive ? "bg-white text-indigo-800" : "text-stone-300 hover:text-white"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang("sw")}
+                className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                  swActive ? "bg-white text-indigo-800" : "text-stone-300 hover:text-white"
+                }`}
+              >
+                SW
+              </button>
+            </div>
             <ThemeToggle />
             <Link
               href="/"
               target="_blank"
-              className="hidden sm:inline-flex items-center gap-1.5 text-stone-300 hover:text-stone-50"
+              className="hidden xl:inline-flex items-center gap-1.5 text-stone-300 hover:text-stone-50"
             >
-              View site <ExternalLink size={14} />
+              {t("adminViewSite")} <ExternalLink size={14} />
             </Link>
             <form action={signOut}>
               <button className="inline-flex items-center gap-1.5 text-stone-300 hover:text-stone-50">
-                <LogOut size={14} /> Sign out
+                <LogOut size={14} /> {t("adminSignOut")}
               </button>
             </form>
           </div>
@@ -100,8 +124,8 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
         <aside className="hidden lg:block w-56 shrink-0 sticky top-20">
           <nav className="space-y-6">
             {navGroups.map((group) => (
-              <div key={group.title}>
-                <p className="text-[11px] uppercase tracking-widest text-stone-400 font-semibold px-2 mb-1">{group.title}</p>
+              <div key={group.titleKey}>
+                <p className="text-[11px] uppercase tracking-widest text-stone-400 font-semibold px-2 mb-1">{t(group.titleKey)}</p>
                 <div className="space-y-0.5">
                   {group.items.map((item) => (
                     <Link
@@ -109,7 +133,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
                       href={item.href}
                       className="flex items-center gap-2.5 px-2 py-1.5 text-sm text-stone-700 hover:bg-stone-200/70 hover:text-indigo-700 rounded-lg transition-colors"
                     >
-                      <item.icon size={15} /> {item.label}
+                      <item.icon size={15} /> {t(item.labelKey)}
                     </Link>
                   ))}
                 </div>
@@ -120,17 +144,35 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
 
         <main className="flex-1 min-w-0">
           {/* Mobile nav (chips) */}
-          <nav className="lg:hidden flex flex-wrap gap-1.5 mb-4">
+          <div className="lg:hidden flex flex-wrap items-center gap-1.5 mb-4">
             {flattened.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs text-stone-700 bg-white border border-stone-200 rounded-lg hover:bg-indigo-50 hover:text-indigo-700 transition-colors"
               >
-                <item.icon size={13} /> {item.label}
+                <item.icon size={13} /> {t(item.labelKey)}
               </Link>
             ))}
-          </nav>
+            <div className="flex items-center gap-1 rounded-full border border-stone-200 bg-white p-0.5">
+              <button
+                onClick={() => setLang("en")}
+                className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                  enActive ? "bg-indigo-700 text-white" : "text-stone-600"
+                }`}
+              >
+                EN
+              </button>
+              <button
+                onClick={() => setLang("sw")}
+                className={`px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                  swActive ? "bg-indigo-700 text-white" : "text-stone-600"
+                }`}
+              >
+                SW
+              </button>
+            </div>
+          </div>
           {children}
         </main>
       </div>

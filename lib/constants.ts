@@ -17,7 +17,6 @@ export const business = {
   instagram: "https://instagram.com/sitmeirtourtravel",
   location: "Stone Town, Zanzibar, Tanzania",
   mapCenter: { lat: -6.1659, lng: 39.2026 }, // Stone Town coordinates — replace with your actual meeting point
-  depositPercent: 0.2, // 20% deposit online, rest paid to the guide directly
 };
 
 export function waLink(prefillText?: string) {

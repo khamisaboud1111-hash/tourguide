@@ -47,7 +47,7 @@ export default async function BookPage() {
                 t("stepBook2"),
                 t("stepBook3"),
                 t("stepBook4").replace("{name}", business.guideName),
-                `Pay the ${business.depositPercent * 100}% deposit online or the full amount on the day.`,
+                "No payment online — the guide confirms your date and you settle on the day.",
               ].map((s, i) => (
                 <li key={i} className="flex gap-3">
                   <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-lagoon-700 text-white text-xs font-medium shrink-0">{i + 1}</span>

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Inbox, MapPin, Plus } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { getLang, tServer } from "@/lib/i18n/server";
 
 export default async function AdminHomePage() {
   const supabase = await createClient();
+  const lang = getLang();
 
   const [{ count: newBookings }, { count: totalTours }] = await Promise.all([
     supabase.from("bookings").select("*", { count: "exact", head: true }).eq("status", "new"),
@@ -12,7 +14,7 @@ export default async function AdminHomePage() {
 
   return (
     <div>
-      <h1 className="font-display text-2xl font-semibold mb-6">Overview</h1>
+      <h1 className="font-display text-2xl font-semibold mb-6">{tServer("adminOverview", lang)}</h1>
 
       <div className="grid sm:grid-cols-2 gap-4 mb-8">
         <Link
@@ -21,7 +23,7 @@ export default async function AdminHomePage() {
         >
           <Inbox className="text-clove-600 mb-3" size={22} />
           <p className="text-3xl font-display font-semibold">{newBookings ?? 0}</p>
-          <p className="text-sm text-stone-500">New booking requests</p>
+          <p className="text-sm text-stone-500">{tServer("adminNewBookingRequests", lang)}</p>
         </Link>
         <Link
           href="/admin/tours"
@@ -29,7 +31,7 @@ export default async function AdminHomePage() {
         >
           <MapPin className="text-clove-600 mb-3" size={22} />
           <p className="text-3xl font-display font-semibold">{totalTours ?? 0}</p>
-          <p className="text-sm text-stone-500">Tours listed</p>
+          <p className="text-sm text-stone-500">{tServer("adminToursListed", lang)}</p>
         </Link>
       </div>
 
@@ -37,7 +39,7 @@ export default async function AdminHomePage() {
         href="/admin/tours/new"
         className="inline-flex items-center gap-2 rounded-full bg-lagoon-600 hover:bg-lagoon-700 transition-colors text-stone-50 px-5 py-2.5 text-sm font-medium"
       >
-        <Plus size={16} /> Add a new tour
+        <Plus size={16} /> {tServer("adminAddNewTour", lang)}
       </Link>
     </div>
   );

@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CheckCircle2, CreditCard, ArrowRight, ArrowLeft, Calendar, Users, User, Mail, MessageCircle, MapPin } from "lucide-react";
+import { CheckCircle2, ArrowRight, ArrowLeft, Calendar, Users, User, Mail, MessageCircle, MapPin } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { createBooking } from "@/app/actions/bookings";
-import { createPaymentLink } from "@/app/actions/payments";
 import { business } from "@/lib/constants";
 import { PICKUP_LOCATIONS } from "@/lib/validations";
 import { calculateBookingPrice } from "@/lib/pricing";
@@ -28,9 +27,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
   const { t } = useLang();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [isPending, startTransition] = useTransition();
-  const [isPayPending, startPayTransition] = useTransition();
   const [result, setResult] = useState<{ ok: boolean; error?: string; bookingId?: string; reference?: string } | null>(null);
-  const [payError, setPayError] = useState<string | null>(null);
 
   const [requestedDate, setRequestedDate] = useState("");
   const [partySize, setPartySize] = useState("2");
@@ -41,20 +38,10 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
   const [message, setMessage] = useState("");
 
   const travelers = Math.max(1, parseInt(partySize) || 1);
-  const preview = priceUsd ? calculateBookingPrice(priceUsd, travelers, business.depositPercent) : null;
+  const preview = priceUsd ? calculateBookingPrice(priceUsd, travelers) : null;
 
   function canContinueStep2() {
     return customerName.trim().length >= 2 && customerContact.trim().length >= 3;
-  }
-
-  function handlePayDeposit() {
-    if (!result?.bookingId) return;
-    setPayError(null);
-    startPayTransition(async () => {
-      const res = await createPaymentLink(result.bookingId!);
-      if (res.ok) window.location.href = res.link;
-      else setPayError(res.error);
-    });
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -102,20 +89,8 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
         {preview && (
           <div className="rounded-xl bg-white border border-lagoon-200 p-3 text-sm">
             <div className="flex justify-between"><span className="text-stone-600">{t("bookSubtotal").replace("{count}", String(preview.travelers)).replace("{price}", `$${preview.pricePerPerson}`)}</span><span className="font-medium">${preview.subtotal}</span></div>
-            <div className="flex justify-between"><span className="text-stone-600">{t("depositOnline")}</span><span className="font-medium">${preview.deposit}</span></div>
-            <div className="flex justify-between font-semibold border-t border-stone-100 mt-2 pt-2"><span>{t("remaining")}</span><span>${preview.remaining}</span></div>
           </div>
         )}
-
-        <button
-          onClick={handlePayDeposit}
-          disabled={isPayPending}
-          className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-lagoon-700 hover:bg-lagoon-800 disabled:opacity-60 transition-colors text-white px-5 py-3 text-sm font-medium shadow-soft"
-        >
-          <CreditCard size={16} />
-          {isPayPending ? t("openingCheckout") : t("payDepositOnline")}
-        </button>
-        {payError && <p className="text-xs text-clove-700">{payError}</p>}
 
         <div className="flex flex-wrap gap-2 justify-center text-xs">
           <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ${ref}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800">
@@ -176,8 +151,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
             {preview && (
               <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs leading-relaxed">
                 <div className="flex justify-between"><span className="text-stone-600">{preview.travelers} × ${preview.pricePerPerson}</span><span className="font-medium">${preview.subtotal}</span></div>
-                <div className="flex justify-between"><span className="text-stone-600">{t("depositOnline")}</span><span className="font-medium">${preview.deposit}</span></div>
-                <div className="flex justify-between"><span className="text-stone-600">{t("remainingOnDay")}</span><span className="font-medium">${preview.remaining}</span></div>
               </div>
             )}
 
@@ -228,8 +201,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
             {preview && (
               <div className="rounded-xl bg-white border border-stone-200 p-3 text-sm">
                 <div className="flex justify-between"><span>{t("bookSubtotal").replace("{count}", String(preview.travelers)).replace("{price}", `$${preview.pricePerPerson}`)}</span><span className="font-display font-semibold">${preview.subtotal}</span></div>
-                <div className="flex justify-between text-stone-600"><span>{t("deposit")}</span><span>${preview.deposit}</span></div>
-                <div className="flex justify-between text-stone-600"><span>{t("remaining")}</span><span>${preview.remaining}</span></div>
               </div>
             )}
 

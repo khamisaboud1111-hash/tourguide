@@ -7,8 +7,6 @@ type EventName =
   | "booking_started"
   | "booking_completed"
   | "whatsapp_clicked"
-  | "payment_started"
-  | "payment_completed"
   | "journal_article_view";
 
 export function track(event: EventName, params: Record<string, string | number> = {}) {

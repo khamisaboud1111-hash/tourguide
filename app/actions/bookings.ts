@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/server";
 import { bookingSchema } from "@/lib/validations";
 import { calculateBookingPrice } from "@/lib/pricing";
 import { authorizeStaff } from "@/lib/auth";
-import { business } from "@/lib/constants";
 import { sendBookingEmails } from "@/lib/email";
 
 export type CreateBookingResult = { ok: true; bookingId: string; reference: string } | { ok: false; error: string };
@@ -74,7 +73,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   }
 
   // 3) Authoritative pricing — server-side only
-  const price = calculateBookingPrice(Number(tour.price_usd), data.partySize, business.depositPercent);
+  const price = calculateBookingPrice(Number(tour.price_usd), data.partySize);
 
   // 4) Upsert customer (CRM)
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerContact);
@@ -117,8 +116,6 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
       country: data.country || null,
       subtotal_usd: price.subtotal,
       total_usd: price.subtotal,
-      deposit_usd: price.deposit,
-      remaining_usd: price.remaining,
       currency: price.currency,
       status: "pending",
     })
@@ -170,7 +167,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
 
 // ── Admin actions — all guarded ─────────────────────────────────────
 
-const VALID_STATUSES = ["pending","contacted","confirmed","deposit_pending","deposit_paid","ready","completed","cancelled","refunded","rescheduled"] as const;
+const VALID_STATUSES = ["pending","contacted","confirmed","ready","completed","cancelled","rescheduled"] as const;
 type BookingStatus = (typeof VALID_STATUSES)[number];
 
 export async function updateBookingStatus(id: string, status: string) {
@@ -179,17 +176,5 @@ export async function updateBookingStatus(id: string, status: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
   if (error) throw new Error(`Couldn't update booking: ${error.message}`);
-  revalidatePath("/admin/bookings");
-}
-
-export async function updatePaymentStatus(id: string, paymentStatus: string) {
-  await authorizeStaff("update payment status");
-  if (!["unpaid", "deposit_paid", "paid_in_full"].includes(paymentStatus)) throw new Error("Invalid payment status");
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("bookings")
-    .update({ payment_status: paymentStatus })
-    .eq("id", id);
-  if (error) throw new Error(`Couldn't update payment status: ${error.message}`);
   revalidatePath("/admin/bookings");
 }

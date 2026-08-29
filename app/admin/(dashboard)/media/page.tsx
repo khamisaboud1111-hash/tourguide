@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Plus, Image as ImageIcon, Folder, Upload, Trash2 } from "lucide-react";
 import { Button } from "@/components/admin/AdminForms";
+import { useLang } from "@/lib/i18n/context";
 
 const folders = ["All", "Tours", "Hero", "Gallery", "Team", "Blog"];
 
@@ -17,6 +18,7 @@ const mediaItems = [
 
 export default function AdminMediaPage() {
   const [activeFolder, setActiveFolder] = useState("All");
+  const { t } = useLang();
 
   const filtered =
     activeFolder === "All" ? mediaItems : mediaItems.filter((m) => m.folder === activeFolder);
@@ -24,8 +26,8 @@ export default function AdminMediaPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="font-display text-2xl font-semibold">Media Library</h1>
-        <Button icon={<Plus size={16} />}>Upload media</Button>
+        <h1 className="font-display text-2xl font-semibold">{t("adminMediaLibrary")}</h1>
+        <Button icon={<Plus size={16} />}>{t("adminUploadMedia")}</Button>
       </div>
 
       {/* Folder tabs */}
@@ -58,7 +60,7 @@ export default function AdminMediaPage() {
               <p className="text-xs text-stone-500 mt-0.5">{item.size} · {item.dims}</p>
               <div className="mt-2 flex items-center justify-between">
                 <span className="text-xs text-stone-500">{item.folder}</span>
-                <button className="text-stone-400 hover:text-clove-600 transition-colors" aria-label={`Delete ${item.name}`}>
+                <button className="text-stone-400 hover:text-clove-600 transition-colors" aria-label={t("adminDeleteMedia").replace("{name}", item.name)}>
                   <Trash2 size={14} />
                 </button>
               </div>
@@ -70,7 +72,7 @@ export default function AdminMediaPage() {
       {filtered.length === 0 && (
         <div className="rounded-2xl border border-stone-200 bg-white p-12 text-center">
           <Upload size={32} className="mx-auto text-stone-300 mb-3" />
-          <p className="text-stone-500">No media in this folder yet.</p>
+          <p className="text-stone-500">{t("adminNoMediaInFolder")}</p>
         </div>
       )}
     </div>

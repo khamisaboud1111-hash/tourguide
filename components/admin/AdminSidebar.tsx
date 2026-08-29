@@ -66,7 +66,6 @@ const navSections = [
     label: "Operations",
     items: [
       { href: "/admin/availability", label: "Availability", icon: Calendar },
-      { href: "/admin/payments", label: "Payments", icon: CreditCard },
       { href: "/admin/analytics", label: "Analytics", icon: BarChart2 },
       { href: "/admin/reviews", label: "Reviews", icon: Star },
       { href: "/admin/journal", label: "Journal", icon: FileText },
@@ -88,7 +87,6 @@ const navSections = [
     items: [
       { href: "/admin/settings/business", label: "Business", icon: Settings },
       { href: "/admin/settings/booking", label: "Booking", icon: Calendar },
-      { href: "/admin/settings/payments", label: "Payments", icon: CreditCard },
       { href: "/admin/settings/seo", label: "SEO", icon: Search },
       { href: "/admin/settings/social", label: "Social", icon: ExternalLink },
       { href: "/admin/settings/security", label: "Security", icon: Shield },

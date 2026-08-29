@@ -60,7 +60,7 @@ export default function LanguageSwitcher({ variant = "dark" }: { variant?: "ligh
           className="h-3.5 w-5 rounded-sm object-cover shadow-sm shrink-0"
           loading="lazy"
         />
-        <span className="hidden sm:inline">{current.native}</span>
+        <span className="truncate">{current.native}</span>
         <ChevronDown size={12} className={`transition-transform ${open ? "rotate-180" : ""} ${isLight ? "text-white/70" : "text-stone-400"}`} />
       </button>
 
