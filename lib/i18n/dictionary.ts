@@ -672,6 +672,10 @@ export const dictionary: Record<Lang, Dict> = {
     adminEdit: "Edit",
     adminDelete: "Delete",
     adminSaveChanges: "Save changes",
+    notFoundTitle: "This page drifted out to sea",
+    notFoundDesc:
+      "The page you're looking for doesn't exist — but your Zanzibar trip still can.",
+    backHome: "Back to home",
   },
   sw: {
     experiences: "Matukio",
@@ -1326,6 +1330,10 @@ export const dictionary: Record<Lang, Dict> = {
     adminEdit: "Hariri",
     adminDelete: "Futa",
     adminSaveChanges: "Hifadhi mabadiliko",
+    notFoundTitle: "Ukurasa huu umeenda mbali na bahari",
+    notFoundDesc:
+      "Ukurasa unaoutafuta haupo — lakini safari yako ya Zanzibar bado inawezekana.",
+    backHome: "Rudi nyumbani",
   },
   fr: {
     experiences: "Expériences",
