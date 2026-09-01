@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 export default function NotFound() {
+  const lang = getLang();
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-6">
       <div className="max-w-md text-center">
