@@ -79,6 +79,14 @@ const photos: Photo[] = [
   { seed: "gallery-experience", cat: "Experiences", alt: "Guests tasting fruit — spice tour" },
   { seed: "zanzibar_ai_21", cat: "Experiences", alt: "Snorkeling — reef experience" },
   { seed: "zanzibar_ai_22", tall: true, cat: "Experiences", alt: "Island picnic — Safari Blue" },
+
+  // Jozani Forest & Red Colobus Monkeys
+  { seed: "zanzibar_jozani_01", tall: true, cat: "Jozani Forest & Red Colobus Monkeys", alt: "Jozani Forest — mangrove boardwalk" },
+  { seed: "zanzibar_jozani_02", cat: "Jozani Forest & Red Colobus Monkeys", alt: "Red colobus monkey — Jozani Forest" },
+  { seed: "zanzibar_jozani_03", cat: "Jozani Forest & Red Colobus Monkeys", alt: "Jozani Forest trail — Zanzibar" },
+  { seed: "zanzibar_jozani_04", cat: "Jozani Forest & Red Colobus Monkeys", alt: "Red colobus monkeys in the trees" },
+  { seed: "zanzibar_jozani_05", tall: true, cat: "Jozani Forest & Red Colobus Monkeys", alt: "Red colobus monkey — close up" },
+  { seed: "zanzibar_jozani_06", cat: "Jozani Forest & Red Colobus Monkeys", alt: "Red colobus monkey baby" },
 ];
 
 export default function GalleryClient() {

@@ -145,6 +145,12 @@ export const zanzibarImageMap: Record<string, string> = {
   "zanzibar_ai_39": `photos/zanzibar_ai_39.jpg`,
   "zanzibar_ai_40": `photos/zanzibar_ai_40.jpg`,
   // Nature — Jozani Forest & Red Colobus Monkeys (Images 24-44)
+  "zanzibar_jozani_01": `photos/zanzibar_jozani_01.jpg`,
+  "zanzibar_jozani_02": `photos/zanzibar_jozani_02.jpg`,
+  "zanzibar_jozani_03": `photos/zanzibar_jozani_03.jpg`,
+  "zanzibar_jozani_04": `photos/zanzibar_jozani_04.jpg`,
+  "zanzibar_jozani_05": `photos/zanzibar_jozani_05.jpg`,
+  "zanzibar_jozani_06": `photos/zanzibar_jozani_06.jpg`,
   "zanzibar_nature_24": `photos/zanzibar_nature_24.jpg`,
   "zanzibar_nature_25": `photos/zanzibar_nature_25.jpg`,
   "zanzibar_nature_26": `photos/zanzibar_nature_26.jpg`,
