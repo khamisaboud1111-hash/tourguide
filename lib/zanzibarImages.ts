@@ -49,7 +49,7 @@ export const zanzibarImageMap: Record<string, string> = {
 
   // ── Tours (DB photo_seed values) ───────────────────
   "stonetown-1": `photos/stonetown_real_01.jpg`, // carved arch door — Culture & History
-  "spicefarm-1": `photos/zanzibar_ai_04.jpg`,
+  "spicefarm-1": `photos/zanzibar_spice_01.jpg`,
   "safariblue-1": `photos/sitmeir_real_01.jpg`, // turquoise lagoon pier
   "jozani-1": `photos/zanzibar_ai_16.jpg`,
   "sunset-dhow-1": `photos/sitmeir_real_14.jpg`, // real sunset beach
@@ -58,9 +58,9 @@ export const zanzibarImageMap: Record<string, string> = {
   "stonetown-1-2": `photos/stonetown_real_02.jpg`,
   "stonetown-1-3": `photos/stonetown_real_03.jpg`,
   "stonetown-1-4": `photos/stonetown_real_04.jpg`,
-  "spicefarm-1-2": `photos/zanzibar_ai_05.jpg`,
-  "spicefarm-1-3": `photos/zanzibar_mnemba_island.jpg`,
-  "spicefarm-1-4": `photos/zanzibar_ai_07.jpg`,
+  "spicefarm-1-2": `photos/zanzibar_spice_02.jpg`,
+  "spicefarm-1-3": `photos/zanzibar_spice_03.jpg`,
+  "spicefarm-1-4": `photos/zanzibar_spice_04.jpg`,
   "safariblue-1-2": `photos/zanzibar_ai_09.jpg`,
   "safariblue-1-3": `photos/zanzibar_ai_10.jpg`,
   "safariblue-1-4": `photos/zanzibar_ai_12.jpg`,

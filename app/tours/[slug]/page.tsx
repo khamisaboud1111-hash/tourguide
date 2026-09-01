@@ -91,11 +91,18 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
   const bookingMessage = `Hi ${business.guideName}, I'd like to book the ${tour.title} tour.`;
 
   // Build gallery — seed + variants using same seed family so placeholders stay coherent.
-  // The Jozani Forest & Red Colobus Monkeys tour uses 6 dedicated photos; all other tours use the original 4-photo seed-variant logic.
-  const gallery = tour.slug === "jozani-forest-tour"
-    ? ["zanzibar_jozani_01", "zanzibar_jozani_02", "zanzibar_jozani_03", "zanzibar_jozani_04", "zanzibar_jozani_05", "zanzibar_jozani_06"].map((seed, i) => ({
+  // The Jozani Forest & Red Colobus Monkeys tour uses 6 dedicated photos, and the
+  // Spice Farm Tour uses 6 dedicated spice photos; all other tours use the original
+  // 4-photo seed-variant logic.
+  const dedicated = tour.slug === "jozani-forest-tour"
+    ? ["zanzibar_jozani_01", "zanzibar_jozani_02", "zanzibar_jozani_03", "zanzibar_jozani_04", "zanzibar_jozani_05", "zanzibar_jozani_06"]
+    : tour.slug === "spice-farm-tour"
+      ? ["zanzibar_spice_01", "zanzibar_spice_02", "zanzibar_spice_03", "zanzibar_spice_04", "zanzibar_spice_05", "zanzibar_spice_06"]
+      : null;
+  const gallery = dedicated
+    ? dedicated.map((seed, i) => ({
         src: placeholderPhoto(seed, i === 0 ? 1600 : 800, i === 0 ? 1000 : 600),
-        alt: `${tour.title} — ${i === 0 ? "main view" : `photo ${i + 1} of 6`}`,
+        alt: `${tour.title} — ${i === 0 ? "main view" : `photo ${i + 1} of ${dedicated.length}`}`,
       }))
     : [
         { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} — main view` },
