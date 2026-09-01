@@ -42,7 +42,6 @@ const photos: Photo[] = [
   { seed: "zanzibar_ai_08", tall: true, cat: "Ocean", alt: "Mnemba Island — turquoise water and white sandbank" },
   { seed: "zanzibar_ai_09", cat: "Ocean", alt: "Safari Blue — dhow sailing Menai Bay" },
   { seed: "zanzibar_ai_10", tall: true, cat: "Ocean", alt: "Reef snorkeling off Zanzibar" },
-  { seed: "zanzibar_prison_45", cat: "Nature", alt: "Prison Island beach — Aldabra tortoise coast" },
   { seed: "zanzibar_ai_12", cat: "Ocean", alt: "Traditional dhow on Indian Ocean" },
   { seed: "zanzibar_mnemba_island", tall: true, cat: "Ocean", alt: "Mnemba atoll — crystal water" },
   { seed: "gallery-beach-sandbank", tall: true, cat: "Ocean", alt: "White sandbank at low tide" },

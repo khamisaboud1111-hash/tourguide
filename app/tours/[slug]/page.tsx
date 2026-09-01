@@ -90,13 +90,19 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
 
   const bookingMessage = `Hi ${business.guideName}, I'd like to book the ${tour.title} tour.`;
 
-  // Build gallery — seed + 3 variants using same seed family so placeholders stay coherent
-  const gallery = [
-    { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} — main view` },
-    { src: placeholderPhoto(`${tour.photoSeed}-2`, 800, 600), alt: `${tour.title} — detail` },
-    { src: placeholderPhoto(`${tour.photoSeed}-3`, 800, 600), alt: `${tour.title} — local scene` },
-    { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} — another view` },
-  ];
+  // Build gallery — seed + variants using same seed family so placeholders stay coherent.
+  // The Jozani Forest & Red Colobus Monkeys tour uses 6 dedicated photos; all other tours use the original 4-photo seed-variant logic.
+  const gallery = tour.slug === "jozani-forest-tour"
+    ? ["zanzibar_jozani_01", "zanzibar_jozani_02", "zanzibar_jozani_03", "zanzibar_jozani_04", "zanzibar_jozani_05", "zanzibar_jozani_06"].map((seed, i) => ({
+        src: placeholderPhoto(seed, i === 0 ? 1600 : 800, i === 0 ? 1000 : 600),
+        alt: `${tour.title} — ${i === 0 ? "main view" : `photo ${i + 1} of 6`}`,
+      }))
+    : [
+        { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} — main view` },
+        { src: placeholderPhoto(`${tour.photoSeed}-2`, 800, 600), alt: `${tour.title} — photo 2 of 4` },
+        { src: placeholderPhoto(`${tour.photoSeed}-3`, 800, 600), alt: `${tour.title} — photo 3 of 4` },
+        { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} — photo 4 of 4` },
+      ];
 
   const highlights = tour.highlights && tour.highlights.length > 0 ? tour.highlights : highlightsFor(tour);
   const itinerary = tour.itinerary && tour.itinerary.length > 0 ? tour.itinerary : itineraryFor(tour);
