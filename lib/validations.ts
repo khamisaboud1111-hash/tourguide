@@ -49,6 +49,12 @@ export const bookingSchema = z
     customerContact: z
       .string().min(3, "Email or phone is required").max(200)
       .refine((v) => EMAIL_RE.test(v) || PHONE_RE.test(v), "Enter a valid email or phone number"),
+    whatsapp: z
+      .string()
+      .max(30)
+      .optional()
+      .or(z.literal(""))
+      .refine((v) => !v || PHONE_RE.test(v), "Enter a valid WhatsApp number"),
     requestedDate: z
       .string().min(1, "Date is required")
       .refine((v) => !Number.isNaN(Date.parse(v)), "Invalid date")

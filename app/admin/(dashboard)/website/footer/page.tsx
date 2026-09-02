@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button, Input, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
 import { business } from "@/lib/constants";
+import { saveFooterSettings } from "@/app/actions/siteSettings";
 
 export default function AdminFooterCmsPage() {
   const { t } = useLang();
@@ -14,16 +15,37 @@ export default function AdminFooterCmsPage() {
     whatsapp: `+${business.whatsappNumber}`,
     copyright: `© ${new Date().getFullYear()} ${business.name}. All rights reserved.`,
   });
+  const [msg, setMsg] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const onSave = () => {
+    setMsg(null);
+    const fd = new FormData();
+    fd.set("about", form.about);
+    fd.set("facebook", form.facebook);
+    fd.set("instagram", form.instagram);
+    fd.set("whatsapp", form.whatsapp);
+    fd.set("copyright", form.copyright);
+    startTransition(async () => {
+      try {
+        await saveFooterSettings(fd);
+        setMsg("Saved — changes are live.");
+      } catch (e: unknown) {
+        setMsg(e instanceof Error ? e.message : "Save failed");
+      }
+    });
+  };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-2xl font-semibold">{t("adminFooterTitle")}</h1>
-        <Button>{t("adminSaveChanges")}</Button>
+        <Button onClick={onSave} loading={isPending}>{t("adminSaveChanges")}</Button>
       </div>
+      {msg && <p className={`mb-4 text-sm px-3 py-2 rounded-lg ${msg.includes("Saved") ? "bg-lagoon-50 text-lagoon-800 border border-lagoon-200" : "bg-clove-50 text-clove-700 border border-clove-200"}`}>{msg}</p>}
 
       <div className="max-w-3xl">
         <Card>

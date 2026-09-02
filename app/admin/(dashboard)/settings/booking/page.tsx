@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button, Input, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
+import { saveBookingSettings } from "@/app/actions/siteSettings";
 
 export default function AdminBookingSettingsPage() {
   const { t } = useLang();
@@ -12,16 +13,35 @@ export default function AdminBookingSettingsPage() {
     maxPartySize: "20",
     bookingWindowDays: "90",
   });
+  const [msg, setMsg] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
+
+  const onSave = () => {
+    setMsg(null);
+    const fd = new FormData();
+    fd.set("minPartySize", form.minPartySize);
+    fd.set("maxPartySize", form.maxPartySize);
+    fd.set("bookingWindowDays", form.bookingWindowDays);
+    startTransition(async () => {
+      try {
+        await saveBookingSettings(fd);
+        setMsg("Saved — changes are live.");
+      } catch (e: unknown) {
+        setMsg(e instanceof Error ? e.message : "Save failed");
+      }
+    });
+  };
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-2xl font-semibold">{t("adminBookingSettingsTitle")}</h1>
-        <Button>{t("adminSaveChanges")}</Button>
+        <Button onClick={onSave} loading={isPending}>{t("adminSaveChanges")}</Button>
       </div>
+      {msg && <p className={`mb-4 text-sm px-3 py-2 rounded-lg ${msg.includes("Saved") ? "bg-lagoon-50 text-lagoon-800 border border-lagoon-200" : "bg-clove-50 text-clove-700 border border-clove-200"}`}>{msg}</p>}
 
       <div className="max-w-3xl">
         <Card>

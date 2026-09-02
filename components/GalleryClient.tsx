@@ -181,7 +181,7 @@ export default function GalleryClient() {
               alt={p.alt}
               fill
               sizes="(min-width:768px) 33vw, 50vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-700"
+              className="object-cover"
             />
           </button>
         ))}

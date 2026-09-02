@@ -33,6 +33,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     tourTitleSnapshot: formData.get("tourTitleSnapshot") ?? "",
     customerName: formData.get("customerName") ?? "",
     customerContact: formData.get("customerContact") ?? "",
+    whatsapp: formData.get("whatsapp") ?? "",
     requestedDate: formData.get("requestedDate") ?? "",
     partySize: formData.get("partySize") || undefined,
     pickupLocation: formData.get("pickupLocation") ?? "",
@@ -75,7 +76,8 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   // 3) Authoritative pricing — server-side only
   const price = calculateBookingPrice(Number(tour.price_usd), data.partySize);
 
-  // 4) Upsert customer (CRM)
+  // 4) Upsert customer (CRM) — prefer whatsapp if provided
+  const whatsappOrContact = data.whatsapp?.trim() ? data.whatsapp! : data.customerContact;
   const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerContact);
   let customerId: string | null = null;
   const { data: existingCustomer } = await supabase
@@ -85,13 +87,17 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     .maybeSingle();
   if (existingCustomer) {
     customerId = existingCustomer.id;
+    // keep whatsapp up to date
+    if (data.whatsapp) {
+      await supabase.from("customers").update({ phone: data.whatsapp }).eq("id", customerId);
+    }
   } else {
     const { data: newCustomer } = await supabase
       .from("customers")
       .insert({
         full_name: data.customerName,
         email: isEmail ? data.customerContact : null,
-        phone: isEmail ? null : data.customerContact,
+        phone: data.whatsapp || (isEmail ? null : data.customerContact),
         country: data.country || null,
       })
       .select("id")
@@ -99,7 +105,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
     customerId = newCustomer?.id ?? null;
   }
 
-  // 5) Insert booking with computed totals
+  // 5) Insert booking with computed totals + whatsapp
   const { data: inserted, error } = await supabase
     .from("bookings")
     .insert({
@@ -108,6 +114,7 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
       customer_id: customerId,
       customer_name: data.customerName,
       customer_contact: data.customerContact,
+      whatsapp: data.whatsapp || null,
       requested_date: data.requestedDate,
       party_size: data.partySize,
       message: data.message || null,

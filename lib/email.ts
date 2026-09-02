@@ -4,6 +4,7 @@ import { business } from "./constants";
 type BookingEmailInput = {
   customerName: string;
   customerContact: string;
+  whatsapp?: string;
   tourTitle: string;
   requestedDate?: string;
   partySize?: number;
@@ -31,6 +32,7 @@ export async function sendBookingEmails(input: BookingEmailInput) {
     `Tour: ${input.tourTitle}`,
     `Name: ${input.customerName}`,
     `Contact: ${input.customerContact}`,
+    input.whatsapp ? `WhatsApp: ${input.whatsapp}` : null,
     input.requestedDate ? `Requested date: ${input.requestedDate}` : null,
     input.partySize ? `Travelers: ${input.partySize}` : null,
     input.pickupLocation ? `Pickup: ${input.pickupLocation}` : null,

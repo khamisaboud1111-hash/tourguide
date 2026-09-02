@@ -34,6 +34,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
   const [pickupLocation, setPickupLocation] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [message, setMessage] = useState("");
 
   const selected = tours.find((t) => t.id === tourId);
@@ -52,6 +53,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
     formData.set("tourTitleSnapshot", selected?.title ?? "");
     formData.set("customerName", customerName);
     formData.set("customerContact", customerContact);
+    formData.set("whatsapp", whatsapp);
     formData.set("requestedDate", requestedDate);
     formData.set("partySize", String(travelers));
     formData.set("pickupLocation", pickupLocation);
@@ -168,6 +170,10 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
           <div>
             <label htmlFor="contact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> {t("emailOrPhone")}</label>
             <input id="contact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255…" className={inputBase} />
+          </div>
+          <div>
+            <label htmlFor="whatsapp2" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><MessageCircle size={14} className="text-clove-600" /> WhatsApp <span className="text-stone-400 font-normal">(optional)</span></label>
+            <input id="whatsapp2" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+255 700 000 000" className={inputBase} />
           </div>
           <div>
             <label htmlFor="notes" className="block text-sm font-medium text-stone-700 mb-1.5">{t("notesOptional")}</label>
