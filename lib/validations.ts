@@ -76,6 +76,7 @@ export type BookingInput = z.infer<typeof bookingSchema>;
 export const reviewSchema = z.object({
   tourId: z.string().uuid().optional().or(z.literal("")),
   customerName: z.string().min(2).max(100),
+  email: z.string().email("Enter a valid email").max(200).optional().or(z.literal("")),
   country: z.string().max(80).optional().or(z.literal("")),
   rating: z.coerce.number().int().min(1).max(5),
   review: z.string().min(10).max(2000),

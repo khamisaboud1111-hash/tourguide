@@ -12,6 +12,7 @@ import BookingForm from "@/components/BookingForm";
 import ImageGallery from "@/components/ImageGallery";
 import StickyBookingBar from "@/components/StickyBookingBar";
 import TourCard from "@/components/TourCard";
+import ReviewForm from "@/components/ReviewForm";
 import { getLang, tServer } from "@/lib/i18n/server";
 import { getPublishedReviews, aggregateRating } from "@/lib/reviews";
 import { TourJsonLd, BreadcrumbJsonLd } from "@/components/StructuredData";
@@ -293,14 +294,23 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
                   <figure key={r.id} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
                     <div className="text-saffron-500 text-sm" aria-label={`${r.rating} out of 5`}>{"★".repeat(r.rating)}<span className="text-stone-300">{"★".repeat(5 - r.rating)}</span></div>
                     <blockquote className="mt-2 text-sm text-stone-700 leading-relaxed">“{r.review}”</blockquote>
-                    <figcaption className="mt-3 text-xs text-stone-500">
-                      <span className="font-medium text-stone-700">{r.customer_name}</span>
-                      {r.country ? ` · ${r.country}` : ""} · {new Date(r.created_at).toLocaleDateString(lang === "sw" ? "sw-TZ" : "en-GB", { month: "short", year: "numeric" })}
+                    <figcaption className="mt-3 text-xs text-stone-500 flex items-center gap-2">
+                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-clove-100 text-clove-700 text-xs font-medium">
+                        {r.customer_name.charAt(0).toUpperCase()}
+                      </span>
+                      <span>
+                        <span className="font-medium text-stone-700">{r.customer_name}</span>
+                        {r.email ? ` · ${r.email}` : ""}
+                        {r.country ? ` · ${r.country}` : ""} · {new Date(r.created_at).toLocaleDateString(lang === "sw" ? "sw-TZ" : "en-GB", { month: "short", year: "numeric" })}
+                      </span>
                     </figcaption>
                   </figure>
                 ))}
               </div>
             )}
+            <div className="mt-8">
+              <ReviewForm tourId={tour.id} tourTitle={tour.title} />
+            </div>
           </div>
 
           {/* Related */}

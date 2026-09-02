@@ -11,6 +11,7 @@ import {
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
 import ThemeToggle from "@/components/ThemeToggle";
+import BookingNotifier from "@/components/admin/BookingNotifier";
 import { useLang } from "@/lib/i18n/context";
 
 type NavItem = { href: string; labelKey: string; icon: React.ComponentType<{ size?: number | string; className?: string }> };
@@ -74,6 +75,7 @@ export default function AdminDashboardLayout({ children }: { children: React.Rea
 
   return (
     <div className="min-h-screen bg-stone-100">
+      <BookingNotifier />
       <header className="bg-indigo-800 text-stone-100">
         <div className="container-page flex items-center justify-between h-16">
           <span className="font-display font-semibold">{title}</span>

@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { placeholderPhoto } from "@/lib/placeholder";
 import { useLang } from "@/lib/i18n/context";
+import { createClient } from "@/lib/supabase/client";
 
 type Photo = { seed: string; tall?: boolean; cat: string; alt: string };
 
@@ -158,18 +159,42 @@ const photos: Photo[] = [
   { seed: "safari_blue_11", cat: "Ocean", alt: "Safari Blue — Kwale Island mangrove and beach" },
 ];
 
+function resolveSrc(seed: string, w: number, h: number): string {
+  if (seed.startsWith("http://") || seed.startsWith("https://") || seed.startsWith("/")) return seed;
+  return placeholderPhoto(seed, w, h);
+}
+
 export default function GalleryClient() {
   const { t } = useLang();
   const [open, setOpen] = useState<number | null>(null);
+  const [dynamic, setDynamic] = useState<Photo[]>([]);
 
-  const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % photos.length));
-  const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + photos.length) % photos.length));
-  const current = open !== null ? photos[open] : null;
+  // Load admin-uploaded media (Supabase storage) — appears in gallery after upload
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.from("media_assets").select("public_url, alt_text, original_filename").order("created_at", { ascending: false }).limit(60).then(({ data }) => {
+      if (!data) return;
+      const mapped: Photo[] = data
+        .filter((r) => r.public_url)
+        .map((r) => ({
+          seed: r.public_url as string,
+          cat: "Gallery",
+          alt: (r.alt_text as string) || (r.original_filename as string) || "Gallery image",
+        }));
+      if (mapped.length) setDynamic(mapped);
+    });
+  }, []);
+
+  const allPhotos = [...photos, ...dynamic];
+
+  const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % allPhotos.length));
+  const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + allPhotos.length) % allPhotos.length));
+  const current = open !== null ? allPhotos[open] : null;
 
   return (
     <>
       <div className="columns-2 md:columns-3 gap-4 space-y-4">
-        {photos.map((p, idx) => (
+        {allPhotos.map((p, idx) => (
           <button
             key={`${p.seed}-${idx}`}
             onClick={() => setOpen(idx)}
@@ -177,11 +202,12 @@ export default function GalleryClient() {
             aria-label={t("openPhoto").replace("{alt}", p.alt)}
           >
             <Image
-              src={placeholderPhoto(p.seed, 700, p.tall ? 900 : 700)}
+              src={resolveSrc(p.seed, 700, p.tall ? 900 : 700)}
               alt={p.alt}
               fill
               sizes="(min-width:768px) 33vw, 50vw"
               className="object-cover"
+              unoptimized={p.seed.startsWith("http")}
             />
           </button>
         ))}
@@ -197,14 +223,14 @@ export default function GalleryClient() {
           className="fixed inset-0 z-50 bg-indigo-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label={t("galleryLightbox")}>
           <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
             <p className="text-sm">
-              {current.alt} — {open + 1} / {photos.length}
+              {current.alt} — {open + 1} / {allPhotos.length}
             </p>
             <button onClick={() => setOpen(null)} aria-label={t("close")} className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
               <X size={18} />
             </button>
           </div>
           <div className="flex-1 relative flex items-center justify-center p-4">
-            <Image src={placeholderPhoto(current.seed, 1600, 1200)} alt={current.alt} fill className="object-contain p-4 md:p-10" sizes="100vw" />
+            <Image src={resolveSrc(current.seed, 1600, 1200)} alt={current.alt} fill className="object-contain p-4 md:p-10" sizes="100vw" unoptimized={current.seed.startsWith("http")} />
             <button onClick={prev} aria-label={t("previous")} className="absolute left-4 md:left-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
               <ChevronLeft size={20} />
             </button>

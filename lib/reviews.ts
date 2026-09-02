@@ -4,6 +4,7 @@ export type TourReview = {
   id: string;
   tour_id: string | null;
   customer_name: string;
+  email: string | null;
   country: string | null;
   rating: number;
   review: string;

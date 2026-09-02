@@ -47,6 +47,16 @@ export default async function HomePage() {
   const [featured] = tours;
   const signature = tours.slice(0, 6);
 
+  // CMS — homepage settings from website_settings (admin can change hero/about)
+  const { data: hpSettings } = await supabase.from("website_settings").select("key, value").eq("section", "homepage");
+  const hpMap = new Map((hpSettings ?? []).map((r) => [r.key, r.value]));
+  const hp = (k: string, fallback: string) => {
+    const v = hpMap.get(k);
+    if (v === undefined || v === null) return fallback;
+    // value is jsonb — may be string like "See Zanzibar..." or JSON string
+    return typeof v === "string" ? v : String(v);
+  };
+
   const values = [
     { icon: ShieldCheck, title: t("licensedLocal"), body: lang === "sw" ? "Kila ziara inaongozwa moja kwa moja — leseni na maarifa ya Stone Town." : t("whyDesc") },
     { icon: Users, title: t("smallGroups"), body: t("smallGroupsDesc") },
@@ -69,13 +79,17 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero */}
+      {/* Hero — admin can change image via /admin/website/homepage or /admin/media (hero_image_seed may be a seed or a public URL) */}
       <section className="relative h-[92vh] min-h-[580px] w-full overflow-hidden -mt-[72px] pt-[72px]">
         {/* React Bits PillNav — floating section-jump bar */}
         <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
           <HomePillNav />
         </div>
-        <Image src={placeholderPhoto("hero-dhow-sunset", 1920, 1200)} alt="Traditional dhow sailing off Zanzibar at sunset" fill priority sizes="100vw" className="object-cover" />
+        {(() => {
+          const heroSeed = hp("hero_image_seed", "hero-dhow-sunset");
+          const heroSrc = heroSeed.startsWith("http") || heroSeed.startsWith("/") ? heroSeed : placeholderPhoto(heroSeed, 1920, 1200);
+          return <Image src={heroSrc} alt="Traditional dhow sailing off Zanzibar at sunset" fill priority sizes="100vw" className="object-cover" />;
+        })()}
         <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/88 via-indigo-900/30 to-indigo-900/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-transparent to-transparent hidden md:block" />
         <div className="relative h-full container-page flex flex-col justify-end pb-10 md:pb-14">
@@ -85,12 +99,13 @@ export default async function HomePage() {
             </HeroItem>
             <HeroItem>
               <h1 className="font-display italic font-medium text-[2.6rem] leading-[0.95] md:text-6xl lg:text-[4.75rem] text-stone-50 max-w-3xl text-balance">
-                {t("heroTitle1")}<br />
-                <span className="not-italic font-semibold">{t("heroTitle2")}</span>
+                {hp("hero_title", `${t("heroTitle1")} ${t("heroTitle2")}`).split(" ").slice(0, 2).join(" ")}<br />
+                <span className="not-italic font-semibold">{hp("hero_title", `${t("heroTitle1")} ${t("heroTitle2")}`).split(" ").slice(2).join(" ") || t("heroTitle2")}</span>
               </h1>
+              <p className="sr-only">{hp("hero_title", `${t("heroTitle1")} ${t("heroTitle2")}`)}</p>
             </HeroItem>
             <HeroItem>
-              <p className="mt-4 md:mt-5 max-w-xl text-stone-200 text-[15px] md:text-lg leading-relaxed">{t("heroDesc")}</p>
+              <p className="mt-4 md:mt-5 max-w-xl text-stone-200 text-[15px] md:text-lg leading-relaxed">{hp("hero_subtitle", t("heroDesc"))}</p>
             </HeroItem>
             <HeroItem>
               <div className="mt-7 flex flex-wrap gap-3 md:gap-4">

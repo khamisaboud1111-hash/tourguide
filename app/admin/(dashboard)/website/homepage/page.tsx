@@ -5,6 +5,7 @@ import { Button, Input, Textarea, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
 import { business } from "@/lib/constants";
 import { saveHomepageSettings } from "@/app/actions/siteSettings";
+import { uploadMedia } from "@/app/actions/media";
 
 export default function AdminHomepageCmsPage() {
   const { t } = useLang();
@@ -12,6 +13,7 @@ export default function AdminHomepageCmsPage() {
     heroTitle: "See Zanzibar the way locals do",
     heroSubtitle: `${business.tagline} — small groups, flexible days, routes that change with the sea and the season.`,
     heroCta: "Explore experiences",
+    heroImageSeed: "hero-dhow-sunset",
     aboutTitle: `Why travel with ${business.guideName}`,
     aboutBody: business.guideBioShort,
   });
@@ -27,6 +29,7 @@ export default function AdminHomepageCmsPage() {
     fd.set("heroTitle", form.heroTitle);
     fd.set("heroSubtitle", form.heroSubtitle);
     fd.set("heroCta", form.heroCta);
+    fd.set("heroImageSeed", form.heroImageSeed);
     fd.set("aboutTitle", form.aboutTitle);
     fd.set("aboutBody", form.aboutBody);
     startTransition(async () => {
@@ -35,6 +38,24 @@ export default function AdminHomepageCmsPage() {
         setMsg("Saved — changes are live.");
       } catch (e: unknown) {
         setMsg(e instanceof Error ? e.message : "Save failed");
+      }
+    });
+  };
+
+  const onHeroUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const fd = new FormData();
+    fd.set("file", file);
+    fd.set("folder", "Hero");
+    fd.set("altText", "Hero image");
+    startTransition(async () => {
+      try {
+        const res = await uploadMedia(fd);
+        setForm((f) => ({ ...f, heroImageSeed: res.url }));
+        setMsg("Hero image uploaded — click Save to apply.");
+      } catch (err: unknown) {
+        setMsg(err instanceof Error ? err.message : "Hero upload failed");
       }
     });
   };
@@ -54,6 +75,18 @@ export default function AdminHomepageCmsPage() {
             <Input label={t("adminHeroTitleLabel")} value={form.heroTitle} onChange={update("heroTitle")} />
             <Textarea label={t("adminHeroSubtitleLabel")} value={form.heroSubtitle} onChange={update("heroSubtitle")} rows={3} />
             <Input label={t("adminHeroCtaLabel")} value={form.heroCta} onChange={update("heroCta")} />
+            <Input label="Hero image seed or URL" value={form.heroImageSeed} onChange={update("heroImageSeed")} hint="Use a seed like hero-dhow-sunset or upload below — URL will be saved" />
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Upload new hero image</label>
+              <input type="file" accept="image/*" onChange={onHeroUpload} className="w-full text-sm border border-stone-300 rounded-xl px-3 py-2 bg-stone-50" />
+              <p className="text-xs text-stone-500 mt-1">Uploads to Media/Hero and sets hero to that image. Click Save after upload.</p>
+            </div>
+            {form.heroImageSeed.startsWith("http") && (
+              <div className="rounded-xl overflow-hidden border border-stone-200">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={form.heroImageSeed} alt="hero preview" className="w-full h-32 object-cover" />
+              </div>
+            )}
           </div>
         </Card>
 
