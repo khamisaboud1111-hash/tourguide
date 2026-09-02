@@ -29,20 +29,29 @@ export default function LoginForm() {
   async function handleForgot(e: React.FormEvent) {
     e.preventDefault();
     setForgotMsg(null);
-    if (!forgotEmail.trim()) {
-      setForgotMsg("Enter your email first.");
+    const raw = forgotEmail.trim();
+    if (!raw) {
+      setForgotMsg("Enter your email or phone first.");
       return;
     }
     setForgotPending(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
-        redirectTo: `${window.location.origin}/admin/login?reset=1`,
-      });
-      if (error) setForgotMsg(error.message);
-      else setForgotMsg("Check your email — reset link sent if that address exists.");
+      const isEmail = raw.includes("@");
+      if (isEmail) {
+        const { error } = await supabase.auth.resetPasswordForEmail(raw, {
+          redirectTo: `${window.location.origin}/admin/login?reset=1`,
+        });
+        if (error) setForgotMsg(error.message);
+        else setForgotMsg("Check your email — reset link sent if that address exists.");
+      } else {
+        // Phone OTP — Supabase will send SMS if phone auth is configured
+        const { error } = await supabase.auth.signInWithOtp({ phone: raw });
+        if (error) setForgotMsg(error.message);
+        else setForgotMsg("Check your phone — OTP sent if that number exists. Enter it on the login screen.");
+      }
     } catch (err: unknown) {
-      setForgotMsg(err instanceof Error ? err.message : "Could not send reset email.");
+      setForgotMsg(err instanceof Error ? err.message : "Could not send reset code.");
     } finally {
       setForgotPending(false);
     }
@@ -98,12 +107,12 @@ export default function LoginForm() {
       {showForgot && (
         <form onSubmit={handleForgot} className="rounded-xl border border-stone-200 bg-stone-50 p-4 space-y-3">
           <p className="text-sm font-medium text-stone-700">Reset password</p>
-          <p className="text-xs text-stone-500">Enter your admin email — we&apos;ll send a reset link.</p>
+          <p className="text-xs text-stone-500">Enter your admin email or phone — we&apos;ll send a reset link or OTP.</p>
           <input
-            type="email"
+            type="text"
             value={forgotEmail}
             onChange={(e) => setForgotEmail(e.target.value)}
-            placeholder="admin@example.com"
+            placeholder="admin@example.com or +255 700 000 000"
             className="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-clove-500"
             required
           />
@@ -112,7 +121,7 @@ export default function LoginForm() {
             disabled={forgotPending}
             className="w-full rounded-full bg-stone-900 text-stone-50 px-6 py-2.5 text-sm font-medium hover:bg-stone-800 disabled:opacity-60"
           >
-            {forgotPending ? "Sending…" : "Send reset link"}
+            {forgotPending ? "Sending…" : "Send reset link / OTP"}
           </button>
           {forgotMsg && (
             <p className={`text-sm px-3 py-2 rounded-lg ${forgotMsg.includes("Check") ? "bg-lagoon-50 text-lagoon-800 border border-lagoon-200" : "bg-clove-50 text-clove-700 border border-clove-200"}`}>

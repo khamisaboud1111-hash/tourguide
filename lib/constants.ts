@@ -4,11 +4,11 @@
 // ─────────────────────────────────────────────────────────────
 
 export const business = {
-  name: "Sitmeir Tours and Travel",
-  tagline: "See Zanzibar the way locals do",
+  name: "Sitmeir Tours & Travel",
+  tagline: "Zanzibar, Through Local Eyes",
   guideName: "Abdul Hamid", // owner — matches Facebook account; change here to rename site-wide
   guideBioShort:
-    "A licensed Zanzibar tour guide with years of experience showing visitors the real island — its old town, its spice farms, and its reefs.",
+    "Experience Zanzibar beyond the postcard.\n\nFrom the historic soul of Stone Town to spice-filled farms and vibrant coral reefs, our locally guided experiences bring you closer to the island's culture, nature, people, and stories.\n\nLicensed local guiding • Small groups • Flexible experiences\n\nNo rigid itineraries. No rushed sightseeing. Just a more personal way to discover Zanzibar.",
   whatsappNumber: "255674804477", // 0674804477 — digits only, country code first, no + or spaces
   phoneDisplay: "0674804477",
   email: "abdulhamidameir96@gmail.com",

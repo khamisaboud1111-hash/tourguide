@@ -44,6 +44,11 @@ export default async function ReviewsPage() {
               ))}
             </div>
           )}
+          <div className="mt-8 rounded-xl border border-lagoon-200 bg-lagoon-50 p-4">
+            <p className="text-sm font-medium text-lagoon-900">Your review matters</p>
+            <p className="text-sm text-stone-700 mt-1 leading-relaxed">After you submit, your review will be highlighted on this page once our team approves it. By submitting, you accept that your review (including your name, country and rating) may be displayed publicly to help future travelers discover Zanzibar through real experiences. Thank you for sharing your story — we appreciate your trust!</p>
+            <p className="text-xs text-stone-500 mt-2">All reviews are moderated — only respectful, genuine experiences are published.</p>
+          </div>
         </div>
         <div>
           <ReviewForm />

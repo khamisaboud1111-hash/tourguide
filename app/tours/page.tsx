@@ -7,7 +7,7 @@ import { getLang, tServer } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
   title: `Experiences — ${business.name}`,
-  description: "Culture, ocean, nature — every way to see Zanzibar with a local guide. Small groups, flexible days.",
+  description: "From Stone Town culture to turquoise waters, spice farms and wild nature — choose your Zanzibar experience or combine them. Tailored to your group, schedule and pace.",
 };
 
 export const dynamic = "force-dynamic";

@@ -79,18 +79,23 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
     return (
       <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.35 }} className="rounded-2xl border border-lagoon-200 bg-lagoon-50 p-5 space-y-4">
         <div className="flex gap-3">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-lagoon-600 text-white shrink-0">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-amber-500 text-white shrink-0">
             <CheckCircle2 size={18} />
           </span>
           <div>
-            <p className="font-display font-semibold text-lagoon-900">{t("bookingRequestReceived")}</p>
+            <p className="font-display font-semibold text-lagoon-900">Booking request sent — pending confirmation</p>
             <p className="text-sm text-lagoon-800 mt-1">
-              {t("reference")} <span className="font-mono font-semibold">{ref}</span> — {t("bookingRefNote")}
+              {t("reference")} <span className="font-mono font-semibold">{ref}</span> — Admin will answer via your WhatsApp/email whether accepted or not. Save this reference to check status.
             </p>
+            <p className="text-xs text-stone-600 mt-2">Status: <span className="font-medium text-amber-700">Pending</span> — you’ll be notified on WhatsApp/email when admin confirms.</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2 justify-center text-xs">
+          <a href={`/booking/status?ref=${encodeURIComponent(ref)}`} className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800 font-medium">
+            Check booking status
+          </a>
+          <span className="text-stone-300">·</span>
           <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ${ref}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800">
             <MessageCircle size={14} /> {t("whatsapp")}
           </a>
