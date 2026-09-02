@@ -216,9 +216,10 @@ html.theme-dark .shadow-soft,
 html.theme-dark .shadow-card,
 html.theme-dark .shadow-card-hover,
 html.theme-dark .shadow-floating { box-shadow: 0 1px 2px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.5) !important; }
-/* Dim images slightly to reduce light in dark mode */
-html.theme-dark img { filter: brightness(0.88) contrast(1.02); }
-html.theme-dark .leaflet-container-full { filter: brightness(0.85); }
+/* Dim images slightly to reduce light in dark mode — hero stays clean and HD */
+html.theme-dark img:not([alt^="Hero"]) { filter: brightness(0.92) contrast(1.02); }
+html.theme-dark img[alt^="Hero"] { filter: brightness(1) contrast(1); }
+html.theme-dark .leaflet-container-full { filter: brightness(0.88); }
 
 @layer components {
   /* Reusable focus ring for components that need stronger treatment (cards, dialogs) */

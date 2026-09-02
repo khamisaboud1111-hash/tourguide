@@ -29,6 +29,14 @@ export default function LoginForm() {
     });
   }
 
+  function normalizePhone(raw: string): string {
+    let p = raw.replace(/[\s()-]/g, "");
+    if (p.startsWith("00")) p = "+" + p.slice(2);
+    if (p.startsWith("0")) p = "+255" + p.slice(1);
+    if (!p.startsWith("+")) p = "+255" + p.replace(/^\+/, "");
+    return p;
+  }
+
   async function handleForgot(e: React.FormEvent) {
     e.preventDefault();
     setForgotMsg(null);
@@ -48,9 +56,14 @@ export default function LoginForm() {
         if (error) setForgotMsg(error.message);
         else setForgotMsg("Check your email — reset link sent if that address exists. Click the link to set a new password.");
       } else {
-        const { error } = await supabase.auth.signInWithOtp({ phone: raw });
-        if (error) setForgotMsg(error.message);
-        else {
+        const phone = normalizePhone(raw);
+        const { error } = await supabase.auth.signInWithOtp({ phone });
+        if (error) {
+          // If SMS not configured, give helpful fallback
+          if (error.message.toLowerCase().includes("sms") || error.message.toLowerCase().includes("phone") || error.message.toLowerCase().includes("provider")) {
+            setForgotMsg("Phone reset not configured — please use your email, or contact support at abdulhamidameir96@gmail.com / 0674804477 for manual reset.");
+          } else setForgotMsg(error.message);
+        } else {
           setForgotMsg("OTP sent to your phone — enter it below with your new password.");
           setOtpSent(true);
         }
@@ -139,30 +152,60 @@ export default function LoginForm() {
         </button>
       </div>
       {showForgot && (
-        <form onSubmit={handleForgot} className="rounded-xl border border-stone-200 bg-stone-50 p-4 space-y-3">
-          <p className="text-sm font-medium text-stone-700">Reset password</p>
-          <p className="text-xs text-stone-500">Enter your admin email or phone — we&apos;ll send a reset link or OTP.</p>
-          <input
-            type="text"
-            value={forgotEmail}
-            onChange={(e) => setForgotEmail(e.target.value)}
-            placeholder="admin@example.com or +255 700 000 000"
-            className="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-clove-500"
-            required
-          />
-          <button
-            type="submit"
-            disabled={forgotPending}
-            className="w-full rounded-full bg-stone-900 text-stone-50 px-6 py-2.5 text-sm font-medium hover:bg-stone-800 disabled:opacity-60"
-          >
-            {forgotPending ? "Sending…" : "Send reset link / OTP"}
-          </button>
+        <div className="rounded-xl border border-stone-200 bg-stone-50 p-4 space-y-3">
+          <form onSubmit={handleForgot} className="space-y-3">
+            <p className="text-sm font-medium text-stone-700">Reset password</p>
+            <p className="text-xs text-stone-500">Enter your admin email or phone — we&apos;ll send a reset link or OTP. Works for real via Supabase.</p>
+            <input
+              type="text"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              placeholder="admin@example.com or +255 700 000 000"
+              className="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-clove-500"
+              required
+            />
+            <button
+              type="submit"
+              disabled={forgotPending}
+              className="w-full rounded-full bg-stone-900 text-stone-50 px-6 py-2.5 text-sm font-medium hover:bg-stone-800 disabled:opacity-60"
+            >
+              {forgotPending ? "Sending…" : "Send reset link / OTP"}
+            </button>
+          </form>
+          {otpSent && (
+            <form onSubmit={handleVerifyOtp} className="space-y-3 pt-3 border-t border-stone-200">
+              <p className="text-sm font-medium text-stone-700">Enter OTP + new password</p>
+              <input
+                type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="123456"
+                className="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-clove-500"
+                required
+              />
+              <input
+                type="password"
+                value={newPass}
+                onChange={(e) => setNewPass(e.target.value)}
+                placeholder="New password (min 8 chars)"
+                className="w-full rounded-xl border border-stone-300 bg-white px-4 py-2.5 text-sm outline-none focus:border-clove-500"
+                required
+              />
+              <button
+                type="submit"
+                disabled={forgotPending}
+                className="w-full rounded-full bg-lagoon-600 text-white px-6 py-2.5 text-sm font-medium hover:bg-lagoon-700 disabled:opacity-60"
+              >
+                {forgotPending ? "Verifying…" : "Verify OTP & set new password"}
+              </button>
+            </form>
+          )}
           {forgotMsg && (
-            <p className={`text-sm px-3 py-2 rounded-lg ${forgotMsg.includes("Check") ? "bg-lagoon-50 text-lagoon-800 border border-lagoon-200" : "bg-clove-50 text-clove-700 border border-clove-200"}`}>
+            <p className={`text-sm px-3 py-2 rounded-lg ${forgotMsg.includes("Check") || forgotMsg.includes("sent") ? "bg-lagoon-50 text-lagoon-800 border border-lagoon-200" : "bg-clove-50 text-clove-700 border border-clove-200"}`}>
               {forgotMsg}
             </p>
           )}
-        </form>
+        </div>
       )}
     </form>
   );

@@ -13,15 +13,31 @@ export default async function AdminAvailabilityPage({
   const { tour: tourId } = await searchParams;
   const lang = getLang();
   const supabase = await createClient();
-  const { data: tours } = await supabase.from("tours").select("id, title").eq("is_published", true).order("title");
+  let tours: Array<{ id: string; title: string }> | null = null;
+  let toursError: string | null = null;
+  try {
+    const { data, error } = await supabase.from("tours").select("id, title").eq("is_published", true).order("title");
+    if (error) toursError = error.message;
+    else tours = data as typeof tours;
+  } catch (e: unknown) {
+    toursError = e instanceof Error ? e.message : "Could not load tours";
+  }
 
   const selected = tourId || tours?.[0]?.id || "";
   const today = new Date().toISOString().slice(0, 10);
   const in30 = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
 
-  const { data: rows } = selected
-    ? await supabase.from("tour_availability").select("*").eq("tour_id", selected).gte("date", today).lte("date", in30).order("date")
-    : { data: [] };
+  let rows: Array<{ date: string; status: string; booked: number; capacity: number }> | null = null;
+  let rowsError: string | null = null;
+  try {
+    const res = selected
+      ? await supabase.from("tour_availability").select("*").eq("tour_id", selected).gte("date", today).lte("date", in30).order("date")
+      : { data: [] as never[], error: null };
+    if ((res as { error: { message: string } | null }).error) rowsError = (res as { error: { message: string } }).error.message;
+    else rows = (res.data ?? []) as typeof rows;
+  } catch (e: unknown) {
+    rowsError = e instanceof Error ? e.message : "Could not load availability";
+  }
 
   // Generate next 30 days grid
   const days: string[] = [];
@@ -33,6 +49,11 @@ export default async function AdminAvailabilityPage({
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold mb-6">{tServer("adminAvailability", lang)}</h1>
+      {(toursError || rowsError) && (
+        <p className="mb-4 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-sm px-4 py-3">
+          {toursError ? `Tours: ${toursError}` : ""} {rowsError ? `Availability: ${rowsError}` : ""} — showing intended content with empty data. Try again or check Supabase RLS.
+        </p>
+      )}
 
       <form method="get" className="mb-6">
         <label className="block text-sm font-medium text-stone-700 mb-1.5">{tServer("adminTourLabel", lang)}</label>
