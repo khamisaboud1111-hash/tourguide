@@ -35,7 +35,7 @@ export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }
   return (
     <div className="absolute inset-0">
       {seeds.map((seed, i) => {
-        const src = seed.startsWith("http") || seed.startsWith("/") ? seed : placeholderPhoto(seed, 1920, 1200);
+        const src = seed.startsWith("http") || seed.startsWith("/") ? seed : placeholderPhoto(seed, 3840, 2160);
         return (
           <Image
             key={seed}
@@ -44,7 +44,9 @@ export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }
             fill
             priority={i === 0}
             sizes="100vw"
+            quality={100}
             className={`object-cover transition-opacity duration-700 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
+            unoptimized={false}
           />
         );
       })}
