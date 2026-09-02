@@ -65,10 +65,10 @@ export default async function HomePage() {
   ];
 
   const whyLocal = [
-    { k: "01", title: "Local Knowledge", desc: "Go beyond the guidebook.\n\nDiscover hidden streets, local markets, farms, beaches, reefs, and cultural gems that are best experienced with someone who knows when and where to find them." },
-    { k: "02", title: "Personal Attention", desc: "Your experience, your pace.\n\nNo rushing from one stop to another. Ask questions, explore freely, take your time, and enjoy a tour shaped around you." },
-    { k: "03", title: "Authentic Experiences", desc: "Meet the real Zanzibar.\n\nTaste local flavors, discover everyday island life, hear local stories, and experience Zanzibar's culture respectfully and naturally." },
-    { k: "04", title: "Genuine Local Connection", desc: "A local connection that continues beyond the tour." },
+    { k: "01", title: t("whyCard1Title"), desc: t("whyCard1Body") },
+    { k: "02", title: t("whyCard2Title"), desc: t("whyCard2Body") },
+    { k: "03", title: t("whyCard3Title"), desc: t("whyCard3Body") },
+    { k: "04", title: t("whyCard4Title"), desc: t("whyCard4Body") },
   ];
 
   const destinations = [
@@ -173,11 +173,11 @@ export default async function HomePage() {
 
       <DoorMotifDivider tone="onLight" className="mt-6" />
 
-      {/* Why local — updated per 2025-09-02 request */}
+      {/* Why local — updated per 2025-09-02 request, now fully i18n */}
       <section id="why-local" className="container-page py-12 md:py-20">
         <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-start">
           <div className="md:col-span-5">
-            <SectionHeading kicker="Why Experience Zanzibar With a Local?" title="See Zanzibar Beyond the Tourist Route" description="Discover the island through the eyes of someone who knows it personally. Zanzibar is more than the places listed in a guidebook. Its streets have stories, its markets have their own rhythm, and its beaches, farms, food, and communities change with the seasons. We don't simply take you around Zanzibar — we help you experience it." />
+            <SectionHeading kicker={t("whyExpKicker")} title={t("whyExpTitle")} description={`${t("whyExpDesc1")} ${t("whyExpDesc2")}`} />
             <div className="mt-8 grid grid-cols-2 gap-4">
               {whyLocal.map((w) => (
                 <div key={w.k} className="rounded-2xl bg-stone-100 border border-stone-200 p-4">
@@ -204,10 +204,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Signature — updated 2025-09-02 per request */}
+      {/* Signature — updated 2025-09-02 per request, i18n */}
       <section id="signature" className="container-page py-6 md:py-12">
         <div className="flex items-end justify-between gap-4 mb-8">
-          <SectionHeading kicker="Unforgettable Zanzibar Experiences" title="Discover the Island Your Way" description="From ancient streets and vibrant local culture to turquoise waters and wild nature, choose an experience that matches the way you want to explore Zanzibar. Private or small-group experiences — thoughtfully designed for meaningful moments, authentic discoveries, and memories that stay with you." />
+          <SectionHeading kicker={t("signatureKickerNew")} title={t("signatureTitleNew")} description={t("signatureDescNew")} />
           <Link href="/tours" className="hidden md:inline-flex items-center gap-1.5 text-clove-700 font-medium text-sm hover:gap-2.5 transition-all shrink-0">
             {t("viewAll")} <ArrowRight size={16} />
           </Link>

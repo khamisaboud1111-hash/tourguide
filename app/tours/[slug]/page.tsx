@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 // Minimal highlight/itinerary fallbacks — no fake content, just generic structure that the owner can replace per-tour via DB later.
-function highlightsFor(tour: ReturnType<typeof rowToTour>) {
+function highlightsFor(tour: ReturnType<typeof rowToTour>, t: (k: string) => string) {
   const map: Record<string, { title: string; body: string }[]> = {
     "stone-town-walking-tour": [
       { title: "Walk the coral-stone alleys", body: "Carved doors, bazaars, and the layered history of Swahili, Omani and Indian Zanzibar." },
@@ -57,8 +57,8 @@ function highlightsFor(tour: ReturnType<typeof rowToTour>) {
     ],
   };
   return map[tour.slug] ?? [
-    { title: "01 — Personal Local Guidance", body: "Explore with someone who knows Zanzibar.\n\nYour local guide is there to share stories, answer your questions, and help you discover the places and moments that make the island special." },
-    { title: "02 — Small Groups, Better Experiences", body: "More freedom. More connection. More Zanzibar.\n\nForget crowded buses and rushed itineraries. Our small groups create space to explore comfortably, connect with your guide, and enjoy the experience at your own pace." },
+    { title: t("whatMakesCard1Title"), body: t("whatMakesCard1Body") },
+    { title: t("whatMakesCard2Title"), body: t("whatMakesCard2Body") },
   ];
 }
 
@@ -116,7 +116,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
         { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} — photo 4 of 4` },
       ];
 
-  const highlights = tour.highlights && tour.highlights.length > 0 ? tour.highlights : highlightsFor(tour);
+  const highlights = tour.highlights && tour.highlights.length > 0 ? tour.highlights : highlightsFor(tour, t);
   const itinerary = tour.itinerary && tour.itinerary.length > 0 ? tour.itinerary : itineraryFor(tour);
   const whatToBringList = tour.whatToBring && tour.whatToBring.length > 0 ? tour.whatToBring : ["Comfortable shoes", "Sunscreen, water, camera", "Light scarf for Stone Town"];
   const cancellationText = tour.cancellationPolicy || t("cancellationDesc");
@@ -185,11 +185,11 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
             <p className="mt-3 text-stone-600 text-sm leading-relaxed">{tour.summary}</p>
           </div>
 
-          {/* What Makes the Experience Different */}
+          {/* What Makes the Experience Different — i18n */}
           <div>
-            <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-2">What Makes the Experience Different</p>
-            <h3 className="font-display text-2xl font-semibold">Travel Slowly. Discover More. Connect Deeper.</h3>
-            <p className="text-stone-600 leading-relaxed mt-2 max-w-2xl">We believe the best Zanzibar experiences aren&apos;t rushed. They are personal, flexible, and guided by people who know the island.</p>
+            <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-2">{t("whatMakesKicker")}</p>
+            <h3 className="font-display text-2xl font-semibold">{t("whatMakesTitle")}</h3>
+            <p className="text-stone-600 leading-relaxed mt-2 max-w-2xl">{t("whatMakesDesc")}</p>
             <div className="grid sm:grid-cols-2 gap-4 mt-6">
               {highlights.map((h) => (
                 <div key={h.title} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
