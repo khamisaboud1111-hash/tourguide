@@ -10,25 +10,30 @@ async function setReviewPublished(id: string, published: boolean) {
   revalidatePath("/admin/reviews");
 }
 
+type ReviewRow = { id: string; customer_name: string; email?: string | null; country?: string | null; rating: number; review: string; published: boolean };
+
 export default async function AdminReviewsPage() {
   const lang = getLang();
   const supabase = await createClient();
-  let reviews: Array<{ id: string; customer_name: string; email?: string | null; country?: string | null; rating: number; review: string; published: boolean }> | null = null;
+  let reviews: ReviewRow[] | null = null;
   let fetchError: string | null = null;
   try {
     const { data, error } = await supabase.from("reviews").select("*").order("created_at", { ascending: false });
     if (error) fetchError = error.message;
-    else reviews = data as typeof reviews;
+    else reviews = data as unknown as ReviewRow[];
   } catch (e: unknown) {
     fetchError = e instanceof Error ? e.message : "Could not load reviews";
   }
 
+  const list: ReviewRow[] = reviews ?? [];
+
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold mb-6">{tServer("adminReviews", lang)}</h1>
-      {(reviews ?? []).length === 0 && <p className="text-sm text-stone-500">{tServer("adminNoReviewsYet", lang)}</p>}
+      {fetchError && <p className="mb-4 rounded-lg bg-clove-50 text-clove-700 text-sm px-4 py-3">{fetchError}</p>}
+      {list.length === 0 && <p className="text-sm text-stone-500">{tServer("adminNoReviewsYet", lang)}</p>}
       <div className="space-y-3">
-          {(reviews ?? []).map((r) => (
+          {list.map((r) => (
           <div key={r.id} className="rounded-2xl border border-stone-200 bg-white p-4 flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-sm font-medium">{r.customer_name} {r.email ? `· ${r.email}` : ""} {r.country ? `· ${r.country}` : ""} <span className="text-saffron-500">{"★".repeat(r.rating)}</span></p>
