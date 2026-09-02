@@ -243,8 +243,6 @@ export default async function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/85 via-indigo-900/10 to-transparent" />
                 <div className="absolute bottom-0 p-5">
                   <h3 className="font-display text-white text-xl font-semibold">{d.name}</h3>
-                  <p className="text-stone-200 text-sm mt-1">{d.blurb}</p>
-                  <span className="inline-flex items-center gap-1 text-saffron-300 text-xs font-medium mt-3">{t("explore")} <ArrowRight size={14} /></span>
                 </div>
               </Link>
             ))}
