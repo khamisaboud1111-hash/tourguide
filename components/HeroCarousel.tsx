@@ -21,9 +21,8 @@ const SAFARI_HERO_SEEDS = [
 export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }) {
   const [index, setIndex] = useState(0);
 
-  // If admin has set a custom hero image via website_settings, respect it (no carousel)
-  const isCustom = !!overrideSeed && overrideSeed !== "hero-dhow-sunset" && overrideSeed !== "hero-zanzibar";
-  const seeds = isCustom ? [overrideSeed!] : SAFARI_HERO_SEEDS;
+  // Strict: only use images from C:\Users\hp\OneDrive\Desktop\safari blue (11 files) — no other hero
+  const seeds = SAFARI_HERO_SEEDS;
 
   useEffect(() => {
     if (seeds.length <= 1) return;
@@ -31,7 +30,7 @@ export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }
       setIndex((i) => (i + 1) % seeds.length);
     }, 3000);
     return () => clearInterval(id);
-  }, [seeds.length]);
+  }, []);
 
   return (
     <div className="absolute inset-0">
