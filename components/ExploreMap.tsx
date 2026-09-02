@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents } from "react-leaflet";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import Link from "next/link";
 import type { Tour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 import { useLang } from "@/lib/i18n/context";
+
+const STREET_TILES = "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+const SATELLITE_TILES =
+  "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}";
 
 // Self-hosted marker icons failed in some regions; use the CDN copies (allowed by CSP).
 const ICON = L.icon({
@@ -93,7 +97,7 @@ function SitePopup({ site, tour }: { site: Site; tour?: Tour }) {
       <p className="text-stone-600 text-xs mt-1 leading-relaxed">{site.desc}</p>
       {tour ? (
         <div className="mt-2 flex items-center justify-between gap-2">
-          <span className="text-xs text-stone-500">{tour.duration} · {t("fromPriceDot").replace("{price}", String(tour.priceUsd))}</span>
+          <span className="text-xs text-stone-500">{tour.meetingPoint} · {tour.duration}</span>
           <Link href={`/tours/${tour.slug}`} className="inline-flex items-center gap-1 rounded-full bg-clove-600 text-white px-3 py-1 text-xs font-medium hover:bg-clove-700 transition-colors">
             {t("viewTourLink")}
           </Link>
@@ -114,49 +118,86 @@ export default function ExploreMap({ tours }: { tours: Tour[] }) {
     () => [...SITES.map((s) => s.coords), ...tours.map((t) => [t.coords.lat, t.coords.lng] as [number, number])],
     [tours]
   );
+  const [base, setBase] = useState<"street" | "satellite">("street");
 
   return (
-    <MapContainer
-      center={[-6.1659, 39.2026]}
-      zoom={10}
-      minZoom={8}
-      maxZoom={17}
-      scrollWheelZoom={false}
-      zoomControl={true}
-      className="leaflet-container-full"
-    >
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <MapSetup points={allPoints} />
+    <div className="relative h-full w-full">
+      <MapContainer
+        center={[-6.1659, 39.2026]}
+        zoom={10}
+        minZoom={8}
+        maxZoom={17}
+        scrollWheelZoom={false}
+        zoomControl={true}
+        className="leaflet-container-full"
+      >
+        <TileLayer
+          attribution={
+            base === "satellite"
+              ? "Tiles &copy; Esri — Source: Esri, Maxar, Earthstar Geographics"
+              : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }
+          url={base === "satellite" ? SATELLITE_TILES : STREET_TILES}
+          maxZoom={base === "satellite" ? 19 : 18}
+        />
+        <MapSetup points={allPoints} />
 
-      {/* Tourism site pins */}
-      {SITES.map((s) => (
-        <Marker key={`site-${s.name}`} position={s.coords} title={s.name} icon={ICON}>
-          <Popup maxWidth={260}>
-            <SitePopup site={s} tour={s.tourSlug ? tourBySlug.get(s.tourSlug) : undefined} />
-          </Popup>
-        </Marker>
-      ))}
+        {/* Tourism site pins — place name also shown as tooltip */}
+        {SITES.map((s) => (
+          <Marker key={`site-${s.name}`} position={s.coords} title={s.name} icon={ICON}>
+            <Tooltip direction="top" offset={[0, -28]}>
+              <span className="text-xs font-medium">{s.name}</span>
+            </Tooltip>
+            <Popup maxWidth={260}>
+              <SitePopup site={s} tour={s.tourSlug ? tourBySlug.get(s.tourSlug) : undefined} />
+            </Popup>
+          </Marker>
+        ))}
 
-      {/* Tour meeting points (from the database) */}
-      {tours.map((tour) => (
-        <Marker key={`tour-${tour.slug}`} position={[tour.coords.lat, tour.coords.lng]} title={tour.title} opacity={0.85}>
-          <Popup maxWidth={240}>
-            <div className="text-sm w-[210px]">
-              <p className="font-semibold text-stone-900">{tour.title}</p>
-              <p className="text-stone-600 text-xs mt-1">{t("meetingPointDot").replace("{duration}", tour.duration).replace("{price}", String(tour.priceUsd))}</p>
-              <Link
-                href={`/tours/${tour.slug}`}
-                className="inline-flex items-center gap-1 text-clove-600 text-xs font-medium mt-2 hover:underline"
-              >
-                {t("viewExperienceArrow")}
-              </Link>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-    </MapContainer>
+        {/* Tour meeting points (from the database) — label pinned on map */}
+        {tours.map((tour) => (
+          <Marker key={`tour-${tour.slug}`} position={[tour.coords.lat, tour.coords.lng]} title={tour.title} opacity={0.95}>
+            <Tooltip direction="top" offset={[0, -32]} permanent={false}>
+              <span className="text-xs font-medium">{tour.meetingPoint}</span>
+            </Tooltip>
+            <Popup maxWidth={240}>
+              <div className="text-sm w-[210px]">
+                <p className="font-semibold text-stone-900">{tour.title}</p>
+                <p className="text-stone-600 text-xs mt-1">
+                  {tour.meetingPoint} · {tour.duration}
+                </p>
+                <Link
+                  href={`/tours/${tour.slug}`}
+                  className="inline-flex items-center gap-1 text-clove-600 text-xs font-medium mt-2 hover:underline"
+                >
+                  {t("viewExperienceArrow")}
+                </Link>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
+      </MapContainer>
+
+      {/* Satellite toggle */}
+      <div className="absolute top-4 left-4 z-[500] flex rounded-lg bg-white/95 backdrop-blur border border-stone-200 shadow-card p-1 gap-1">
+        {(
+          [
+            { key: "street", label: t("mapView") },
+            { key: "satellite", label: t("satelliteView") },
+          ] as const
+        ).map((b) => (
+          <button
+            key={b.key}
+            type="button"
+            onClick={() => setBase(b.key)}
+            className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              base === b.key ? "bg-clove-600 text-white" : "text-stone-700 hover:bg-stone-100"
+            }`}
+          >
+            {b.label}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
