@@ -57,9 +57,8 @@ function highlightsFor(tour: ReturnType<typeof rowToTour>) {
     ],
   };
   return map[tour.slug] ?? [
-    { title: "Local guiding", body: "Led in person, paced for questions and wandering." },
-    { title: "Small group", body: "No buses — you see more when the group stays small." },
-    { title: "Real island day", body: "Timing that matches tide, light and season." },
+    { title: "01 — Personal Local Guidance", body: "Explore with someone who knows Zanzibar.\n\nYour local guide is there to share stories, answer your questions, and help you discover the places and moments that make the island special." },
+    { title: "02 — Small Groups, Better Experiences", body: "More freedom. More connection. More Zanzibar.\n\nForget crowded buses and rushed itineraries. Our small groups create space to explore comfortably, connect with your guide, and enjoy the experience at your own pace." },
   ];
 }
 
@@ -186,15 +185,17 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
             <p className="mt-3 text-stone-600 text-sm leading-relaxed">{tour.summary}</p>
           </div>
 
-          {/* Highlights */}
+          {/* What Makes the Experience Different */}
           <div>
-            <h3 className="font-display text-xl font-semibold mb-4">{t("highlights")}</h3>
-            <div className="grid sm:grid-cols-3 gap-4">
+            <p className="text-clove-700 text-xs uppercase tracking-[0.2em] font-medium mb-2">What Makes the Experience Different</p>
+            <h3 className="font-display text-2xl font-semibold">Travel Slowly. Discover More. Connect Deeper.</h3>
+            <p className="text-stone-600 leading-relaxed mt-2 max-w-2xl">We believe the best Zanzibar experiences aren&apos;t rushed. They are personal, flexible, and guided by people who know the island.</p>
+            <div className="grid sm:grid-cols-2 gap-4 mt-6">
               {highlights.map((h) => (
                 <div key={h.title} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
                   <Star size={16} className="text-saffron-500" />
-                  <h4 className="font-display font-semibold mt-2 text-stone-900">{h.title}</h4>
-                  <p className="text-sm text-stone-600 leading-relaxed mt-1">{h.body}</p>
+                  <h4 className="font-display font-semibold mt-2 text-stone-900 whitespace-pre-line">{h.title}</h4>
+                  <p className="text-sm text-stone-600 leading-relaxed mt-1 whitespace-pre-line">{h.body}</p>
                 </div>
               ))}
             </div>
