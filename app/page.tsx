@@ -204,10 +204,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Signature */}
+      {/* Signature — updated 2025-09-02 per request */}
       <section id="signature" className="container-page py-6 md:py-12">
         <div className="flex items-end justify-between gap-4 mb-8">
-          <SectionHeading kicker={t("signatureKicker")} title={t("signatureTitle")} description={t("signatureDesc")} />
+          <SectionHeading kicker="Unforgettable Zanzibar Experiences" title="Discover the Island Your Way" description="From ancient streets and vibrant local culture to turquoise waters and wild nature, choose an experience that matches the way you want to explore Zanzibar. Private or small-group experiences — thoughtfully designed for meaningful moments, authentic discoveries, and memories that stay with you." />
           <Link href="/tours" className="hidden md:inline-flex items-center gap-1.5 text-clove-700 font-medium text-sm hover:gap-2.5 transition-all shrink-0">
             {t("viewAll")} <ArrowRight size={16} />
           </Link>
