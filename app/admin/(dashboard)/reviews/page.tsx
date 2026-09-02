@@ -4,6 +4,7 @@ import { authorizeStaff } from "@/lib/auth";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 async function setReviewPublished(id: string, published: boolean) {
+  "use server";
   await authorizeStaff("moderate review");
   const supabase = await createClient();
   await supabase.from("reviews").update({ published }).eq("id", id);
