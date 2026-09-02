@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { Button, Input, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
+import { business } from "@/lib/constants";
 
 export default function AdminFooterCmsPage() {
   const { t } = useLang();
   const [form, setForm] = useState({
-    about: "AKTIVANZ — Guided adventures across Tanzania.",
-    facebook: "https://facebook.com/aktivanz",
-    instagram: "https://instagram.com/aktivanz",
-    whatsapp: "+255700000000",
-    copyright: "© 2026 AKTIVANZ. All rights reserved.",
+    about: `${business.name} — ${business.tagline}. ${business.guideBioShort}`,
+    facebook: business.facebook,
+    instagram: business.instagram,
+    whatsapp: `+${business.whatsappNumber}`,
+    copyright: `© ${new Date().getFullYear()} ${business.name}. All rights reserved.`,
   });
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>

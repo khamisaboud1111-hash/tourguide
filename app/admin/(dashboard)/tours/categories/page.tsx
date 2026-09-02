@@ -5,12 +5,13 @@ import { Plus, Tag, Trash2 } from "lucide-react";
 import { Button, Badge } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
 
+// Real website categories — match the 5 categories used in tours table and homepage
 const initialCategories = [
-  { id: 1, name: "Safari", slug: "safari", tours: 8, color: "#8B3A2B" },
-  { id: 2, name: "Treks & Climbs", slug: "treks-climbs", tours: 5, color: "#142825" },
-  { id: 3, name: "Beach & Islands", slug: "beach-islands", tours: 6, color: "#C08A2E" },
-  { id: 4, name: "Cultural", slug: "cultural", tours: 4, color: "#537179" },
-  { id: 5, name: "Day Trips", slug: "day-trips", tours: 9, color: "#B75928" },
+  { id: 1, name: "Culture & History", slug: "culture-history", tours: 1, color: "#8B3A2B" },
+  { id: 2, name: "Culture & Nature", slug: "culture-nature", tours: 1, color: "#142825" },
+  { id: 3, name: "Ocean & Sailing", slug: "ocean-sailing", tours: 2, color: "#0e7490" },
+  { id: 4, name: "Nature & Wildlife", slug: "nature-wildlife", tours: 1, color: "#15803d" },
+  { id: 5, name: "Ocean & Wildlife", slug: "ocean-wildlife", tours: 1, color: "#0369a1" },
 ];
 
 export default function AdminTourCategoriesPage() {

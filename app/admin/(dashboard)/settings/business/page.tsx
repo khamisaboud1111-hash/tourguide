@@ -4,15 +4,16 @@ import { useState } from "react";
 import { Button, Input, Textarea, Card } from "@/components/admin/AdminForms";
 import { FloatingInput } from "@/components/ui/FloatingInput";
 import { useLang } from "@/lib/i18n/context";
+import { business } from "@/lib/constants";
 
 export default function AdminBusinessSettingsPage() {
   const { t } = useLang();
   const [form, setForm] = useState({
-    name: "AKTIVANZ",
-    tagline: "Guided adventures across Tanzania",
-    email: "hello@aktivanz.com",
-    phone: "+255 700 000 000",
-    address: "123 Arusha Road, Moshi, Tanzania",
+    name: business.name,
+    tagline: business.tagline,
+    email: business.email,
+    phone: business.phoneDisplay,
+    address: business.location,
     currency: "USD",
     timezone: "Africa/Dar_es_Salaam",
   });

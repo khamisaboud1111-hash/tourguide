@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { Button, Input, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
+import { business } from "@/lib/constants";
 
 export default function AdminSocialSettingsPage() {
   const { t } = useLang();
   const [form, setForm] = useState({
-    facebook: "https://facebook.com/aktivanz",
-    instagram: "https://instagram.com/aktivanz",
-    twitter: "https://twitter.com/aktivanz",
-    youtube: "https://youtube.com/@aktivanz",
-    whatsapp: "+255700000000",
+    facebook: business.facebook,
+    instagram: business.instagram,
+    twitter: `https://twitter.com/${business.name.replace(/\s+/g, "").toLowerCase()}`,
+    youtube: business.tiktok.replace("tiktok.com", "youtube.com"),
+    whatsapp: `+${business.whatsappNumber}`,
   });
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>

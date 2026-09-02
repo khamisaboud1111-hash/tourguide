@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { Button, Input, Textarea, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
+import { business } from "@/lib/constants";
 
 export default function AdminAboutCmsPage() {
   const { t } = useLang();
   const [form, setForm] = useState({
-    title: "About Us",
-    intro: "We are a dedicated team of local guides and travel experts.",
-    story: "Founded in 2015, we've taken thousands of travelers on unforgettable journeys.",
-    mission: "To share the beauty of Tanzania while supporting local communities.",
-    values: "Sustainability • Authenticity • Excellence",
+    title: `About ${business.name}`,
+    intro: business.guideBioShort,
+    story: `Born and raised in Stone Town, ${business.guideName} has guided visitors through Zanzibar's alleys, spice farms and reefs for years — sharing the island the way locals live it, not the way brochures sell it.`,
+    mission: business.tagline,
+    values: "Local knowledge • Small groups • Direct contact",
   });
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

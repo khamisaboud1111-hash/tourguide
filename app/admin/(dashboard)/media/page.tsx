@@ -1,20 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Image as ImageIcon, Folder, Upload, Trash2 } from "lucide-react";
+import { Plus, Image as ImageIcon, Folder, Upload } from "lucide-react";
 import { Button } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
 
 const folders = ["All", "Tours", "Hero", "Gallery", "Team", "Blog"];
 
-const mediaItems = [
-  { id: 1, name: "kilimanjaro.jpg", folder: "Tours", type: "image", size: "2.4 MB", dims: "1920x1280" },
-  { id: 2, name: "safari-lion.jpg", folder: "Tours", type: "image", size: "1.8 MB", dims: "1920x1080" },
-  { id: 3, name: "hero-main.jpg", folder: "Hero", type: "image", size: "3.1 MB", dims: "2560x1440" },
-  { id: 4, name: "zanzibar-beach.jpg", folder: "Gallery", type: "image", size: "2.2 MB", dims: "1920x1280" },
-  { id: 5, name: "team-guide.jpg", folder: "Team", type: "image", size: "1.4 MB", dims: "1280x1280" },
-  { id: 6, name: "blog-safari-tips.jpg", folder: "Blog", type: "image", size: "1.9 MB", dims: "1920x1080" },
-];
+// No hardcoded demo items — media appears here only after admin uploads real files.
+// This keeps the library empty until the admin sets it (per request to remove demo).
+const mediaItems: { id: number; name: string; folder: string; type: string; size: string; dims: string }[] = [];
 
 export default function AdminMediaPage() {
   const [activeFolder, setActiveFolder] = useState("All");
@@ -48,31 +43,27 @@ export default function AdminMediaPage() {
         ))}
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {filtered.map((item) => (
-          <div key={item.id} className="group rounded-2xl border border-stone-200 bg-white overflow-hidden hover:border-clove-300 transition-colors">
-            <div className="aspect-[4/3] bg-stone-100 flex items-center justify-center">
-              <ImageIcon size={32} className="text-stone-300" />
-            </div>
-            <div className="p-3">
-              <p className="text-sm font-medium text-stone-800 truncate">{item.name}</p>
-              <p className="text-xs text-stone-500 mt-0.5">{item.size} · {item.dims}</p>
-              <div className="mt-2 flex items-center justify-between">
-                <span className="text-xs text-stone-500">{item.folder}</span>
-                <button className="text-stone-400 hover:text-clove-600 transition-colors" aria-label={t("adminDeleteMedia").replace("{name}", item.name)}>
-                  <Trash2 size={14} />
-                </button>
+      {/* Grid — empty until admin uploads */}
+      {filtered.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-12 text-center">
+          <Upload size={32} className="mx-auto text-stone-300 mb-3" />
+          <p className="text-stone-600 font-medium">No media yet</p>
+          <p className="text-sm text-stone-500 mt-1">{t("adminNoMediaInFolder")} — upload real photos via the button above.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {filtered.map((item) => (
+            <div key={item.id} className="group rounded-2xl border border-stone-200 bg-white overflow-hidden hover:border-clove-300 transition-colors">
+              <div className="aspect-[4/3] bg-stone-100 flex items-center justify-center">
+                <ImageIcon size={32} className="text-stone-300" />
+              </div>
+              <div className="p-3">
+                <p className="text-sm font-medium text-stone-800 truncate">{item.name}</p>
+                <p className="text-xs text-stone-500 mt-0.5">{item.size} · {item.dims}</p>
+                <p className="text-xs text-stone-500 mt-1">{item.folder}</p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {filtered.length === 0 && (
-        <div className="rounded-2xl border border-stone-200 bg-white p-12 text-center">
-          <Upload size={32} className="mx-auto text-stone-300 mb-3" />
-          <p className="text-stone-500">{t("adminNoMediaInFolder")}</p>
+          ))}
         </div>
       )}
     </div>

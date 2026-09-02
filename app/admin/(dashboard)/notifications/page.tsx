@@ -4,13 +4,7 @@ import { useState } from "react";
 import { Bell, Check, Archive } from "lucide-react";
 import { useLang } from "@/lib/i18n/context";
 
-const initialNotifications = [
-  { id: 1, type: "booking", titleKey: "adminNotifNewBookingTitle", bodyKey: "adminNotifNewBookingBody", bodyParams: { name: "John M.", tour: "Kilimanjaro Trek" } as Record<string, string | number>, time: "2 min ago", read: false },
-  { id: 2, type: "payment", titleKey: "adminNotifPaymentTitle", bodyKey: "adminNotifDepositBody", bodyParams: { amount: "$250", tour: "Zanzibar Escape" }, time: "15 min ago", read: false },
-  { id: 3, type: "review", titleKey: "adminNotifReviewTitle", bodyKey: "adminNotifReviewBody", bodyParams: { stars: "5" }, time: "1 hour ago", read: false },
-  { id: 4, type: "system", titleKey: "adminNotifSystemTitle", bodyKey: "adminNotifSystemBody", bodyParams: {}, time: "Yesterday", read: true },
-  { id: 5, type: "booking", titleKey: "adminNotifReminderTitle", bodyKey: "adminNotifReminderBody", bodyParams: { count: 3 }, time: "Yesterday", read: true },
-];
+const initialNotifications: { id: number; type: string; titleKey: string; bodyKey: string; bodyParams: Record<string, string | number>; time: string; read: boolean }[] = [];
 
 export default function AdminNotificationsPage() {
   const { t } = useLang();

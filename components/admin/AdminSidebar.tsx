@@ -7,10 +7,8 @@ import {
   LayoutDashboard,
   Calendar,
   Inbox,
-  Users,
   MapPin,
   CreditCard,
-  BarChart2,
   Star,
   Image,
   FileText,
@@ -18,12 +16,10 @@ import {
   Tag,
   Bell,
   Shield,
-  Activity,
   LogOut,
   ExternalLink,
   ChevronLeft,
   ChevronRight,
-  Search,
   Menu,
   X,
   type LucideIcon,
@@ -36,6 +32,7 @@ const navSections = [
     label: "Overview",
     items: [
       { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+      { href: "/admin/notifications", label: "Notifications", icon: Bell },
     ],
   },
   {
@@ -44,13 +41,6 @@ const navSections = [
       { href: "/admin/bookings", label: "All Bookings", icon: Inbox },
       { href: "/admin/bookings/calendar", label: "Calendar", icon: Calendar },
       { href: "/admin/bookings/new", label: "New Booking", icon: Inbox },
-    ],
-  },
-  {
-    label: "Customers",
-    items: [
-      { href: "/admin/customers", label: "All Customers", icon: Users },
-      { href: "/admin/customers/segments", label: "Segments", icon: Users },
     ],
   },
   {
@@ -66,11 +56,9 @@ const navSections = [
     label: "Operations",
     items: [
       { href: "/admin/availability", label: "Availability", icon: Calendar },
-      { href: "/admin/analytics", label: "Analytics", icon: BarChart2 },
       { href: "/admin/reviews", label: "Reviews", icon: Star },
       { href: "/admin/journal", label: "Journal", icon: FileText },
       { href: "/admin/media", label: "Media Library", icon: Image },
-      { href: "/admin/promotions", label: "Promotions", icon: Tag },
     ],
   },
   {
@@ -87,17 +75,8 @@ const navSections = [
     items: [
       { href: "/admin/settings/business", label: "Business", icon: Settings },
       { href: "/admin/settings/booking", label: "Booking", icon: Calendar },
-      { href: "/admin/settings/seo", label: "SEO", icon: Search },
       { href: "/admin/settings/social", label: "Social", icon: ExternalLink },
       { href: "/admin/settings/security", label: "Security", icon: Shield },
-    ],
-  },
-  {
-    label: "Team & Activity",
-    items: [
-      { href: "/admin/team", label: "Team", icon: Users },
-      { href: "/admin/activity", label: "Activity Log", icon: Activity },
-      { href: "/admin/notifications", label: "Notifications", icon: Bell },
     ],
   },
 ];

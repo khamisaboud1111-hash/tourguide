@@ -3,15 +3,16 @@
 import { useState } from "react";
 import { Button, Input, Textarea, Card } from "@/components/admin/AdminForms";
 import { useLang } from "@/lib/i18n/context";
+import { business } from "@/lib/constants";
 
 export default function AdminContactCmsPage() {
   const { t } = useLang();
   const [form, setForm] = useState({
     heading: "Get in Touch",
-    email: "hello@aktivanz.com",
-    phone: "+255 700 000 000",
-    address: "123 Arusha Road, Moshi, Tanzania",
-    hours: "Mon–Sat, 9am–6pm EAT",
+    email: business.email,
+    phone: business.phoneDisplay,
+    address: business.location,
+    hours: "Mon–Sat, 9am–6pm EAT · Stone Town",
   });
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import {
-  LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, Users, CalendarDays,
-  Star, BookOpen, Settings, Activity, LineChart, Image, Images, Bell,
-  Tag, Megaphone, UsersRound, CalendarRange, PlusCircle, FolderTree, DollarSign,
-  Lock, Search, Share2, Globe, MessageSquare, Phone, FileText, Radio, BarChart3,
-  UserPlus, LayoutGrid, PieChart,
+  LayoutDashboard, MapPin, Inbox, LogOut, ExternalLink, CalendarDays,
+  Star, BookOpen, Settings, Image, Bell,
+  CalendarRange, PlusCircle, FolderTree, DollarSign,
+  Lock, Share2, FileText, MessageSquare, BarChart3,
+  LayoutGrid,
 } from "lucide-react";
 import { signOut } from "@/app/actions/auth";
 import { business } from "@/lib/constants";
@@ -21,8 +21,6 @@ const navGroups: NavGroup[] = [
     titleKey: "adminGroupMain",
     items: [
       { href: "/admin", labelKey: "adminNavOverview", icon: LayoutDashboard },
-      { href: "/admin/analytics", labelKey: "adminNavAnalytics", icon: LineChart },
-      { href: "/admin/activity", labelKey: "adminNavActivity", icon: Activity },
       { href: "/admin/notifications", labelKey: "adminNavNotifications", icon: Bell },
     ],
   },
@@ -32,9 +30,6 @@ const navGroups: NavGroup[] = [
       { href: "/admin/bookings", labelKey: "adminNavBookings", icon: Inbox },
       { href: "/admin/bookings/calendar", labelKey: "adminNavCalendar", icon: CalendarRange },
       { href: "/admin/bookings/new", labelKey: "adminNavNewBooking", icon: PlusCircle },
-      { href: "/admin/customers", labelKey: "adminNavCustomers", icon: Users },
-      { href: "/admin/customers/segments", labelKey: "adminNavSegments", icon: UsersRound },
-      { href: "/admin/promotions", labelKey: "adminNavPromotions", icon: Megaphone },
     ],
   },
   {
@@ -65,8 +60,6 @@ const navGroups: NavGroup[] = [
       { href: "/admin/settings", labelKey: "adminNavGeneral", icon: Settings },
       { href: "/admin/settings/booking", labelKey: "adminNavBookingSettings", icon: CalendarDays },
       { href: "/admin/settings/security", labelKey: "adminNavSecurity", icon: Lock },
-      { href: "/admin/settings/seo", labelKey: "adminNavSeo", icon: Search },
-      { href: "/admin/team", labelKey: "adminNavTeam", icon: UserPlus },
     ],
   },
 ];
