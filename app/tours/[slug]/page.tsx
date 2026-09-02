@@ -91,14 +91,19 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
   const bookingMessage = `Hi ${business.guideName}, I'd like to book the ${tour.title} tour.`;
 
   // Build gallery — seed + variants using same seed family so placeholders stay coherent.
-  // The Jozani Forest & Red Colobus Monkeys tour uses 6 dedicated photos, and the
-  // Spice Farm Tour uses 6 dedicated spice photos; all other tours use the original
-  // 4-photo seed-variant logic.
+  // Jozani, Spice Farm, Sunset Dhow, Prison Island and Safari Blue use dedicated real-photo galleries;
+  // all other tours use the original 4-photo seed-variant logic.
   const dedicated = tour.slug === "jozani-forest-tour"
     ? ["zanzibar_jozani_01", "zanzibar_jozani_02", "zanzibar_jozani_03", "zanzibar_jozani_04", "zanzibar_jozani_05", "zanzibar_jozani_06"]
     : tour.slug === "spice-farm-tour"
       ? ["zanzibar_spice_01", "zanzibar_spice_02", "zanzibar_spice_03", "zanzibar_spice_04", "zanzibar_spice_05", "zanzibar_spice_06"]
-      : null;
+      : tour.slug === "sunset-dhow-cruise"
+        ? ["dhow_cruise_01", "dhow_cruise_02", "dhow_cruise_03", "dhow_cruise_04", "dhow_cruise_05", "dhow_cruise_06"]
+        : tour.slug === "prison-island-tour"
+          ? ["prison_island_01", "prison_island_02", "prison_island_03", "prison_island_04", "prison_island_05", "prison_island_06"]
+          : tour.slug === "safari-blue"
+            ? ["safari_blue_01", "safari_blue_02", "safari_blue_03", "safari_blue_04", "safari_blue_05", "safari_blue_06"]
+            : null;
   const gallery = dedicated
     ? dedicated.map((seed, i) => ({
         src: placeholderPhoto(seed, i === 0 ? 1600 : 800, i === 0 ? 1000 : 600),
