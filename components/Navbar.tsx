@@ -146,8 +146,8 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="fixed inset-y-0 left-0 z-50 w-[82%] max-w-sm flex flex-col bg-stone-50 shadow-floating md:hidden animate-slide-in-left"
-            style={{ animation: "slideInLeft 0.25s ease-out" }}
+            className="fixed inset-y-0 right-0 z-50 w-[82%] max-w-sm flex flex-col bg-stone-50 shadow-floating md:hidden animate-slide-in-right"
+            style={{ animation: "slideInRight 0.25s ease-out" }}
           >
           <div className="container-page flex h-[72px] items-center justify-between border-b border-stone-200" style={{ paddingTop: "env(safe-area-inset-top)" }}>
             <span onClick={() => setOpen(false)} className="inline-flex">

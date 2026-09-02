@@ -14,8 +14,6 @@ const SAFARI_HERO_SEEDS = [
   "safari_blue_07",
   "safari_blue_08",
   "safari_blue_09",
-  "safari_blue_10",
-  "safari_blue_11",
 ];
 
 export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }) {
