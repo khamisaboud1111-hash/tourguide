@@ -80,8 +80,8 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — safari blue carousel (11 images, 3s each) unless admin overrides via website_settings */}
-      <section className="relative h-[92vh] min-h-[580px] w-full overflow-hidden -mt-[72px] pt-[72px]">
+      {/* Hero — safari blue carousel, responsive: clean on desktop wide, not too wide/dirty on phone */}
+      <section className="relative h-[70vh] md:h-[92vh] min-h-[500px] md:min-h-[580px] w-full overflow-hidden -mt-[72px] pt-[72px]">
         {/* React Bits PillNav — floating section-jump bar */}
         <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
           <HomePillNav />
@@ -239,7 +239,7 @@ export default async function HomePage() {
                 <Image src={placeholderPhoto(d.seed, 600, 800)} alt={d.name} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-700 ease-entrance" />
                 <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/85 via-indigo-900/10 to-transparent" />
                 <div className="absolute bottom-0 p-5">
-                  <h3 className="font-display text-white text-xl font-semibold">{d.name}</h3>
+                  <p className="font-display text-white text-sm leading-snug">{d.blurb}</p>
                 </div>
               </Link>
             ))}

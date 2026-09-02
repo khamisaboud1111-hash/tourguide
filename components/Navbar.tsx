@@ -138,14 +138,17 @@ export default function Navbar() {
 
       {/* Mobile full-screen menu */}
       {open && (
-        <div
-          id="mobile-menu"
-          ref={menuRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Navigation menu"
-          className="fixed inset-0 z-50 flex flex-col bg-stone-50 md:hidden animate-fade-in"
-        >
+        <>
+          <div className="fixed inset-0 z-40 bg-black/30 md:hidden" onClick={() => setOpen(false)} aria-hidden="true" />
+          <div
+            id="mobile-menu"
+            ref={menuRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
+            className="fixed inset-y-0 left-0 z-50 w-[82%] max-w-sm flex flex-col bg-stone-50 shadow-floating md:hidden animate-slide-in-left"
+            style={{ animation: "slideInLeft 0.25s ease-out" }}
+          >
           <div className="container-page flex h-[72px] items-center justify-between border-b border-stone-200" style={{ paddingTop: "env(safe-area-inset-top)" }}>
             <span onClick={() => setOpen(false)} className="inline-flex">
               <Logo variant="dark" size="sm" href="/" />
