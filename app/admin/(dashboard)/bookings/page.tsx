@@ -86,6 +86,7 @@ export default async function AdminBookingsPage() {
               <p><span className="text-stone-500">{tServer("date", lang)}:</span> {b.requested_date ?? "—"} · <span className="text-stone-500">{tServer("travelers", lang)}:</span> {b.party_size ?? "—"}</p>
               {(b.pickup_location || b.pickup_notes) && <p><span className="text-stone-500">{tServer("adminPickup", lang)}:</span> {b.pickup_location ?? ""} {b.pickup_notes ?? ""}</p>}
               {b.country && <p><span className="text-stone-500">{tServer("adminCountry", lang)}:</span> {b.country}</p>}
+              {b.whatsapp && <p><span className="text-stone-500">WhatsApp:</span> {b.whatsapp}</p>}
               {b.message && <p><span className="text-stone-500">{tServer("adminMessage", lang)}:</span> {b.message}</p>}
             </div>
 

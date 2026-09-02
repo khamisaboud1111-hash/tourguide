@@ -857,6 +857,7 @@ export const dictionary: Record<Lang, Dict> = {
     level: "Ngazi",
     copyIntoMaps: "— nakili kwenye ramani. Alama inayojulikana imejumuishwa kwenye uthibitisho.",
     noReviewsYet: "Hakuna hakiki zilizochapishwa bado — baada ya ziara yako tutapenda kusikia ilivyokuwa.",
+    reviews: "maoni",
     onTheDay: "siku hiyo",
     or: "au",
     askAboutTour: "Uliza kuhusu tukio hili",

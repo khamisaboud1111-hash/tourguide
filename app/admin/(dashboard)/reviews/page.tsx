@@ -20,10 +20,10 @@ export default async function AdminReviewsPage() {
       <h1 className="font-display text-2xl font-semibold mb-6">{tServer("adminReviews", lang)}</h1>
       {(reviews ?? []).length === 0 && <p className="text-sm text-stone-500">{tServer("adminNoReviewsYet", lang)}</p>}
       <div className="space-y-3">
-        {(reviews ?? []).map((r) => (
+          {(reviews ?? []).map((r) => (
           <div key={r.id} className="rounded-2xl border border-stone-200 bg-white p-4 flex flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-sm font-medium">{r.customer_name} {r.country ? `· ${r.country}` : ""} <span className="text-saffron-500">{"★".repeat(r.rating)}</span></p>
+              <p className="text-sm font-medium">{r.customer_name} {r.email ? `· ${r.email}` : ""} {r.country ? `· ${r.country}` : ""} <span className="text-saffron-500">{"★".repeat(r.rating)}</span></p>
               <p className="text-sm text-stone-600 mt-1">{r.review}</p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
