@@ -97,11 +97,7 @@ export default function TourCard({ tour, featured = false, highlight }: { tour: 
           </span>
         </div>
 
-        <div className="mt-4 flex items-center justify-between gap-3 pt-4 border-t border-stone-100">
-          <p className="font-display font-semibold text-lagoon-800">
-            {t("fromPrice")} ${tour.priceUsd}
-            <span className="font-body font-normal text-stone-500 text-xs"> {t("perPerson")}</span>
-          </p>
+        <div className="mt-4 flex items-center justify-end gap-3 pt-4 border-t border-stone-100">
           <span className="inline-flex items-center gap-1 text-sm font-medium text-clove-700 group-hover:gap-1.5 transition-all">
             {t("viewTour")} <ArrowRight size={14} />
           </span>
