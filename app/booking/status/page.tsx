@@ -2,15 +2,17 @@ import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
+type BookingRow = { id: string; status: string; tour_title_snapshot: string; requested_date: string | null; party_size: number | null };
+
 export default async function BookingStatusPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const { ref } = await searchParams;
   const clean = ref?.replace(/^ZKT-/, "").toUpperCase() ?? "";
-  let booking: { id: string; status: string; tour_title_snapshot: string; requested_date: string | null; party_size: number | null } | null = null;
+  let booking: BookingRow | null = null;
   let error: string | null = null;
 
   if (clean) {
     const supabase = await createClient();
-    const { data, error: qErr } = await supabase.from("bookings").select("id, status, tour_title_snapshot, requested_date, party_size").ilike("id", `${clean.toLowerCase()}%`).maybeSingle() as unknown as { data: typeof booking | null; error: { message: string } | null };
+    const { data, error: qErr } = await supabase.from("bookings").select("id, status, tour_title_snapshot, requested_date, party_size").ilike("id", `${clean.toLowerCase()}%`).maybeSingle() as unknown as { data: BookingRow | null; error: { message: string } | null };
     if (qErr) error = qErr.message;
     else booking = data;
   }

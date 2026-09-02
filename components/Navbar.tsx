@@ -19,12 +19,12 @@ export default function Navbar() {
   const closeBtnRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
+  // Premium nav — order: Experiences, Explore Zanzibar, Travel Journal, About Us, Gallery, Contact | CTA: Book Your Experience
   const links = [
     { href: "/tours", label: t("experiences") },
-    { href: "/book", label: "Book Online" },
-    { href: "/map", label: "Map" },
-    { href: "/journal", label: t("journal") },
-    { href: "/about", label: t("about") },
+    { href: "/map", label: "Explore Zanzibar" },
+    { href: "/journal", label: "Travel Journal" },
+    { href: "/about", label: "About Us" },
     { href: "/gallery", label: t("gallery") },
     { href: "/contact", label: t("contact") },
   ];
@@ -111,15 +111,12 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-3">
             <ThemeToggle />
             <LanguageSwitcher variant={isHome && !scrolled ? "light" : "dark"} />
-            <a
-              href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${isHome && !scrolled ? "bg-stone-50 text-stone-900 hover:bg-white shadow-card" : "bg-clove-600 text-stone-50 hover:bg-clove-700 shadow-soft"}`}
+            <Link
+              href="/book"
+              className="inline-flex items-center gap-2 rounded-full bg-clove-600 text-white px-6 py-2.5 text-sm font-semibold tracking-wide shadow-floating hover:bg-clove-700 hover:shadow-card-hover hover:-translate-y-px active:translate-y-0 transition-all duration-200"
             >
-              <MessageCircle size={16} />
-              {t("planTrip")}
-            </a>
+              Book Your Experience <ArrowRight size={16} />
+            </Link>
           </div>
 
           <div className="md:hidden flex items-center gap-2">
@@ -184,22 +181,22 @@ export default function Navbar() {
             </div>
 
             <div className="mt-8 grid gap-3">
+              <Link
+                href="/book"
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-4 text-[0.9375rem] font-semibold tracking-wide shadow-floating hover:bg-clove-700 transition-colors"
+              >
+                Book Your Experience <ArrowRight size={18} />
+              </Link>
               <a
                 href={waLink(`Hi ${business.guideName}, I'd like to ask about a tour.`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-stone-50 px-6 py-4 text-[0.9375rem] font-medium hover:bg-clove-700 transition-colors shadow-soft"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-4 text-[0.9375rem] font-medium text-stone-800 hover:border-clove-300 hover:text-clove-700 transition-colors"
               >
                 <MessageCircle size={18} /> Chat on WhatsApp
               </a>
-              <Link
-                href="/tours"
-                onClick={() => setOpen(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-4 text-[0.9375rem] font-medium text-stone-800 hover:border-clove-300 hover:text-clove-700 transition-colors"
-              >
-                Explore experiences <ArrowRight size={16} />
-              </Link>
             </div>
 
             <div className="mt-auto pt-8 text-sm text-stone-500 space-y-1">
