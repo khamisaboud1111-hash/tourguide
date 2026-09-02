@@ -1,20 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react";
 import { useLang } from "@/lib/i18n/context";
+import { createClient } from "@/lib/supabase/client";
 
-const mockBookings = [
-  { day: 5, customer: "John M.", tour: "Kilimanjaro Trek", time: "09:00", status: "confirmed" },
-  { day: 8, customer: "Sarah K.", tour: "Safari Classic", time: "07:30", status: "pending" },
-  { day: 12, customer: "David L.", tour: "Zanzibar Escape", time: "10:00", status: "confirmed" },
-  { day: 15, customer: "Grace M.", tour: "Ngorongoro Day Trip", time: "08:00", status: "confirmed" },
-  { day: 20, customer: "Peter A.", tour: "Serengeti Migration", time: "09:30", status: "confirmed" },
-];
+type BookingDay = { day: number; customer: string; tour: string; time: string; status: string };
 
 export default function AdminBookingCalendarPage() {
   const { t } = useLang();
-  const [month, setMonth] = useState("August 2026");
+  const [baseDate, setBaseDate] = useState(() => new Date());
+  const [bookings, setBookings] = useState<BookingDay[]>([]);
+  const month = baseDate.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
   const weekdays = [
     t("adminWeekdayMon"),
     t("adminWeekdayTue"),
@@ -25,16 +22,39 @@ export default function AdminBookingCalendarPage() {
     t("adminWeekdaySun"),
   ];
 
+  useEffect(() => {
+    const supabase = createClient();
+    const start = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1).toISOString().slice(0, 10);
+    const end = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).toISOString().slice(0, 10);
+    supabase.from("bookings").select("requested_date, customer_name, tour_title_snapshot, status, created_at").gte("requested_date", start).lte("requested_date", end).then(({ data }) => {
+      const mapped: BookingDay[] = (data ?? [])
+        .filter((b) => b.requested_date)
+        .map((b) => {
+          const d = new Date(b.requested_date as string);
+          return {
+            day: d.getDate(),
+            customer: (b.customer_name as string) || "Guest",
+            tour: (b.tour_title_snapshot as string) || "Tour",
+            time: new Date(b.created_at as string).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" }),
+            status: (b.status as string) || "pending",
+          };
+        });
+      setBookings(mapped);
+    });
+  }, [baseDate]);
+
+  const daysInMonth = new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 0).getDate();
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-2xl font-semibold">{t("adminBookingCalendarTitle")}</h1>
         <div className="flex items-center gap-2">
-          <button className="p-2 rounded-lg border border-stone-200 hover:bg-stone-50" aria-label={t("adminCalendarPrevMonth")}>
+          <button onClick={() => setBaseDate(new Date(baseDate.getFullYear(), baseDate.getMonth() - 1, 1))} className="p-2 rounded-lg border border-stone-200 hover:bg-stone-50" aria-label={t("adminCalendarPrevMonth")}>
             <ChevronLeft size={18} />
           </button>
           <span className="font-medium text-stone-700 min-w-[140px] text-center">{month}</span>
-          <button className="p-2 rounded-lg border border-stone-200 hover:bg-stone-50" aria-label={t("adminCalendarNextMonth")}>
+          <button onClick={() => setBaseDate(new Date(baseDate.getFullYear(), baseDate.getMonth() + 1, 1))} className="p-2 rounded-lg border border-stone-200 hover:bg-stone-50" aria-label={t("adminCalendarNextMonth")}>
             <ChevronRight size={18} />
           </button>
         </div>
@@ -47,11 +67,11 @@ export default function AdminBookingCalendarPage() {
         ))}
       </div>
 
-      {/* Calendar grid */}
+      {/* Calendar grid — real bookings from Supabase, empty until admin has bookings */}
       <div className="grid grid-cols-7 gap-2">
-        {[...Array(31)].map((_, i) => {
+        {[...Array(daysInMonth)].map((_, i) => {
           const day = i + 1;
-          const dayBookings = mockBookings.filter((b) => b.day === day);
+          const dayBookings = bookings.filter((b) => b.day === day);
           return (
             <div
               key={day}
