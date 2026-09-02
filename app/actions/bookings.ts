@@ -179,14 +179,46 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
 
 // ── Admin actions — all guarded ─────────────────────────────────────
 
-const VALID_STATUSES = ["pending","contacted","confirmed","ready","completed","cancelled","rescheduled"] as const;
+const VALID_STATUSES = ["pending","contacted","confirmed","accepted","ready","completed","cancelled","rescheduled"] as const;
 type BookingStatus = (typeof VALID_STATUSES)[number];
 
 export async function updateBookingStatus(id: string, status: string) {
   await authorizeStaff("update booking status");
   if (!VALID_STATUSES.includes(status as BookingStatus)) throw new Error("Invalid status");
   const supabase = await createClient();
+  // Fetch booking to notify visitor
+  const { data: booking } = await supabase.from("bookings").select("customer_name, customer_contact, whatsapp, tour_title_snapshot").eq("id", id).maybeSingle();
   const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
   if (error) throw new Error(`Couldn't update booking: ${error.message}`);
+  // Notify visitor via email (if provided) and WhatsApp (if provided) when accepted/confirmed/cancelled
+  if (booking && (status === "confirmed" || status === "accepted" || status === "cancelled")) {
+    const isAccepted = status === "confirmed" || status === "accepted";
+    const subject = isAccepted ? `Your booking was accepted — ${booking.tour_title_snapshot}` : `Update on your booking — ${booking.tour_title_snapshot}`;
+    const text = isAccepted
+      ? `Hi ${booking.customer_name}, your booking for ${booking.tour_title_snapshot} was accepted! We'll send meeting point details on WhatsApp/email shortly. Reference: ZKT-${id.slice(0,8).toUpperCase()}`
+      : `Hi ${booking.customer_name}, your booking for ${booking.tour_title_snapshot} was not accepted. Please contact us on WhatsApp ${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || ""} for alternatives. Reference: ZKT-${id.slice(0,8).toUpperCase()}`;
+    try {
+      // Email if available
+      if (booking.customer_contact && booking.customer_contact.includes("@")) {
+        const { sendBookingEmails } = await import("@/lib/email");
+        // Reuse email lib but send simple notification
+        const { Resend } = await import("resend");
+        if (process.env.RESEND_API_KEY) {
+          const resend = new Resend(process.env.RESEND_API_KEY);
+          await resend.emails.send({
+            from: process.env.RESEND_FROM_EMAIL || "bookings@resend.dev",
+            to: booking.customer_contact,
+            subject,
+            text,
+          });
+        }
+      }
+      // WhatsApp notification is via admin manually — log for now, or could integrate with WhatsApp API
+      console.log(`Booking ${id} status ${status} — notify ${booking.whatsapp || booking.customer_contact}: ${text}`);
+    } catch (e) {
+      console.error("Booking status notify failed", e);
+    }
+  }
   revalidatePath("/admin/bookings");
+  revalidatePath(`/booking/status`);
 }
