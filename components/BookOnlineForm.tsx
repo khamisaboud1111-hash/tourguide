@@ -38,7 +38,8 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
 
   const selected = tours.find((t) => t.id === tourId);
   const travelers = Math.max(1, parseInt(partySize) || 1);
-  const preview = selected ? calculateBookingPrice(selected.priceUsd, travelers) : null;
+  // price hidden until admin sets via TourForm
+  const preview: ReturnType<typeof calculateBookingPrice> | null = null;
   const ref = result?.bookingId ? `ZKT-${result.bookingId.slice(0, 8).toUpperCase()}` : "";
 
   const canStep1 = tourId && partySize && parseInt(partySize) >= 1;
@@ -88,7 +89,6 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
             <div className="flex justify-between"><span className="text-stone-600">{t("tourField")}</span><span className="font-medium">{selected.title}</span></div>
             {requestedDate && <div className="flex justify-between"><span className="text-stone-600">{t("dateField")}</span><span>{requestedDate}</span></div>}
             <div className="flex justify-between"><span className="text-stone-600">{t("travelersField")}</span><span>{partySize}</span></div>
-            {preview && <div className="flex justify-between border-t border-stone-100 mt-2 pt-2"><span className="text-stone-600">{t("total")}</span><span className="font-semibold">${preview.subtotal}</span></div>}
           </div>
         )}
 
@@ -127,7 +127,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
             <label htmlFor="tour" className="block text-sm font-medium text-stone-700 mb-1.5">{t("chooseYourExperience")}</label>
             <select id="tour" value={tourId} onChange={(e) => setTourId(e.target.value)} className={inputBase}>
               {tours.map((tour) => (
-                <option key={tour.id} value={tour.id}>{t("tourOptionLabel").replace("{title}", tour.title).replace("{price}", `$${tour.priceUsd}`).replace("{duration}", tour.duration)}</option>
+                <option key={tour.id} value={tour.id}>{tour.title} — {tour.duration}</option>
               ))}
             </select>
           </div>
@@ -150,11 +150,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
               {PICKUP_LOCATIONS.map((loc) => <option key={loc} value={loc}>{loc}</option>)}
             </select>
           </div>
-          {preview && (
-            <div className="rounded-xl bg-stone-50 border border-stone-200 p-4 text-sm">
-              <div className="flex justify-between"><span className="text-stone-600">{t("bookSubtotal").replace("{count}", String(travelers)).replace("{price}", `$${selected!.priceUsd}`)}</span><span className="font-semibold">${preview.subtotal}</span></div>
-            </div>
-          )}
+
           <button type="button" disabled={!canStep1} onClick={() => setStep(2)} className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-clove-600 text-white px-6 py-3.5 font-medium hover:bg-clove-700 disabled:opacity-50 transition-colors shadow-soft">
             {t("continue")} <ArrowRight size={16} />
           </button>

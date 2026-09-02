@@ -36,13 +36,8 @@ export function TourJsonLd({
     url: `${base}/tours/${tour.slug}`,
     touristType: ["Couples", "Families", "Solo travelers", "Small groups"],
     provider: { "@type": "TravelAgency", name: business.name },
-    offers: {
-      "@type": "Offer",
-      price: tour.priceUsd,
-      priceCurrency: "USD",
-      availability: "https://schema.org/InStock",
-      url: `${base}/tours/${tour.slug}`,
-    },
+    // offers hidden until admin sets price via TourForm — re-add when price should be public:
+    // offers: { "@type": "Offer", price: tour.priceUsd, priceCurrency: "USD", availability: "https://schema.org/InStock", url: `${base}/tours/${tour.slug}` },
   };
   return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />;
 }

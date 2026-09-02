@@ -252,7 +252,6 @@ export default async function HomePage() {
               <div className="mt-4 flex flex-wrap gap-3 text-xs text-stone-600">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1.5"><Clock size={14} /> {featured.duration}</span>
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-stone-100 border border-stone-200 px-3 py-1.5"><Users size={14} /> {featured.groupSize}</span>
-                <span className="rounded-full bg-stone-900 text-stone-50 px-3 py-1.5 font-display font-semibold">{t("from")} ${featured.priceUsd} {t("perPerson")}</span>
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link href={`/tours/${featured.slug}`} className="inline-flex items-center gap-2 rounded-full bg-clove-600 text-stone-50 px-6 py-3 text-sm font-medium hover:bg-clove-700 transition-colors shadow-soft">

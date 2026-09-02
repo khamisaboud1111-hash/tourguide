@@ -319,10 +319,6 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
         {/* Right — booking card */}
         <aside className="md:col-span-1" id="booking">
           <div className="sticky top-[88px] rounded-2xl border border-stone-200 bg-white shadow-card p-6 space-y-5">
-            <div>
-              <p className="font-display text-3xl font-semibold text-stone-900">${tour.priceUsd} <span className="text-sm font-body font-normal text-stone-500">{t("perPerson")}</span></p>
-            </div>
-
             <BookingForm tourId={tour.id} tourTitle={tour.title} priceUsd={tour.priceUsd} />
 
             <div className="relative text-center">

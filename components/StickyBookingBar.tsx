@@ -11,7 +11,6 @@ export default function StickyBookingBar({ price, title, slug }: { price: number
     <div className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-stone-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-floating" style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="flex-1">
-          <p className="font-display font-semibold text-stone-900 leading-none">{t("fromPrice")} ${price}<span className="font-body text-xs text-stone-500 font-normal"> {t("perPerson")}</span></p>
           <p className="text-xs text-stone-500 mt-1">{t("flexibleDateConfirm")}</p>
         </div>
         <a

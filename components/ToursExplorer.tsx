@@ -6,7 +6,7 @@ import type { Tour } from "@/lib/tours";
 import TourCard from "./TourCard";
 import { useLang } from "@/lib/i18n/context";
 
-type SortKey = "recommended" | "price-asc" | "price-desc" | "duration";
+type SortKey = "recommended" | "duration";
 
 function parseDurationToMinutes(s: string): number {
   const low = s.toLowerCase();
@@ -46,7 +46,6 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
   const [cat, setCat] = useState("All");
   const [dur, setDur] = useState("All durations");
   const [diff, setDiff] = useState<Tour["difficulty"] | "All">("All");
-  const [maxPrice, setMaxPrice] = useState<number | null>(null);
   const [sort, setSort] = useState<SortKey>("recommended");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -58,24 +57,20 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
       const hitDiff = diff === "All" || t.difficulty === diff;
       const durObj = durations.find((d) => d.value === dur);
       const hitDur = durObj ? durObj.test(t) : true;
-      const hitPrice = maxPrice === null || t.priceUsd <= maxPrice;
-      return hitQ && hitCat && hitDiff && hitDur && hitPrice;
+      return hitQ && hitCat && hitDiff && hitDur;
     });
 
-    if (sort === "price-asc") out = [...out].sort((a, b) => a.priceUsd - b.priceUsd);
-    else if (sort === "price-desc") out = [...out].sort((a, b) => b.priceUsd - a.priceUsd);
-    else if (sort === "duration") out = [...out].sort((a, b) => parseDurationToMinutes(a.duration) - parseDurationToMinutes(b.duration));
+    if (sort === "duration") out = [...out].sort((a, b) => parseDurationToMinutes(a.duration) - parseDurationToMinutes(b.duration));
     // recommended keeps DB order (created_at desc)
     return out;
-  }, [tours, query, cat, dur, diff, maxPrice, sort]);
+  }, [tours, query, cat, dur, diff, sort]);
 
-  const hasActiveFilter = cat !== "All" || dur !== "All durations" || diff !== "All" || maxPrice !== null || query.length > 0;
+  const hasActiveFilter = cat !== "All" || dur !== "All durations" || diff !== "All" || query.length > 0;
   const clearAll = () => {
     setQuery("");
     setCat("All");
     setDur("All durations");
     setDiff("All");
-    setMaxPrice(null);
     setSort("recommended");
   };
 
@@ -108,8 +103,6 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
               aria-label={t("sortTours")}
             >
               <option value="recommended">{t("recommended")}</option>
-              <option value="price-asc">{t("priceLowHigh")}</option>
-              <option value="price-desc">{t("priceHighLow")}</option>
               <option value="duration">{t("sortDuration")}</option>
             </select>
 
@@ -124,7 +117,7 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
         </div>
 
         {showFilters && (
-          <div className="mt-4 grid md:grid-cols-4 gap-4 border-t border-stone-100 pt-4 animate-fade-in">
+          <div className="mt-4 grid md:grid-cols-3 gap-4 border-t border-stone-100 pt-4 animate-fade-in">
             <label className="space-y-1.5">
               <span className="block text-xs font-medium text-stone-700">{t("experienceType")}</span>
               <select value={cat} onChange={(e) => setCat(e.target.value)} className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm outline-none focus:border-clove-500">
@@ -148,19 +141,6 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
                   <option key={d.label} value={d.value}>{d.label}</option>
                 ))}
               </select>
-            </label>
-            <label className="space-y-1.5">
-              <span className="block text-xs font-medium text-stone-700">{maxPrice ? t("maxPriceAny").replace(/\{price\}/, `$${maxPrice}`) : t("any")}</span>
-              <input
-                type="range"
-                min={20}
-                max={120}
-                step={5}
-                value={maxPrice ?? 120}
-                onChange={(e) => setMaxPrice(parseInt(e.target.value) >= 120 ? null : parseInt(e.target.value))}
-                className="w-full accent-clove-600"
-              />
-              <div className="flex justify-between text-[11px] text-stone-500"><span>$20</span><span>$120</span></div>
             </label>
           </div>
         )}

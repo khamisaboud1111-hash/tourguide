@@ -38,7 +38,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
   const [message, setMessage] = useState("");
 
   const travelers = Math.max(1, parseInt(partySize) || 1);
-  const preview = priceUsd ? calculateBookingPrice(priceUsd, travelers) : null;
 
   function canContinueStep2() {
     return customerName.trim().length >= 2 && customerContact.trim().length >= 3;
@@ -85,12 +84,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
             </p>
           </div>
         </div>
-
-        {preview && (
-          <div className="rounded-xl bg-white border border-lagoon-200 p-3 text-sm">
-            <div className="flex justify-between"><span className="text-stone-600">{t("bookSubtotal").replace("{count}", String(preview.travelers)).replace("{price}", `$${preview.pricePerPerson}`)}</span><span className="font-medium">${preview.subtotal}</span></div>
-          </div>
-        )}
 
         <div className="flex flex-wrap gap-2 justify-center text-xs">
           <a href={`https://wa.me/${business.whatsappNumber}?text=${encodeURIComponent(`Hi ${business.guideName}, I have a question about my booking ${ref}.`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-lagoon-700 hover:text-lagoon-800">
@@ -148,12 +141,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
               )}
             </div>
 
-            {preview && (
-              <div className="rounded-xl bg-stone-50 border border-stone-200 p-3 text-xs leading-relaxed">
-                <div className="flex justify-between"><span className="text-stone-600">{preview.travelers} × ${preview.pricePerPerson}</span><span className="font-medium">${preview.subtotal}</span></div>
-              </div>
-            )}
-
             <button type="button" onClick={() => setStep(2)} className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-stone-900 text-stone-50 px-6 py-3 font-medium hover:bg-stone-800 transition-colors">
               {t("continue")} <ArrowRight size={16} />
             </button>
@@ -197,12 +184,6 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
               <div className="flex justify-between"><span className="text-stone-500">{t("contactField")}</span><span className="truncate max-w-[160px]">{customerContact}</span></div>
               {message && <div><span className="text-stone-500">{t("notesField")}</span><p className="mt-1 text-stone-700 bg-white rounded-lg border border-stone-200 p-2">{message}</p></div>}
             </div>
-
-            {preview && (
-              <div className="rounded-xl bg-white border border-stone-200 p-3 text-sm">
-                <div className="flex justify-between"><span>{t("bookSubtotal").replace("{count}", String(preview.travelers)).replace("{price}", `$${preview.pricePerPerson}`)}</span><span className="font-display font-semibold">${preview.subtotal}</span></div>
-              </div>
-            )}
 
             {err && <p className="rounded-lg bg-clove-50 text-clove-700 text-sm px-3 py-2">{err}</p>}
 
