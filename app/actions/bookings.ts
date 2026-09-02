@@ -160,7 +160,8 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   try {
     await sendBookingEmails({
       customerName: data.customerName,
-      customerContact: data.customerContact,
+      customerContact: data.customerContact ?? "",
+      whatsapp: data.whatsapp,
       tourTitle: tour.title,
       requestedDate: data.requestedDate,
       partySize: data.partySize,

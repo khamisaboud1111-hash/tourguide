@@ -8,6 +8,7 @@ import { business } from "@/lib/constants";
 import { PICKUP_LOCATIONS } from "@/lib/validations";
 import { calculateBookingPrice } from "@/lib/pricing";
 import { useLang } from "@/lib/i18n/context";
+import CountrySelect from "@/components/CountrySelect";
 
 type Props = {
   tourId?: string;
@@ -36,6 +37,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [country, setCountry] = useState("");
   const [message, setMessage] = useState("");
 
   const travelers = Math.max(1, parseInt(partySize) || 1);
@@ -52,6 +54,7 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
     formData.set("customerName", customerName);
     formData.set("customerContact", customerContact);
     formData.set("whatsapp", whatsapp);
+    formData.set("country", country);
     formData.set("requestedDate", requestedDate);
     formData.set("partySize", String(travelers));
     formData.set("pickupLocation", pickupLocation);
@@ -162,6 +165,10 @@ export default function BookingForm({ tourId, tourTitle, priceUsd }: Props) {
             <div>
               <label htmlFor="whatsapp" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><MessageCircle size={14} className="text-clove-600" /> WhatsApp number <span className="text-clove-600">*</span></label>
               <input id="whatsapp" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+255 700 000 000" className={inputBase} />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-stone-700 mb-1.5">Country <span className="text-stone-400 font-normal">(search alphabetically)</span></label>
+              <CountrySelect value={country} onChange={setCountry} placeholder="Select your country" />
             </div>
             <div>
               <label htmlFor="message" className="block text-sm font-medium text-stone-700 mb-1.5">{t("notesOptional")}</label>

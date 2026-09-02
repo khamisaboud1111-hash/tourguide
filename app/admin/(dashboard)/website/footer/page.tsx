@@ -17,6 +17,7 @@ export default function AdminFooterCmsPage() {
   });
   const [msg, setMsg] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [saved, setSaved] = useState(false);
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -33,6 +34,8 @@ export default function AdminFooterCmsPage() {
       try {
         await saveFooterSettings(fd);
         setMsg("Saved — changes are live.");
+        setSaved(true);
+        setTimeout(() => setSaved(false), 5000);
       } catch (e: unknown) {
         setMsg(e instanceof Error ? e.message : "Save failed");
       }
@@ -43,7 +46,7 @@ export default function AdminFooterCmsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="font-display text-2xl font-semibold">{t("adminFooterTitle")}</h1>
-        <Button onClick={onSave} loading={isPending}>{t("adminSaveChanges")}</Button>
+        <Button onClick={onSave} loading={isPending} className={saved ? "!bg-emerald-600 !text-white !border-emerald-600" : ""}>{saved ? "✓ Saved" : t("adminSaveChanges")}</Button>
       </div>
       {msg && <p className={`mb-4 text-sm px-3 py-2 rounded-lg ${msg.includes("Saved") ? "bg-lagoon-50 text-lagoon-800 border border-lagoon-200" : "bg-clove-50 text-clove-700 border border-clove-200"}`}>{msg}</p>}
 

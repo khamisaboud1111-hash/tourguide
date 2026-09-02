@@ -11,6 +11,7 @@ import { rowToTour } from "@/lib/tours";
 import { placeholderPhoto } from "@/lib/placeholder";
 import HillsBackdrop from "@/components/HillsBackdrop";
 import HomePillNav from "@/components/HomePillNav";
+import HeroCarousel from "@/components/HeroCarousel";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Primitives";
 import { HeroIntro, HeroItem } from "@/components/motion/HeroIntro";
 import { getLang, tServer } from "@/lib/i18n/server";
@@ -64,10 +65,10 @@ export default async function HomePage() {
   ];
 
   const whyLocal = [
-    { k: "01", title: t("localKnowledge"), desc: t("localKnowledgeDesc") },
-    { k: "02", title: t("personalAttention"), desc: t("personalAttentionDesc") },
-    { k: "03", title: t("authenticExp"), desc: t("authenticExpDesc") },
-    { k: "04", title: t("localConnection"), desc: t("localConnectionDesc") },
+    { k: "01", title: "Local Knowledge", desc: "Go beyond the guidebook.\n\nDiscover hidden streets, local markets, farms, beaches, reefs, and cultural gems that are best experienced with someone who knows when and where to find them." },
+    { k: "02", title: "Personal Attention", desc: "Your experience, your pace.\n\nNo rushing from one stop to another. Ask questions, explore freely, take your time, and enjoy a tour shaped around you." },
+    { k: "03", title: "Authentic Experiences", desc: "Meet the real Zanzibar.\n\nTaste local flavors, discover everyday island life, hear local stories, and experience Zanzibar's culture respectfully and naturally." },
+    { k: "04", title: "Genuine Local Connection", desc: "A local connection that continues beyond the tour." },
   ];
 
   const destinations = [
@@ -79,17 +80,13 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* Hero — admin can change image via /admin/website/homepage or /admin/media (hero_image_seed may be a seed or a public URL) */}
+      {/* Hero — safari blue carousel (11 images, 3s each) unless admin overrides via website_settings */}
       <section className="relative h-[92vh] min-h-[580px] w-full overflow-hidden -mt-[72px] pt-[72px]">
         {/* React Bits PillNav — floating section-jump bar */}
         <div className="absolute top-[88px] right-4 md:right-6 z-20 hidden md:block">
           <HomePillNav />
         </div>
-        {(() => {
-          const heroSeed = hp("hero_image_seed", "hero-dhow-sunset");
-          const heroSrc = heroSeed.startsWith("http") || heroSeed.startsWith("/") ? heroSeed : placeholderPhoto(heroSeed, 1920, 1200);
-          return <Image src={heroSrc} alt="Traditional dhow sailing off Zanzibar at sunset" fill priority sizes="100vw" className="object-cover" />;
-        })()}
+        <HeroCarousel overrideSeed={hp("hero_image_seed", "hero-dhow-sunset")} />
         <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/88 via-indigo-900/30 to-indigo-900/10" />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-900/20 via-transparent to-transparent hidden md:block" />
         <div className="relative h-full container-page flex flex-col justify-end pb-10 md:pb-14">
@@ -176,11 +173,11 @@ export default async function HomePage() {
 
       <DoorMotifDivider tone="onLight" className="mt-6" />
 
-      {/* Why local */}
+      {/* Why local — updated per 2025-09-02 request */}
       <section id="why-local" className="container-page py-12 md:py-20">
         <div className="grid md:grid-cols-12 gap-8 md:gap-10 items-start">
           <div className="md:col-span-5">
-            <SectionHeading kicker={t("whyKicker")} title={t("whyTitle")} description={t("whyDesc")} />
+            <SectionHeading kicker="Why Experience Zanzibar With a Local?" title="See Zanzibar Beyond the Tourist Route" description="Discover the island through the eyes of someone who knows it personally. Zanzibar is more than the places listed in a guidebook. Its streets have stories, its markets have their own rhythm, and its beaches, farms, food, and communities change with the seasons. We don't simply take you around Zanzibar — we help you experience it." />
             <div className="mt-8 grid grid-cols-2 gap-4">
               {whyLocal.map((w) => (
                 <div key={w.k} className="rounded-2xl bg-stone-100 border border-stone-200 p-4">

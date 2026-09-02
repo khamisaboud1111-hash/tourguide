@@ -349,6 +349,7 @@ export default function WaterRippleImage({
 
     input.addEventListener("change", onChange);
     return () => input.removeEventListener("change", onChange);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { Star } from "lucide-react";
 import { submitReview } from "@/app/actions/reviews";
 import { useLang } from "@/lib/i18n/context";
+import CountrySelect from "@/components/CountrySelect";
 
 type Props = {
   tourId?: string;
@@ -14,13 +15,17 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
   const { t } = useLang();
   const [rating, setRating] = useState(5);
   const [hover, setHover] = useState(0);
+  const [country, setCountry] = useState("");
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [burst, setBurst] = useState(false);
+  const [burstKey, setBurstKey] = useState(0);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     fd.set("rating", String(rating));
+    fd.set("country", country);
     if (tourId) fd.set("tourId", tourId);
     setMsg(null);
     startTransition(async () => {
@@ -29,6 +34,7 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
         setMsg({ ok: true, text: t("reviewThankYou") });
         (e.target as HTMLFormElement).reset();
         setRating(5);
+        setCountry("");
       } else {
         setMsg({ ok: false, text: res.error });
       }
@@ -40,7 +46,7 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
       <h3 className="font-display text-lg font-semibold">{t("leaveReview")} {tourTitle ? `for ${tourTitle}` : ""}</h3>
       <p className="text-sm text-stone-600">{t("reviewProfileHint").split(".")[0]}.</p>
 
-      <div>
+      <div className="relative">
         <label className="block text-sm font-medium text-stone-700 mb-1.5">{t("yourRating")} *</label>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
@@ -49,14 +55,43 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
               type="button"
               onMouseEnter={() => setHover(n)}
               onMouseLeave={() => setHover(0)}
-              onClick={() => setRating(n)}
+              onClick={() => {
+                setRating(n);
+                setBurst(true);
+                setBurstKey((k) => k + 1);
+                setTimeout(() => setBurst(false), 800);
+              }}
               aria-label={`Rate ${n} stars`}
-              className="p-1"
+              className="p-1 relative"
             >
               <Star size={28} className={`${(hover || rating) >= n ? "fill-saffron-500 text-saffron-500" : "text-stone-300"} transition-colors`} />
             </button>
           ))}
         </div>
+        {burst && (
+          <div key={burstKey} className="pointer-events-none absolute left-0 top-8 flex gap-1 animate-burst">
+            <span className="animate-float1 text-lg">❤️</span>
+            <span className="animate-float2 text-sm">⭐</span>
+            <span className="animate-float3 text-base">💖</span>
+            <span className="animate-float1 text-sm">✨</span>
+            <span className="animate-float2 text-lg">🌟</span>
+            <span className="animate-float3 text-sm">💕</span>
+            <span className="animate-float1 text-base">⭐</span>
+          </div>
+        )}
+        <style jsx>{`
+          @keyframes burstUp {
+            0% { transform: translateY(0) scale(0.5); opacity: 1; }
+            100% { transform: translateY(-32px) scale(1.2); opacity: 0; }
+          }
+          .animate-burst { animation: burstUp 0.8s ease-out forwards; }
+          @keyframes float1 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-28px) rotate(15deg); } }
+          @keyframes float2 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-36px) rotate(-10deg); } }
+          @keyframes float3 { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-24px) rotate(8deg); } }
+          .animate-float1 { animation: float1 0.8s ease-out forwards; }
+          .animate-float2 { animation: float2 0.9s ease-out forwards; }
+          .animate-float3 { animation: float3 0.7s ease-out forwards; }
+        `}</style>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
@@ -71,7 +106,7 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
       </div>
       <label className="space-y-1.5">
         <span className="block text-xs font-medium text-stone-700">{t("whereFrom")}</span>
-        <input name="country" placeholder="e.g. Germany, Kenya, UK" className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500" />
+        <CountrySelect value={country} onChange={setCountry} placeholder="Select your country" />
       </label>
       <label className="space-y-1.5">
         <span className="block text-xs font-medium text-stone-700">{t("yourReview")} *</span>

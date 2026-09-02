@@ -168,7 +168,6 @@ export default function GalleryClient() {
   const { t } = useLang();
   const [open, setOpen] = useState<number | null>(null);
   const [dynamic, setDynamic] = useState<Photo[]>([]);
-  const [visible, setVisible] = useState(30);
 
   // Load admin-uploaded media (Supabase storage) — appears in gallery after upload
   useEffect(() => {
@@ -187,7 +186,6 @@ export default function GalleryClient() {
   }, []);
 
   const allPhotos = [...photos, ...dynamic];
-  const shown = allPhotos.slice(0, visible);
 
   const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % allPhotos.length));
   const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + allPhotos.length) % allPhotos.length));
@@ -195,8 +193,8 @@ export default function GalleryClient() {
 
   return (
     <>
-      <div className="columns-2 md:columns-3 gap-4 space-y-4">
-        {shown.map((p, idx) => (
+      <div className="columns-2 md:columns-3 gap-4 space-y-4 max-h-[85vh] overflow-y-auto pr-1 overscroll-contain">
+        {allPhotos.map((p, idx) => (
           <button
             key={`${p.seed}-${idx}`}
             onClick={() => setOpen(idx)}
@@ -214,14 +212,6 @@ export default function GalleryClient() {
           </button>
         ))}
       </div>
-      {visible < allPhotos.length && (
-        <div className="text-center mt-8">
-          <button onClick={() => setVisible((v) => Math.min(v + 30, allPhotos.length))} className="inline-flex items-center gap-2 rounded-full border border-stone-300 bg-white px-6 py-3 text-sm font-medium hover:border-clove-300 hover:text-clove-700 transition-colors">
-            {t("galleryLoadMore")} — {t("galleryRemaining").replace("{n}", String(allPhotos.length - visible))}
-          </button>
-          <p className="text-xs text-stone-500 mt-2">{t("galleryShowing").replace("{shown}", String(shown.length)).replace("{total}", String(allPhotos.length))}</p>
-        </div>
-      )}
 
       <AnimatePresence>
       {open !== null && current && (
