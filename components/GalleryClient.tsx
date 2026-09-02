@@ -86,6 +86,22 @@ const photos: Photo[] = [
   { seed: "zanzibar_jozani_05", tall: true, cat: "Jozani Forest & Red Colobus Monkeys", alt: "Red colobus monkey — close up" },
   { seed: "zanzibar_jozani_06", cat: "Jozani Forest & Red Colobus Monkeys", alt: "Red colobus monkey baby" },
 
+  // Spice Farm Tour — Culture & Nature (14 real photos) — from C:\Users\hp\OneDrive\Desktop\spices
+  { seed: "zanzibar_spice_01", tall: true, cat: "Food", alt: "Spice farm — fresh clove and vanilla tasting, Zanzibar" },
+  { seed: "zanzibar_spice_02", cat: "Food", alt: "Spice farm — cinnamon bark harvest" },
+  { seed: "zanzibar_spice_03", cat: "Food", alt: "Spice farm — guide showing nutmeg fruit" },
+  { seed: "zanzibar_spice_04", tall: true, cat: "Food", alt: "Spice farm — cardamom and pepper vines" },
+  { seed: "zanzibar_spice_05", cat: "Food", alt: "Spice farm — turmeric roots freshly dug" },
+  { seed: "zanzibar_spice_06", cat: "Food", alt: "Spice farm — lemongrass and vanilla vines" },
+  { seed: "zanzibar_spice_07", tall: true, cat: "Food", alt: "Spice farm — tasting tropical fruit under the canopy" },
+  { seed: "zanzibar_spice_08", cat: "Food", alt: "Spice farm — dried cloves in woven basket" },
+  { seed: "zanzibar_spice_09", cat: "Food", alt: "Spice farm — guide explaining medicinal plants" },
+  { seed: "zanzibar_spice_10", tall: true, cat: "Food", alt: "Spice farm — spice market display, Zanzibar" },
+  { seed: "zanzibar_spice_11", cat: "Food", alt: "Spice farm — harvesting black pepper" },
+  { seed: "zanzibar_spice_12", cat: "Food", alt: "Spice farm — ginger and galangal roots" },
+  { seed: "zanzibar_spice_13", tall: true, cat: "Food", alt: "Spice farm — visitors smelling fresh spices" },
+  { seed: "zanzibar_spice_14", cat: "Food", alt: "Spice farm — spice drying in the sun, Zanzibar" },
+
   // Sunset Dhow Cruise — Ocean & Sailing (20 real photos) — replaces previous AI dhow seeds
   { seed: "dhow_cruise_01", tall: true, cat: "Ocean", alt: "Sunset dhow cruise — wooden dhow at golden hour, Stone Town coast" },
   { seed: "dhow_cruise_02", cat: "Ocean", alt: "Sunset dhow cruise — sailing into the sunset, Zanzibar" },

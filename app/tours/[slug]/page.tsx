@@ -251,7 +251,7 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
               <h3 className="font-display text-base font-semibold mb-2 flex items-center gap-2"><MapPin size={16} className="text-clove-600" /> {t("meetingPoint")}</h3>
               <p className="text-sm text-stone-700">{tour.meetingPoint}</p>
               <p className="text-xs text-stone-500 mt-1">{tour.coords.lat.toFixed(4)}, {tour.coords.lng.toFixed(4)} {t("copyIntoMaps")}</p>
-              <div className="mt-3 h-48 rounded-xl overflow-hidden border border-stone-200">
+              <div className="mt-3 h-72 md:h-80 lg:h-96 rounded-xl overflow-hidden border border-stone-200">
                 <TourMapLoader lat={tour.coords.lat} lng={tour.coords.lng} label={tour.meetingPoint} />
               </div>
             </div>
