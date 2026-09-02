@@ -90,74 +90,135 @@
   }
 }
 
-/* ── Dark theme — `.theme-dark` on <html> remaps surfaces/ink/borders
-   so the whole site goes dark to minimize light, but text stays light and readable.
-   Simple, whole-site dimming without washing out words. ── */
+/* ── Dark theme — whole-site dark: every page, feature, icon goes dark
+   `.theme-dark` on <html> — minimizes light, text/icons stay light for readability. ── */
+html.theme-dark { color-scheme: dark; }
 html.theme-dark body {
-  background-color: #12100e;
+  background-color: #0e0d0c;
   color: #f0e8d5;
 }
+/* Every light surface → dark */
 html.theme-dark .bg-stone-50,
-html.theme-dark .bg-stone-50\/10 { background-color: #12100e; }
+html.theme-dark .bg-stone-50\/10,
 html.theme-dark .bg-stone-100,
+html.theme-dark .bg-stone-200,
+html.theme-dark .bg-white,
 html.theme-dark .bg-white\/95,
 html.theme-dark .bg-white\/90,
-html.theme-dark .bg-white\/70 { background-color: #1a1814; }
-html.theme-dark .bg-stone-200 { background-color: #252119; }
-html.theme-dark .bg-stone-300 { background-color: #2e2a22; }
-html.theme-dark .bg-white,
-html.theme-dark .bg-white\/50 { background-color: #1c1915; }
+html.theme-dark .bg-white\/70,
+html.theme-dark .bg-white\/50,
+html.theme-dark .bg-gray-50,
+html.theme-dark .bg-gray-100,
+html.theme-dark .bg-neutral-50,
+html.theme-dark .bg-neutral-100,
+html.theme-dark .bg-slate-50,
+html.theme-dark .bg-slate-100,
+html.theme-dark .bg-zinc-50,
+html.theme-dark .bg-zinc-100 { background-color: #151410 !important; }
+html.theme-dark .bg-stone-300,
+html.theme-dark .bg-gray-200,
+html.theme-dark .bg-neutral-200,
+html.theme-dark .bg-slate-200 { background-color: #252119 !important; }
+html.theme-dark .bg-white { background-color: #1c1915 !important; }
 html.theme-dark .bg-stone-800,
 html.theme-dark .bg-stone-900,
+html.theme-dark .bg-gray-800,
+html.theme-dark .bg-gray-900,
+html.theme-dark .bg-neutral-800,
+html.theme-dark .bg-slate-800,
+html.theme-dark .bg-zinc-800,
 html.theme-dark .bg-indigo-800,
-html.theme-dark .bg-indigo-900\/88 { background-color: #1a1f1e; }
-html.theme-dark .bg-black\/50 { background-color: rgba(0, 0, 0, 0.7); }
-html.theme-dark .bg-lagoon-50 { background-color: #151e1c; }
-html.theme-dark .bg-lagoon-100 { background-color: #1c2a26; }
-html.theme-dark .bg-clove-50 { background-color: #1f1612; }
+html.theme-dark .bg-indigo-900,
+html.theme-dark .bg-indigo-900\/88,
+html.theme-dark .bg-black\/50 { background-color: #0f0e0c !important; }
+html.theme-dark .bg-lagoon-50,
+html.theme-dark .bg-lagoon-100,
+html.theme-dark .bg-clove-50,
+html.theme-dark .bg-saffron-50,
+html.theme-dark .bg-emerald-50 { background-color: #1a1f1e !important; }
+html.theme-dark .bg-clove-600,
+html.theme-dark .bg-lagoon-600,
+html.theme-dark .bg-lagoon-700,
+html.theme-dark .bg-indigo-600 { background-color: #2a1f1c !important; }
+html.theme-dark .bg-saffron-100,
+html.theme-dark .bg-saffron-200,
+html.theme-dark .bg-emerald-100 { background-color: #1e1c18 !important; }
 
-/* Text — keep light for readability, never darken words */
+/* Every text/icon → light, never darkened */
 html.theme-dark .text-stone-900,
 html.theme-dark .text-stone-800,
-html.theme-dark .text-stone-700 { color: #f0e8d5; }
-html.theme-dark .text-stone-600 { color: #d6cfb8; }
-html.theme-dark .text-stone-500 { color: #b8b0a0; }
-html.theme-dark .text-stone-400 { color: #9a958a; }
-html.theme-dark .text-stone-300 { color: #8a867e; }
-html.theme-dark .text-stone-200 { color: #6e6b62; }
-html.theme-dark .text-stone-100 { color: #ede6d4; }
-html.theme-dark .text-stone-50 { color: #f5efe0; }
-html.theme-dark .text-white { color: #f5efe0; }
-html.theme-dark .text-black { color: #f0e8d5; }
-/* Brand tints stay visible on dark */
+html.theme-dark .text-stone-700,
+html.theme-dark .text-gray-900,
+html.theme-dark .text-gray-800,
+html.theme-dark .text-neutral-900,
+html.theme-dark .text-slate-900,
+html.theme-dark .text-zinc-900,
+html.theme-dark .text-black { color: #f0e8d5 !important; }
+html.theme-dark .text-stone-600,
+html.theme-dark .text-gray-600,
+html.theme-dark .text-neutral-600,
+html.theme-dark .text-slate-600 { color: #d6cfb8 !important; }
+html.theme-dark .text-stone-500,
+html.theme-dark .text-gray-500 { color: #b8b0a0 !important; }
+html.theme-dark .text-stone-400,
+html.theme-dark .text-gray-400 { color: #9a958a !important; }
+html.theme-dark .text-stone-300,
+html.theme-dark .text-stone-200,
+html.theme-dark .text-stone-100,
+html.theme-dark .text-stone-50,
+html.theme-dark .text-white,
+html.theme-dark .text-gray-100,
+html.theme-dark .text-slate-100 { color: #ede6d4 !important; }
+/* Brand tints & icons stay visible on dark */
 html.theme-dark .text-clove-600,
-html.theme-dark .text-clove-700 { color: #e8a99a; }
+html.theme-dark .text-clove-700,
+html.theme-dark .text-clove-500 { color: #e8a99a !important; }
+html.theme-dark .text-lagoon-600,
 html.theme-dark .text-lagoon-700,
-html.theme-dark .text-lagoon-800 { color: #8ec9b8; }
+html.theme-dark .text-lagoon-800 { color: #8ec9b8 !important; }
+html.theme-dark .text-indigo-600,
+html.theme-dark .text-indigo-700,
 html.theme-dark .text-indigo-800,
-html.theme-dark .text-indigo-900 { color: #a8c1d9; }
-html.theme-dark .text-saffron-300 { color: #f0d68c; }
+html.theme-dark .text-indigo-900 { color: #a8c1d9 !important; }
+html.theme-dark .text-saffron-500,
+html.theme-dark .text-saffron-300,
+html.theme-dark .text-amber-500 { color: #f0d68c !important; }
+html.theme-dark .text-emerald-600,
+html.theme-dark .text-emerald-700 { color: #8ec9b8 !important; }
+html.theme-dark .text-red-500,
+html.theme-dark .text-red-600 { color: #e8a99a !important; }
+html.theme-dark svg { color: inherit; }
+html.theme-dark .lucide { color: inherit; }
 
-html.theme-dark .border-stone-100 { border-color: #262119; }
+html.theme-dark .border-stone-100,
+html.theme-dark .border-gray-100 { border-color: #262119 !important; }
 html.theme-dark .border-stone-200,
-html.theme-dark .border-white\/20 { border-color: #2e2920; }
-html.theme-dark .border-stone-300 { border-color: #3a342b; }
-html.theme-dark .divide-stone-100 > :not([hidden]) ~ :not([hidden]) { border-color: #262119; }
-html.theme-dark .divide-stone-200 > :not([hidden]) ~ :not([hidden]) { border-color: #2e2920; }
+html.theme-dark .border-stone-300,
+html.theme-dark .border-gray-200,
+html.theme-dark .border-white\/20,
+html.theme-dark .border-white\/10 { border-color: #2e2920 !important; }
+html.theme-dark .divide-stone-100 > :not([hidden]) ~ :not([hidden]),
+html.theme-dark .divide-gray-100 > :not([hidden]) ~ :not([hidden]) { border-color: #262119 !important; }
+html.theme-dark .divide-stone-200 > :not([hidden]) ~ :not([hidden]),
+html.theme-dark .divide-gray-200 > :not([hidden]) ~ :not([hidden]) { border-color: #2e2920 !important; }
 
-/* Inputs/cards keep contrast */
+/* Inputs/cards keep contrast in dark */
 html.theme-dark input,
 html.theme-dark textarea,
 html.theme-dark select {
-  background-color: #1f1c18;
-  color: #f0e8d5;
-  border-color: #3a342b;
+  background-color: #1f1c18 !important;
+  color: #f0e8d5 !important;
+  border-color: #3a342b !important;
 }
 html.theme-dark input::placeholder,
-html.theme-dark textarea::placeholder { color: #8a8167; }
+html.theme-dark textarea::placeholder { color: #8a8167 !important; }
 html.theme-dark .shadow-soft,
 html.theme-dark .shadow-card,
-html.theme-dark .shadow-card-hover { box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4); }
+html.theme-dark .shadow-card-hover,
+html.theme-dark .shadow-floating { box-shadow: 0 1px 2px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.5) !important; }
+/* Dim images slightly to reduce light in dark mode */
+html.theme-dark img { filter: brightness(0.88) contrast(1.02); }
+html.theme-dark .leaflet-container-full { filter: brightness(0.85); }
 
 @layer components {
   /* Reusable focus ring for components that need stronger treatment (cards, dialogs) */

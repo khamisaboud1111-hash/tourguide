@@ -47,14 +47,16 @@ export const bookingSchema = z
     tourTitleSnapshot: z.string().min(1),
     customerName: z.string().min(2, "Name is required").max(100),
     customerContact: z
-      .string().min(3, "Email or phone is required").max(200)
-      .refine((v) => EMAIL_RE.test(v) || PHONE_RE.test(v), "Enter a valid email or phone number"),
-    whatsapp: z
       .string()
-      .max(30)
+      .max(200)
       .optional()
       .or(z.literal(""))
-      .refine((v) => !v || PHONE_RE.test(v), "Enter a valid WhatsApp number"),
+      .refine((v) => !v || EMAIL_RE.test(v), "Enter a valid email"),
+    whatsapp: z
+      .string()
+      .min(7, "WhatsApp number is required")
+      .max(30)
+      .refine((v) => PHONE_RE.test(v), "Enter a valid WhatsApp number"),
     requestedDate: z
       .string().min(1, "Date is required")
       .refine((v) => !Number.isNaN(Date.parse(v)), "Invalid date")

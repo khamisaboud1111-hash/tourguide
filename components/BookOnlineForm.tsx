@@ -44,7 +44,7 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
   const ref = result?.bookingId ? `ZKT-${result.bookingId.slice(0, 8).toUpperCase()}` : "";
 
   const canStep1 = tourId && partySize && parseInt(partySize) >= 1;
-  const canStep2 = customerName.trim().length >= 2 && customerContact.trim().length >= 3;
+  const canStep2 = customerName.trim().length >= 2 && whatsapp.trim().length >= 7;
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -168,12 +168,12 @@ export default function BookOnlineForm({ tours }: { tours: TourOption[] }) {
             <input id="name" required value={customerName} onChange={(e) => setCustomerName(e.target.value)} placeholder="Jane Traveler" className={inputBase} />
           </div>
           <div>
-            <label htmlFor="contact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> {t("emailOrPhone")}</label>
-            <input id="contact" required value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com or +255…" className={inputBase} />
+            <label htmlFor="contact" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><Mail size={14} className="text-clove-600" /> Email <span className="text-stone-400 font-normal">(optional)</span></label>
+            <input id="contact" value={customerContact} onChange={(e) => setCustomerContact(e.target.value)} placeholder="jane@example.com" className={inputBase} />
           </div>
           <div>
-            <label htmlFor="whatsapp2" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><MessageCircle size={14} className="text-clove-600" /> WhatsApp <span className="text-stone-400 font-normal">(optional)</span></label>
-            <input id="whatsapp2" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+255 700 000 000" className={inputBase} />
+            <label htmlFor="whatsapp2" className="block text-sm font-medium text-stone-700 mb-1.5 flex items-center gap-1.5"><MessageCircle size={14} className="text-clove-600" /> WhatsApp number <span className="text-clove-600">*</span></label>
+            <input id="whatsapp2" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} placeholder="+255 700 000 000" className={inputBase} />
           </div>
           <div>
             <label htmlFor="notes" className="block text-sm font-medium text-stone-700 mb-1.5">{t("notesOptional")}</label>

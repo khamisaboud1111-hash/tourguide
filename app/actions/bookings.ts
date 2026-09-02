@@ -76,28 +76,32 @@ export async function createBooking(formData: FormData): Promise<CreateBookingRe
   // 3) Authoritative pricing — server-side only
   const price = calculateBookingPrice(Number(tour.price_usd), data.partySize);
 
-  // 4) Upsert customer (CRM) — prefer whatsapp if provided
-  const whatsappOrContact = data.whatsapp?.trim() ? data.whatsapp! : data.customerContact;
-  const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.customerContact);
+  // 4) Upsert customer (CRM) — email optional, whatsapp (phone) is compulsory
+  const email = data.customerContact?.trim() ? data.customerContact.trim() : null;
+  const phone = data.whatsapp.trim();
+  const isEmail = email ? /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) : false;
   let customerId: string | null = null;
-  const { data: existingCustomer } = await supabase
-    .from("customers")
-    .select("id")
-    .eq(isEmail ? "email" : "phone", data.customerContact)
-    .maybeSingle();
+  // Try lookup by email first if provided, else by phone
+  let existingCustomer: { id: string } | null = null;
+  if (email && isEmail) {
+    const { data: byEmail } = await supabase.from("customers").select("id").eq("email", email).maybeSingle();
+    if (byEmail) existingCustomer = byEmail;
+  }
+  if (!existingCustomer) {
+    const { data: byPhone } = await supabase.from("customers").select("id").eq("phone", phone).maybeSingle();
+    if (byPhone) existingCustomer = byPhone;
+  }
   if (existingCustomer) {
     customerId = existingCustomer.id;
-    // keep whatsapp up to date
-    if (data.whatsapp) {
-      await supabase.from("customers").update({ phone: data.whatsapp }).eq("id", customerId);
-    }
+    // keep contact up to date
+    await supabase.from("customers").update({ phone, ...(email ? { email } : {}) }).eq("id", customerId);
   } else {
     const { data: newCustomer } = await supabase
       .from("customers")
       .insert({
         full_name: data.customerName,
-        email: isEmail ? data.customerContact : null,
-        phone: data.whatsapp || (isEmail ? null : data.customerContact),
+        email: email && isEmail ? email : null,
+        phone,
         country: data.country || null,
       })
       .select("id")

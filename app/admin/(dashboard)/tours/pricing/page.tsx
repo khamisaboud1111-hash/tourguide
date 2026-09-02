@@ -7,6 +7,39 @@ import { savePricingSettings } from "@/app/actions/siteSettings";
 
 export default function AdminTourPricingPage() {
   const { t } = useLang();
+  const currencies = [
+    { code: "USD", label: "USD — US Dollar", symbol: "$" },
+    { code: "TZS", label: "TZS — Tanzanian Shilling", symbol: "TSh" },
+    { code: "EUR", label: "EUR — Euro", symbol: "€" },
+    { code: "GBP", label: "GBP — British Pound", symbol: "£" },
+    { code: "KES", label: "KES — Kenyan Shilling", symbol: "KSh" },
+    { code: "ZAR", label: "ZAR — South African Rand", symbol: "R" },
+    { code: "UGX", label: "UGX — Ugandan Shilling", symbol: "USh" },
+    { code: "RWF", label: "RWF — Rwandan Franc", symbol: "RF" },
+    { code: "ETB", label: "ETB — Ethiopian Birr", symbol: "Br" },
+    { code: "JPY", label: "JPY — Japanese Yen", symbol: "¥" },
+    { code: "CNY", label: "CNY — Chinese Yuan", symbol: "¥" },
+    { code: "INR", label: "INR — Indian Rupee", symbol: "₹" },
+    { code: "AUD", label: "AUD — Australian Dollar", symbol: "A$" },
+    { code: "CAD", label: "CAD — Canadian Dollar", symbol: "C$" },
+    { code: "CHF", label: "CHF — Swiss Franc", symbol: "Fr" },
+    { code: "NZD", label: "NZD — New Zealand Dollar", symbol: "NZ$" },
+    { code: "AED", label: "AED — UAE Dirham", symbol: "AED" },
+    { code: "SAR", label: "SAR — Saudi Riyal", symbol: "﷼" },
+    { code: "QAR", label: "QAR — Qatari Riyal", symbol: "QR" },
+    { code: "OMR", label: "OMR — Omani Rial", symbol: "﷼" },
+    { code: "BHD", label: "BHD — Bahraini Dinar", symbol: "BD" },
+    { code: "KWD", label: "KWD — Kuwaiti Dinar", symbol: "KD" },
+    { code: "TRY", label: "TRY — Turkish Lira", symbol: "₺" },
+    { code: "SEK", label: "SEK — Swedish Krona", symbol: "kr" },
+    { code: "NOK", label: "NOK — Norwegian Krone", symbol: "kr" },
+    { code: "DKK", label: "DKK — Danish Krone", symbol: "kr" },
+    { code: "ZAR", label: "ZAR — South African Rand", symbol: "R" },
+    { code: "BRL", label: "BRL — Brazilian Real", symbol: "R$" },
+    { code: "MXN", label: "MXN — Mexican Peso", symbol: "$" },
+    { code: "SGD", label: "SGD — Singapore Dollar", symbol: "S$" },
+    { code: "HKD", label: "HKD — Hong Kong Dollar", symbol: "HK$" },
+  ];
   const [form, setForm] = useState({
     defaultPricing: "per_person",
     vatPercent: "18",
@@ -49,7 +82,15 @@ export default function AdminTourPricingPage() {
           <h2 className="font-display text-lg font-semibold mb-4">{t("adminDefaultPricing")}</h2>
           <div className="space-y-4">
             <Input label={t("adminPricingModel")} value={form.defaultPricing} onChange={update("defaultPricing")} hint={t("adminPricingModelHint")} />
-            <Input label={t("adminCurrency")} value={form.currency} onChange={update("currency")} />
+            <label className="block">
+              <span className="block text-sm font-medium text-stone-700 mb-1.5">{t("adminCurrency")}</span>
+              <select value={form.currency} onChange={(e) => setForm((f) => ({ ...f, currency: e.target.value }))} className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500">
+                {currencies.map((c) => (
+                  <option key={c.code} value={c.code}>{c.label} ({c.symbol})</option>
+                ))}
+              </select>
+              <p className="mt-1.5 text-xs text-stone-500">Symbol: {currencies.find((c) => c.code === form.currency)?.symbol ?? "$"} — admin can choose any currency, symbol shows live</p>
+            </label>
             <Input label={t("adminTaxVat")} value={form.vatPercent} onChange={update("vatPercent")} />
           </div>
         </Card>

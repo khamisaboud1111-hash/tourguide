@@ -19,6 +19,7 @@ export default function AdminHomepageCmsPage() {
   });
   const [msg, setMsg] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [saved, setSaved] = useState(false);
 
   const update = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -36,6 +37,8 @@ export default function AdminHomepageCmsPage() {
       try {
         await saveHomepageSettings(fd);
         setMsg("Saved — changes are live.");
+        setSaved(true);
+        setTimeout(() => setSaved(false), 5000);
       } catch (e: unknown) {
         setMsg(e instanceof Error ? e.message : "Save failed");
       }

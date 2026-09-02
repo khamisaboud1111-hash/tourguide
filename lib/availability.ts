@@ -51,7 +51,6 @@ export async function upsertAvailability(input: UpsertAvailabilityInput) {
 
 // Server action wrapper for the admin form
 export async function setAvailabilityAction(formData: FormData) {
-  const { upsertAvailability } = await import("./availability");
   const tourId = String(formData.get("tourId") ?? "");
   const date = String(formData.get("date") ?? "");
   const status = String(formData.get("status") ?? "available") as "available" | "limited" | "full" | "unavailable";
