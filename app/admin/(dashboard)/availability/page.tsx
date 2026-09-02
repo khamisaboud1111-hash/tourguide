@@ -18,7 +18,7 @@ export default async function AdminAvailabilityPage({
   try {
     const { data, error } = await supabase.from("tours").select("id, title").eq("is_published", true).order("title");
     if (error) toursError = error.message;
-    else tours = data as typeof tours;
+    else tours = (data as unknown) as Array<{ id: string; title: string }>;
   } catch (e: unknown) {
     toursError = e instanceof Error ? e.message : "Could not load tours";
   }
@@ -34,7 +34,7 @@ export default async function AdminAvailabilityPage({
       ? await supabase.from("tour_availability").select("*").eq("tour_id", selected).gte("date", today).lte("date", in30).order("date")
       : { data: [] as never[], error: null };
     if ((res as { error: { message: string } | null }).error) rowsError = (res as { error: { message: string } }).error.message;
-    else rows = (res.data ?? []) as typeof rows;
+    else rows = (res.data ?? []) as unknown as Array<{ date: string; status: string; booked: number; capacity: number }>;
   } catch (e: unknown) {
     rowsError = e instanceof Error ? e.message : "Could not load availability";
   }

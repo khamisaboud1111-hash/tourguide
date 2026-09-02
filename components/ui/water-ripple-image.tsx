@@ -328,6 +328,7 @@ export default function WaterRippleImage({
     const gl = glRef.current;
     if (!gl) return;
     updateUniforms(gl);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.blueish, params.scale, params.illumination, params.surfaceDistortion, params.waterDistortion]);
 
   useEffect(() => {
