@@ -3,8 +3,10 @@
 import { useState, useTransition } from "react";
 import { Upload, Image as ImageIcon } from "lucide-react";
 import { uploadMedia } from "@/app/actions/media";
+import { useLang } from "@/lib/i18n/context";
 
 export default function MediaUploadForm({ folders }: { folders: string[] }) {
+  const { t } = useLang();
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
@@ -33,21 +35,21 @@ export default function MediaUploadForm({ folders }: { folders: string[] }) {
 
   return (
     <form onSubmit={onSubmit} className="rounded-2xl border border-stone-200 bg-white p-5 mb-6">
-      <h3 className="font-display font-semibold mb-3">Upload to gallery / hero</h3>
-      <p className="text-xs text-stone-500 mb-4">Images uploaded here appear in the Gallery and can be set as hero. Max 8MB.</p>
+      <h3 className="font-display font-semibold mb-3">{t("mediaUploadTitle")}</h3>
+      <p className="text-xs text-stone-500 mb-4">{t("mediaUploadDesc")}</p>
       <div className="grid md:grid-cols-3 gap-4">
         <label className="space-y-1.5">
-          <span className="block text-xs font-medium text-stone-700">Image file *</span>
+          <span className="block text-xs font-medium text-stone-700">{t("mediaImageFile")} *</span>
           <input name="file" type="file" accept="image/*" required onChange={onFileChange} className="w-full text-sm border border-stone-300 rounded-xl px-3 py-2 bg-stone-50" />
         </label>
         <label className="space-y-1.5">
-          <span className="block text-xs font-medium text-stone-700">Folder</span>
+          <span className="block text-xs font-medium text-stone-700">{t("mediaFolder")}</span>
           <select name="folder" defaultValue="Gallery" className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm">
             {folders.map((f) => <option key={f} value={f}>{f}</option>)}
           </select>
         </label>
         <label className="space-y-1.5">
-          <span className="block text-xs font-medium text-stone-700">Alt text</span>
+          <span className="block text-xs font-medium text-stone-700">{t("mediaAltText")}</span>
           <input name="altText" placeholder="Sunset dhow, spice farm..." className="w-full rounded-xl border border-stone-300 bg-stone-50 px-3 py-2.5 text-sm" />
         </label>
       </div>
