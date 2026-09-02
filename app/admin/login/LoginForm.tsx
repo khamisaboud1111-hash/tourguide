@@ -11,6 +11,9 @@ export default function LoginForm() {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotMsg, setForgotMsg] = useState<string | null>(null);
   const [forgotPending, setForgotPending] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [newPass, setNewPass] = useState("");
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,15 +46,46 @@ export default function LoginForm() {
           redirectTo: `${window.location.origin}/admin/login?reset=1`,
         });
         if (error) setForgotMsg(error.message);
-        else setForgotMsg("Check your email — reset link sent if that address exists.");
+        else setForgotMsg("Check your email — reset link sent if that address exists. Click the link to set a new password.");
       } else {
-        // Phone OTP — Supabase will send SMS if phone auth is configured
         const { error } = await supabase.auth.signInWithOtp({ phone: raw });
         if (error) setForgotMsg(error.message);
-        else setForgotMsg("Check your phone — OTP sent if that number exists. Enter it on the login screen.");
+        else {
+          setForgotMsg("OTP sent to your phone — enter it below with your new password.");
+          setOtpSent(true);
+        }
       }
     } catch (err: unknown) {
       setForgotMsg(err instanceof Error ? err.message : "Could not send reset code.");
+    } finally {
+      setForgotPending(false);
+    }
+  }
+
+  async function handleVerifyOtp(e: React.FormEvent) {
+    e.preventDefault();
+    if (!otp.trim() || !newPass.trim()) {
+      setForgotMsg("Enter OTP and new password.");
+      return;
+    }
+    setForgotPending(true);
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.verifyOtp({ phone: forgotEmail.trim(), token: otp.trim(), type: "sms" });
+      if (error) {
+        setForgotMsg(error.message);
+        return;
+      }
+      const { error: updErr } = await supabase.auth.updateUser({ password: newPass });
+      if (updErr) setForgotMsg(updErr.message);
+      else {
+        setForgotMsg("Password updated — you can now sign in with your new password.");
+        setOtpSent(false);
+        setOtp("");
+        setNewPass("");
+      }
+    } catch (err: unknown) {
+      setForgotMsg(err instanceof Error ? err.message : "Could not verify OTP.");
     } finally {
       setForgotPending(false);
     }

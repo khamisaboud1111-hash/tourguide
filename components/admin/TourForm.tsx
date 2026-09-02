@@ -68,8 +68,8 @@ export default function TourForm({ action, tour }: Props) {
           <input id="duration" name="duration" required defaultValue={tour?.duration} placeholder="e.g. Half day" className={inputClasses} />
         </div>
         <div>
-          <label className={labelClasses} htmlFor="groupSize">Group size</label>
-          <input id="groupSize" name="groupSize" required defaultValue={tour?.group_size} placeholder="e.g. 1â€“8 people" className={inputClasses} />
+          <label className={labelClasses} htmlFor="groupSize">Group size <span className="text-stone-400 font-normal">(optional)</span></label>
+          <input id="groupSize" name="groupSize" defaultValue={tour?.group_size} placeholder="e.g. 1-8" className={inputClasses} />
         </div>
       </div>
 

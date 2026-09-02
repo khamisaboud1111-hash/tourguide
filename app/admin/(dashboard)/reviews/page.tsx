@@ -13,7 +13,15 @@ async function setReviewPublished(id: string, published: boolean) {
 export default async function AdminReviewsPage() {
   const lang = getLang();
   const supabase = await createClient();
-  const { data: reviews } = await supabase.from("reviews").select("*").order("created_at", { ascending: false });
+  let reviews: Array<{ id: string; customer_name: string; email?: string | null; country?: string | null; rating: number; review: string; published: boolean }> | null = null;
+  let fetchError: string | null = null;
+  try {
+    const { data, error } = await supabase.from("reviews").select("*").order("created_at", { ascending: false });
+    if (error) fetchError = error.message;
+    else reviews = data as typeof reviews;
+  } catch (e: unknown) {
+    fetchError = e instanceof Error ? e.message : "Could not load reviews";
+  }
 
   return (
     <div>
