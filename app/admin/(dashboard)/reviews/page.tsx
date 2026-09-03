@@ -11,6 +11,14 @@ async function setReviewPublished(id: string, published: boolean) {
   revalidatePath("/admin/reviews");
 }
 
+async function deleteReview(id: string) {
+  "use server";
+  await authorizeStaff("moderate review");
+  const supabase = await createClient();
+  await supabase.from("reviews").delete().eq("id", id);
+  revalidatePath("/admin/reviews");
+}
+
 type ReviewRow = { id: string; customer_name: string; email?: string | null; country?: string | null; rating: number; review: string; published: boolean };
 
 export default async function AdminReviewsPage() {
@@ -47,6 +55,11 @@ export default async function AdminReviewsPage() {
               <form action={setReviewPublished.bind(null, r.id, !r.published)}>
                 <button className="rounded-full border border-stone-300 px-3 py-1.5 text-xs font-medium hover:border-clove-300 transition-colors">
                   {r.published ? tServer("adminHide", lang) : tServer("adminPublish", lang)}
+                </button>
+              </form>
+              <form action={deleteReview.bind(null, r.id)}>
+                <button className="rounded-full border border-clove-200 bg-clove-50 text-clove-700 px-3 py-1.5 text-xs font-medium hover:bg-clove-100 transition-colors">
+                  {tServer("adminDelete", lang)}
                 </button>
               </form>
             </div>
