@@ -130,6 +130,8 @@ export async function createTour(formData: FormData) {
   }
 
   revalidatePath("/tours");
+  revalidatePath("/");
+  revalidatePath("/map");
   if (inserted?.id) revalidatePath(`/tours/${data.slug}`);
   revalidatePath("/admin/tours");
   redirect("/admin/tours");
