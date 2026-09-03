@@ -90,9 +90,9 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
 
   const bookingMessage = `Hi ${business.guideName}, I'd like to book the ${tour.title} tour.`;
 
-  // Build gallery — seed + variants using same seed family so placeholders stay coherent.
-  // Jozani, Spice Farm, Sunset Dhow, Prison Island and Safari Blue use dedicated real-photo galleries;
-  // all other tours use the original 4-photo seed-variant logic.
+  // Build gallery — priority: admin-uploaded media_assets for this tour, then dedicated real-photo galleries, then seed variants. Ensures multiple uploaded photos appear on live site.
+  const { data: tourMedia } = await supabase.from("media_assets").select("public_url, alt_text").eq("associated_tour_id", tour.id ?? "").order("created_at", { ascending: true }).limit(12);
+  const uploaded = (tourMedia ?? []).filter((m) => (m as { public_url: string | null }).public_url).map((m) => (m as { public_url: string; alt_text: string | null }).public_url);
   const dedicated = tour.slug === "jozani-forest-tour"
     ? ["zanzibar_jozani_01", "zanzibar_jozani_02", "zanzibar_jozani_03", "zanzibar_jozani_04", "zanzibar_jozani_05", "zanzibar_jozani_06"]
     : tour.slug === "spice-farm-tour"
@@ -104,17 +104,19 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
           : tour.slug === "safari-blue"
             ? ["safari_blue_01", "safari_blue_02", "safari_blue_03", "safari_blue_04", "safari_blue_05", "safari_blue_06"]
             : null;
-  const gallery = dedicated
-    ? dedicated.map((seed, i) => ({
-        src: placeholderPhoto(seed, i === 0 ? 1600 : 800, i === 0 ? 1000 : 600),
-        alt: `${tour.title} — ${i === 0 ? "main view" : `photo ${i + 1} of ${dedicated.length}`}`,
-      }))
-    : [
-        { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} — main view` },
-        { src: placeholderPhoto(`${tour.photoSeed}-2`, 800, 600), alt: `${tour.title} — photo 2 of 4` },
-        { src: placeholderPhoto(`${tour.photoSeed}-3`, 800, 600), alt: `${tour.title} — photo 3 of 4` },
-        { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} — photo 4 of 4` },
-      ];
+  const gallery = uploaded.length > 0
+    ? uploaded.map((url, i) => ({ src: url, alt: `${tour.title} — photo ${i + 1} of ${uploaded.length}` }))
+    : dedicated
+      ? dedicated.map((seed, i) => ({
+          src: placeholderPhoto(seed, i === 0 ? 1600 : 800, i === 0 ? 1000 : 600),
+          alt: `${tour.title} — ${i === 0 ? "main view" : `photo ${i + 1} of ${dedicated.length}`}`,
+        }))
+      : [
+          { src: placeholderPhoto(tour.photoSeed, 1600, 1000), alt: `${tour.title} — main view` },
+          { src: placeholderPhoto(`${tour.photoSeed}-2`, 800, 600), alt: `${tour.title} — photo 2 of 4` },
+          { src: placeholderPhoto(`${tour.photoSeed}-3`, 800, 600), alt: `${tour.title} — photo 3 of 4` },
+          { src: placeholderPhoto(`${tour.photoSeed}-4`, 800, 600), alt: `${tour.title} — photo 4 of 4` },
+        ];
 
   const highlights = tour.highlights && tour.highlights.length > 0 ? tour.highlights : highlightsFor(tour, t);
   const itinerary = tour.itinerary && tour.itinerary.length > 0 ? tour.itinerary : itineraryFor(tour);

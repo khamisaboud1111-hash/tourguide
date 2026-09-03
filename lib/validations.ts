@@ -16,9 +16,9 @@ export const tourSchema = z.object({
   includes: z.string(), // newline-separated in the form, split before saving
   excludes: z.string(),
   meetingPoint: z.string().min(2, "Meeting point is required"),
-  lat: z.coerce.number().min(-90).max(90),
-  lng: z.coerce.number().min(-180).max(180),
-  photoSeed: z.string().min(1, "Photo seed is required"),
+  lat: z.coerce.number().min(-90).max(90).optional().or(z.literal("")),
+  lng: z.coerce.number().min(-180).max(180).optional().or(z.literal("")),
+  photoSeed: z.string().min(1, "Photo seed is required").optional().or(z.literal("")),
   isPublished: z.coerce.boolean().optional(),
   isFeatured: z.coerce.boolean().optional(),
   highlights: z.string().optional(), // JSON array or "Title: Body" lines

@@ -139,21 +139,14 @@ export default function TourForm({ action, tour }: Props) {
       <div>
         <label className={labelClasses} htmlFor="meetingPoint">Meeting point</label>
         <input id="meetingPoint" name="meetingPoint" required defaultValue={tour?.meeting_point} className={inputClasses} />
+        <p className="text-xs text-stone-500 mt-1">Location on map will be set automatically to Stone Town if not specified.</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div>
-          <label className={labelClasses} htmlFor="lat">Latitude</label>
-          <input id="lat" name="lat" type="number" step="any" required defaultValue={tour?.lat} className={inputClasses} />
-        </div>
-        <div>
-          <label className={labelClasses} htmlFor="lng">Longitude</label>
-          <input id="lng" name="lng" type="number" step="any" required defaultValue={tour?.lng} className={inputClasses} />
-        </div>
+      <div>
+        <label className={labelClasses} htmlFor="tourPhotos">Tour photos <span className="text-stone-400 font-normal">(multiple — will appear on live site)</span></label>
+        <input id="tourPhotos" name="tourPhotos" type="file" accept="image/*" multiple className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm file:mr-3 file:rounded-full file:border-0 file:bg-clove-600 file:text-white file:px-4 file:py-1 file:text-sm" />
+        <p className="mt-1 text-xs text-stone-500">Upload multiple images — they will appear in the tour gallery on the live public site. You can also use the Photo seed below for a single placeholder.</p>
       </div>
-      <p className="text-xs text-stone-500 -mt-3">
-        Tip: right-click the spot on Google Maps and tap the coordinates to copy them.
-      </p>
 
       <div>
         <label className={labelClasses} htmlFor="highlights">Highlights <span className="text-stone-400 font-normal">(one per line: Title: Body — or paste JSON)</span></label>

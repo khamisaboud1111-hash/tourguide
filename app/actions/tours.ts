@@ -39,9 +39,9 @@ function parseTourForm(formData: FormData) {
     includes: formData.get("includes") ?? "",
     excludes: formData.get("excludes") ?? "",
     meetingPoint: formData.get("meetingPoint"),
-    lat: formData.get("lat"),
-    lng: formData.get("lng"),
-    photoSeed: formData.get("photoSeed"),
+    lat: formData.get("lat") || " -6.1659",
+    lng: formData.get("lng") || "39.2026",
+    photoSeed: formData.get("photoSeed") || "tours-default",
     isPublished: formData.get("isPublished") === "on",
     isFeatured: formData.get("isFeatured") === "on",
     highlights: formData.get("highlights") ?? "",
@@ -60,12 +60,44 @@ function parseTourForm(formData: FormData) {
   return parsed.data;
 }
 
+async function handleTourPhotos(formData: FormData, tourId: string | null) {
+  const files = formData.getAll("tourPhotos").filter((f) => f instanceof File && (f as File).size > 0) as File[];
+  if (files.length === 0) return null;
+  const supabase = await createClient();
+  let firstUrl: string | null = null;
+  for (const file of files) {
+    if (file.size > 8 * 1024 * 1024) continue;
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const storagePath = `tours/${filename}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const { error: upErr } = await supabase.storage.from("media").upload(storagePath, buffer, {
+      contentType: file.type || "image/jpeg",
+      upsert: false,
+    });
+    if (upErr) continue;
+    const { data: urlData } = supabase.storage.from("media").getPublicUrl(storagePath);
+    if (!firstUrl) firstUrl = urlData.publicUrl;
+    await supabase.from("media_assets").insert({
+      filename,
+      original_filename: file.name,
+      mime_type: file.type || "image/jpeg",
+      file_size: file.size,
+      storage_path: storagePath,
+      public_url: urlData.publicUrl,
+      alt_text: `Tour photo`,
+      associated_tour_id: tourId,
+    });
+  }
+  return firstUrl;
+}
+
 export async function createTour(formData: FormData) {
   await authorizeStaff("create tour");
   const data = parseTourForm(formData);
   const supabase = await createClient();
 
-  const { error } = await supabase.from("tours").insert({
+  const { data: inserted, error } = await supabase.from("tours").insert({
     slug: data.slug,
     title: data.title,
     category: data.category,
@@ -78,20 +110,27 @@ export async function createTour(formData: FormData) {
     includes: splitLines(data.includes),
     excludes: splitLines(data.excludes),
     meeting_point: data.meetingPoint,
-    lat: data.lat,
-    lng: data.lng,
-    photo_seed: data.photoSeed,
+    lat: Number(data.lat) || -6.1659,
+    lng: Number(data.lng) || 39.2026,
+    photo_seed: data.photoSeed || "tours-default",
     is_published: data.isPublished ?? true,
     is_featured: data.isFeatured ?? false,
     highlights: parseHighlights(data.highlights ?? ""),
     itinerary: splitLines(data.itinerary ?? ""),
     what_to_bring: splitLines(data.whatToBring ?? ""),
     cancellation_policy: (data.cancellationPolicy as string)?.trim() || "Free to cancel or reschedule until the guide confirms.",
-  });
+  }).select("id").single();
 
   if (error) throw new Error(`Couldn't create tour: ${error.message}`);
 
+  // Handle multiple tour photos — upload and link to tour, will appear on live site via media_assets
+  const firstUrl = await handleTourPhotos(formData, inserted?.id ?? null);
+  if (firstUrl && inserted?.id) {
+    await supabase.from("tours").update({ photo_seed: firstUrl }).eq("id", inserted.id);
+  }
+
   revalidatePath("/tours");
+  if (inserted?.id) revalidatePath(`/tours/${data.slug}`);
   revalidatePath("/admin/tours");
   redirect("/admin/tours");
 }
@@ -100,6 +139,8 @@ export async function updateTour(id: string, formData: FormData) {
   await authorizeStaff("update tour");
   const data = parseTourForm(formData);
   const supabase = await createClient();
+
+  const firstUrl = await handleTourPhotos(formData, id);
 
   const { error } = await supabase
     .from("tours")
@@ -116,9 +157,9 @@ export async function updateTour(id: string, formData: FormData) {
       includes: splitLines(data.includes),
       excludes: splitLines(data.excludes),
       meeting_point: data.meetingPoint,
-      lat: data.lat,
-      lng: data.lng,
-      photo_seed: data.photoSeed,
+      lat: Number(data.lat) || -6.1659,
+      lng: Number(data.lng) || 39.2026,
+      ...(firstUrl ? { photo_seed: firstUrl } : data.photoSeed ? { photo_seed: data.photoSeed } : {}),
       is_published: data.isPublished ?? true,
       is_featured: data.isFeatured ?? false,
       highlights: parseHighlights(data.highlights ?? ""),
