@@ -86,6 +86,55 @@ export async function setHeroImage(url: string) {
   return { ok: true };
 }
 
+async function getHiddenSeeds(): Promise<string[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("website_settings")
+    .select("value")
+    .eq("section", "gallery")
+    .eq("key", "hidden_seeds")
+    .maybeSingle();
+  const v = (data as { value: unknown } | null)?.value;
+  return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+}
+
+async function saveHiddenSeeds(seeds: string[]) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("website_settings").upsert(
+    {
+      section: "gallery",
+      key: "hidden_seeds",
+      value: seeds,
+      description: "Gallery photo seeds hidden from the live site by admin",
+      is_public: true,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "section,key" }
+  );
+  if (error) throw new Error(error.message);
+}
+
+// Hide a built-in gallery photo from the live site (reversible).
+export async function hideGallerySeed(seed: string) {
+  await authorizeStaff("update gallery settings");
+  if (!seed || typeof seed !== "string") throw new Error("Invalid photo");
+  const seeds = await getHiddenSeeds();
+  if (!seeds.includes(seed)) await saveHiddenSeeds([...seeds, seed]);
+  revalidatePath("/gallery");
+  revalidatePath("/admin/media");
+  return { ok: true };
+}
+
+// Show a previously hidden gallery photo again.
+export async function unhideGallerySeed(seed: string) {
+  await authorizeStaff("update gallery settings");
+  const seeds = await getHiddenSeeds();
+  await saveHiddenSeeds(seeds.filter((s) => s !== seed));
+  revalidatePath("/gallery");
+  revalidatePath("/admin/media");
+  return { ok: true };
+}
+
 export async function deleteMedia(id: string) {
   await authorizeStaff("delete media");
   const supabase = await createClient();

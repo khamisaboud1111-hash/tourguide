@@ -14,23 +14,32 @@ export default function GalleryClient() {
   const [open, setOpen] = useState<number | null>(null);
   const [dynamic, setDynamic] = useState<Photo[]>([]);
 
-  // Load admin-uploaded media (Supabase storage) — appears in gallery after upload
+  const [hiddenSeeds, setHiddenSeeds] = useState<Set<string>>(new Set());
+
+  // Load admin-uploaded media (Supabase storage) — appears in gallery after upload.
+  // Also loads admin-hidden seeds so hidden photos stay off the live gallery.
   useEffect(() => {
     const supabase = createClient();
-    supabase.from("media_assets").select("public_url, alt_text, original_filename").order("created_at", { ascending: false }).limit(60).then(({ data }) => {
-      if (!data) return;
-      const mapped: Photo[] = data
-        .filter((r) => r.public_url)
-        .map((r) => ({
-          seed: r.public_url as string,
-          cat: "Gallery",
-          alt: (r.alt_text as string) || (r.original_filename as string) || "Gallery image",
-        }));
-      if (mapped.length) setDynamic(mapped);
+    Promise.all([
+      supabase.from("media_assets").select("public_url, alt_text, original_filename").order("created_at", { ascending: false }).limit(60),
+      supabase.from("website_settings").select("value").eq("section", "gallery").eq("key", "hidden_seeds").maybeSingle(),
+    ]).then(([{ data }, { data: hiddenRow }]) => {
+      if (data) {
+        const mapped: Photo[] = data
+          .filter((r) => r.public_url)
+          .map((r) => ({
+            seed: r.public_url as string,
+            cat: "Gallery",
+            alt: (r.alt_text as string) || (r.original_filename as string) || "Gallery image",
+          }));
+        if (mapped.length) setDynamic(mapped);
+      }
+      const v: unknown = (hiddenRow as { value: unknown } | null)?.value;
+      if (Array.isArray(v)) setHiddenSeeds(new Set(v.filter((x): x is string => typeof x === "string")));
     });
   }, []);
 
-  const allPhotos = [...photos, ...dynamic];
+  const allPhotos = [...photos.filter((p) => !hiddenSeeds.has(p.seed)), ...dynamic];
 
   const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % allPhotos.length));
   const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + allPhotos.length) % allPhotos.length));
