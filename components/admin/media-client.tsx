@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useMemo } from "react";
-import { Link2, Check, ImageOff, X, Trash2, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { Link2, Check, ImageOff, X, Trash2, Eye, ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
 import { deleteMedia, setHeroImage, hideGallerySeed, unhideGallerySeed } from "@/app/actions/media";
 
 // Thumbnail with graceful fallback — if a stored URL ever breaks, the admin
@@ -280,6 +280,7 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
   const [openSeed, setOpenSeed] = useState<string | null>(null);
   const [hidden, setHidden] = useState<Set<string>>(new Set(hiddenSeeds));
   const [isPending, startTransition] = useTransition();
+  const [openCat, setOpenCat] = useState<string | null>(null);
   const openIndex = items.findIndex((i) => i.seed === openSeed);
   const current = openIndex >= 0 ? items[openIndex] : null;
   const isHidden = openSeed ? hidden.has(openSeed) : false;
@@ -329,34 +330,58 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
 
   return (
     <>
-      <div className="space-y-6">
-        {groups.map(({ cat, list }) => (
-          <section key={cat}>
-            <h3 className="font-display text-base font-semibold">{cat} ({list.length})</h3>
-            <p className="text-xs text-stone-500 mt-0.5 mb-3">Folder: gallery / {cat.toLowerCase().replace(/[^a-z0-9]+/g, "-")}</p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
-              {list.map((p) => {
-                const h = hidden.has(p.seed);
-                return (
-                  <button
-                    key={p.seed}
-                    type="button"
-                    onClick={() => setOpenSeed(p.seed)}
-                    className="rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 transition-colors"
-                    aria-label={`View ${p.alt}`}
-                  >
-                    <div className={`aspect-square bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
-                      <MediaThumb src={p.src} alt={p.alt} />
-                    </div>
-                    <p className="text-[11px] text-stone-500 truncate px-2 py-1" title={`${p.alt} · file: ${p.seed}`}>
-                      {h ? "Deleted · " : ""}{p.seed}
-                    </p>
-                  </button>
-                );
-              })}
+      <div className="rounded-2xl border border-stone-200 bg-white divide-y divide-stone-100 overflow-hidden">
+        {groups.map(({ cat, list }) => {
+          const expanded = openCat === cat;
+          const hiddenCount = list.filter((p) => hidden.has(p.seed)).length;
+          return (
+            <div key={cat}>
+              <button
+                type="button"
+                onClick={() => setOpenCat(expanded ? null : cat)}
+                aria-expanded={expanded}
+                className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-stone-50 transition-colors"
+              >
+                <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${expanded ? "bg-clove-100 text-clove-700" : "bg-stone-100 text-stone-500"}`}>
+                  <FolderOpen size={18} />
+                </span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-sm font-semibold text-stone-800">{cat}</span>
+                  <span className="block text-xs text-stone-500">
+                    {list.length} image{list.length === 1 ? "" : "s"}
+                    {hiddenCount > 0 ? ` · ${hiddenCount} deleted` : ""}
+                  </span>
+                </span>
+                <ChevronRight size={18} className={`shrink-0 text-stone-400 transition-transform ${expanded ? "rotate-90" : ""}`} />
+              </button>
+              {expanded && (
+                <div className="px-4 pb-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                    {list.map((p) => {
+                      const h = hidden.has(p.seed);
+                      return (
+                        <button
+                          key={p.seed}
+                          type="button"
+                          onClick={() => setOpenSeed(p.seed)}
+                          className="rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 transition-colors"
+                          aria-label={`View ${p.alt}`}
+                        >
+                          <div className={`aspect-square bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
+                            <MediaThumb src={p.src} alt={p.alt} />
+                          </div>
+                          <p className="text-[11px] text-stone-500 truncate px-2 py-1" title={`${p.alt} · file: ${p.seed}`}>
+                            {h ? "Deleted · " : ""}{p.seed}
+                          </p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
-          </section>
-        ))}
+          );
+        })}
       </div>
       {current && (
         <Lightbox
