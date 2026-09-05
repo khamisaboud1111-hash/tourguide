@@ -30,8 +30,11 @@ export async function changePassword(formData: FormData): Promise<ChangePassword
   const newPassword = String(formData.get("newPassword") || "");
   const confirmPassword = String(formData.get("confirmPassword") || "");
 
-  if (newPassword.length < 8) {
-    return { ok: false, error: "New password must be at least 8 characters." };
+  if (newPassword.length < 12) {
+    return { ok: false, error: "New password must be at least 12 characters." };
+  }
+  if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+    return { ok: false, error: "Password must include uppercase, lowercase, and a number." };
   }
   if (newPassword !== confirmPassword) {
     return { ok: false, error: "Passwords don't match." };

@@ -9,13 +9,15 @@ import CountrySelect from "@/components/CountrySelect";
 type Props = {
   tourId?: string;
   tourTitle?: string;
+  tours?: { id: string; title: string }[];
 };
 
-export default function ReviewForm({ tourId, tourTitle }: Props) {
+export default function ReviewForm({ tourId, tourTitle, tours }: Props) {
   const { t } = useLang();
   const [rating, setRating] = useState(5);
   const [hover, setHover] = useState(0);
   const [country, setCountry] = useState("");
+  const [selectedTour, setSelectedTour] = useState(tourId ?? "");
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [burst, setBurst] = useState(false);
@@ -26,7 +28,14 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
     const fd = new FormData(e.currentTarget);
     fd.set("rating", String(rating));
     fd.set("country", country);
-    if (tourId) fd.set("tourId", tourId);
+    const effectiveTourId = tourId ?? selectedTour;
+    if (effectiveTourId) {
+      fd.set("tourId", effectiveTourId);
+      const match = tours?.find((x) => x.id === effectiveTourId);
+      if (match) fd.set("tourTitle", match.title);
+    } else if (tourTitle) {
+      fd.set("tourTitle", tourTitle);
+    }
     setMsg(null);
     startTransition(async () => {
       const res = await submitReview(fd);
@@ -35,6 +44,7 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
         (e.target as HTMLFormElement).reset();
         setRating(5);
         setCountry("");
+        if (!tourId) setSelectedTour("");
       } else {
         setMsg({ ok: false, text: res.error });
       }
@@ -100,10 +110,26 @@ export default function ReviewForm({ tourId, tourTitle }: Props) {
           <input name="customerName" required placeholder="Jane Traveler" className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500" />
         </label>
         <label className="space-y-1.5">
-          <span className="block text-xs font-medium text-stone-700">Email *</span>
+          <span className="block text-xs font-medium text-stone-700">Email * <span className="font-normal text-stone-400">(private — never shown publicly)</span></span>
           <input name="email" type="email" required placeholder="jane@example.com" className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500" />
         </label>
       </div>
+      {!tourId && tours && tours.length > 0 && (
+        <label className="space-y-1.5">
+          <span className="block text-xs font-medium text-stone-700">{t("reviewTourLabel")}</span>
+          <select
+            name="tourSelect"
+            value={selectedTour}
+            onChange={(e) => setSelectedTour(e.target.value)}
+            className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500"
+          >
+            <option value="">{t("reviewSelectTour")}</option>
+            {tours.map((tour) => (
+              <option key={tour.id} value={tour.id}>{tour.title}</option>
+            ))}
+          </select>
+        </label>
+      )}
       <label className="space-y-1.5">
         <span className="block text-xs font-medium text-stone-700">{t("whereFrom")}</span>
         <CountrySelect value={country} onChange={setCountry} placeholder="Select your country" />

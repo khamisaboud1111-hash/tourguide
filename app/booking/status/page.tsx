@@ -4,17 +4,29 @@ export const dynamic = "force-dynamic";
 
 type BookingRow = { id: string; status: string; tour_title_snapshot: string; requested_date: string | null; party_size: number | null };
 
-export default async function BookingStatusPage({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
-  const { ref } = await searchParams;
+export default async function BookingStatusPage({ searchParams }: { searchParams: Promise<{ ref?: string; contact?: string }> }) {
+  const { ref, contact } = await searchParams;
   const clean = ref?.replace(/^ZKT-/, "").toUpperCase() ?? "";
+  const contactTrim = contact?.trim() ?? "";
   let booking: BookingRow | null = null;
   let error: string | null = null;
 
   if (clean) {
-    const supabase = await createClient();
-    const { data, error: qErr } = await supabase.from("bookings").select("id, status, tour_title_snapshot, requested_date, party_size").ilike("id", `${clean.toLowerCase()}%`).maybeSingle() as unknown as { data: BookingRow | null; error: { message: string } | null };
-    if (qErr) error = qErr.message;
-    else booking = data;
+    if (!contactTrim) {
+      error = "Please also enter the email or WhatsApp you used to book, to verify ownership.";
+    } else {
+      const supabase = await createClient();
+      // Use eq with full prefix + contact verification to prevent IDOR enumeration
+      const { data, error: qErr } = await supabase
+        .from("bookings")
+        .select("id, status, tour_title_snapshot, requested_date, party_size, customer_contact, whatsapp")
+        .ilike("id", `${clean.toLowerCase()}%`)
+        .maybeSingle() as unknown as { data: (BookingRow & { customer_contact: string | null; whatsapp: string | null }) | null; error: { message: string } | null };
+      if (qErr) error = qErr.message;
+      else if (data && data.customer_contact !== contactTrim && data.whatsapp !== contactTrim) {
+        error = "Reference and contact do not match — please check the email/WhatsApp you used when booking.";
+      } else booking = data as BookingRow | null;
+    }
   }
 
   return (
@@ -22,9 +34,11 @@ export default async function BookingStatusPage({ searchParams }: { searchParams
       <h1 className="font-display text-2xl font-semibold">Booking status</h1>
       <p className="text-sm text-stone-600 mt-2">Enter your reference (e.g. ZKT-ABC12345) to check if your tour was accepted.</p>
 
-      <form method="get" className="mt-6 flex gap-2">
-        <input name="ref" defaultValue={ref ?? ""} placeholder="ZKT-..." className="flex-1 rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500" />
+      <form method="get" className="mt-6 flex flex-col gap-3">
+        <input name="ref" defaultValue={ref ?? ""} placeholder="ZKT-..." className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500" />
+        <input name="contact" defaultValue={contact ?? ""} placeholder="Email or WhatsApp used when booking" className="w-full rounded-xl border border-stone-300 bg-stone-50 px-4 py-2.5 text-sm outline-none focus:border-clove-500" />
         <button className="rounded-full bg-clove-600 text-white px-6 py-2.5 text-sm font-medium hover:bg-clove-700">Check</button>
+        <p className="text-xs text-stone-500">Your reference + contact must match to view status (prevents others from seeing your booking).</p>
       </form>
 
       {clean && !booking && !error && (

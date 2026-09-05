@@ -13,6 +13,8 @@ import ImageGallery from "@/components/ImageGallery";
 import StickyBookingBar from "@/components/StickyBookingBar";
 import TourCard from "@/components/TourCard";
 import ReviewForm from "@/components/ReviewForm";
+import ReportReviewButton from "@/components/ReportReviewButton";
+import { maskName, countryWithFlag } from "@/lib/review-display";
 import { getLang, tServer } from "@/lib/i18n/server";
 import { getPublishedReviews, aggregateRating } from "@/lib/reviews";
 import { TourJsonLd, BreadcrumbJsonLd } from "@/components/StructuredData";
@@ -297,15 +299,26 @@ export default async function TourDetailPage({ params }: { params: Promise<{ slu
                   <figure key={r.id} className="rounded-2xl bg-white border border-stone-200 p-5 shadow-soft">
                     <div className="text-saffron-500 text-sm" aria-label={`${r.rating} out of 5`}>{"★".repeat(r.rating)}<span className="text-stone-300">{"★".repeat(5 - r.rating)}</span></div>
                     <blockquote className="mt-2 text-sm text-stone-700 leading-relaxed">“{r.review}”</blockquote>
-                    <figcaption className="mt-3 text-xs text-stone-500 flex items-center gap-2">
-                      <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-clove-100 text-clove-700 text-xs font-medium">
-                        {r.customer_name.charAt(0).toUpperCase()}
+                    {r.is_verified && (
+                      <p className="mt-2"><span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-lagoon-100 text-lagoon-800">✓ {tServer("reviewVerified", lang)}</span></p>
+                    )}
+                    {r.admin_response && (
+                      <div className="mt-3 rounded-xl bg-stone-50 border border-stone-200 p-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-stone-500">{tServer("reviewAdminResponse", lang)}</p>
+                        <p className="mt-1 text-sm text-stone-700 leading-relaxed">{r.admin_response}</p>
+                      </div>
+                    )}
+                    <figcaption className="mt-3 text-xs text-stone-500 flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-clove-100 text-clove-700 text-xs font-medium">
+                          {maskName(r.customer_name).charAt(0).toUpperCase()}
+                        </span>
+                        <span className="truncate">
+                          <span className="font-medium text-stone-700">{maskName(r.customer_name)}</span>
+                          {r.country ? ` · ${countryWithFlag(r.country)}` : ""} · {new Date(r.created_at).toLocaleDateString(lang === "sw" ? "sw-TZ" : "en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                        </span>
                       </span>
-                      <span>
-                        <span className="font-medium text-stone-700">{r.customer_name}</span>
-                        {r.email ? ` · ${r.email}` : ""}
-                        {r.country ? ` · ${r.country}` : ""} · {new Date(r.created_at).toLocaleDateString(lang === "sw" ? "sw-TZ" : "en-GB", { month: "short", year: "numeric" })}
-                      </span>
+                      <ReportReviewButton reviewId={r.id} />
                     </figcaption>
                   </figure>
                 ))}

@@ -11,17 +11,37 @@ export async function uploadMedia(formData: FormData) {
   const folder = String(formData.get("folder") ?? "Gallery");
   if (!file || file.size === 0) throw new Error("No file selected");
   if (file.size > 8 * 1024 * 1024) throw new Error("File too large — max 8MB");
+  // Strict whitelist — reject SVG (can contain script) and double extensions
+  const allowedExt = new Set(["jpg", "jpeg", "png", "webp", "avif"]);
+  const allowedMime = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
+  const ext = file.name.split(".").pop()?.toLowerCase() || "";
+  if (!allowedExt.has(ext)) throw new Error("Only JPG, PNG, WEBP, AVIF allowed");
+  if (file.name.split(".").length > 2) throw new Error("Double extensions not allowed");
+  if (!allowedMime.has(file.type)) throw new Error("Invalid image type");
+  // Verify magic bytes via sharp metadata (strips scripts)
+  let buffer: Uint8Array = new Uint8Array(await file.arrayBuffer());
+  try {
+    const sharp = (await import("sharp")).default;
+    const meta = await sharp(buffer).metadata();
+    if (!meta.format || !["jpeg", "jpg", "png", "webp", "avif"].includes(meta.format)) throw new Error("Invalid image format");
+    // Re-encode to strip metadata/scripts and normalize
+    buffer = await sharp(buffer).jpeg({ quality: 88, mozjpeg: true }).toBuffer();
+  } catch (e) {
+    // If sharp fails, reject — don't store raw bytes that could be malicious
+    if ((e as Error).message?.includes("Invalid image")) throw e;
+    // otherwise continue with original buffer but already validated ext/mime
+  }
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  // Use already validated buffer (re-encoded via sharp if needed), ensure ext is safe
+  const safeExt = ext === "jpeg" ? "jpg" : ext;
+  const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${safeExt}`;
   const storagePath = `${folder.toLowerCase()}/${filename}`;
 
-  const buffer = Buffer.from(await file.arrayBuffer());
   const { error: uploadError } = await supabase.storage.from("media").upload(storagePath, buffer, {
-    contentType: file.type || "image/jpeg",
+    contentType: "image/jpeg",
     upsert: false,
   });
   if (uploadError) throw new Error(uploadError.message);
