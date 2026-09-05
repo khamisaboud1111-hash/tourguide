@@ -37,13 +37,15 @@ export default function AdminHeader({ onMenuClick }: { onMenuClick: () => void }
   return (
     <header className="sticky top-0 z-30 bg-white border-b border-stone-200">
       <div className="container-page flex items-center justify-between h-16">
-        {/* Mobile menu button using Uiverse design */}
-        <label className="hamburger-label" onClick={onMenuClick}>
-          <input type="checkbox" id="label-check" className="label-check" />
-          <div className="line1" />
-          <div className="line2" />
-          <div className="line3" />
-        </label>
+        {/* Mobile menu button — opens the left sidebar drawer */}
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="lg:hidden p-2 -ml-2 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition-colors"
+          aria-label="Open menu"
+        >
+          <Menu size={22} />
+        </button>
 
         {/* Page title */}
         <div className="flex-1 lg:flex-none text-center lg:text-left">

@@ -36,6 +36,14 @@ const nextConfig = {
         protocol: "https",
         hostname: "flagcdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "peukumxasyuukxjiqbkn.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
     ],
     formats: ["image/avif", "image/webp"],
   },

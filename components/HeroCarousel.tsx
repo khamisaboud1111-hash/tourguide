@@ -19,8 +19,10 @@ const SAFARI_HERO_SEEDS = [
 export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }) {
   const [index, setIndex] = useState(0);
 
-  // Strict: only use images from C:\Users\hp\OneDrive\Desktop\safari blue (11 files) — no other hero
-  const seeds = SAFARI_HERO_SEEDS;
+  // Admin override: a full uploaded image URL (set via Media Library "Use as hero")
+  // replaces the carousel with that single image. Otherwise the safari_blue carousel plays.
+  const overrideUrl = overrideSeed?.startsWith("http") ? overrideSeed : null;
+  const seeds = overrideUrl ? [overrideUrl] : SAFARI_HERO_SEEDS;
 
   useEffect(() => {
     if (seeds.length <= 1) return;

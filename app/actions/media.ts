@@ -65,6 +65,27 @@ export async function uploadMedia(formData: FormData) {
   return { ok: true, url: urlData.publicUrl, path: storagePath };
 }
 
+export async function setHeroImage(url: string) {
+  await authorizeStaff("update homepage settings");
+  if (!url.startsWith("https://")) throw new Error("Invalid image URL");
+  const supabase = await createClient();
+  const { error } = await supabase.from("website_settings").upsert(
+    {
+      section: "homepage",
+      key: "hero_image_seed",
+      value: url,
+      description: "Hero image override set from Media Library",
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "section,key" }
+  );
+  if (error) throw new Error(error.message);
+  revalidatePath("/");
+  revalidatePath("/admin/media");
+  revalidatePath("/admin/website/homepage");
+  return { ok: true };
+}
+
 export async function deleteMedia(id: string) {
   await authorizeStaff("delete media");
   const supabase = await createClient();

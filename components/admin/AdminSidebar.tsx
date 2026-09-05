@@ -38,7 +38,7 @@ const navSections = [
   {
     label: "Bookings",
     items: [
-      { href: "/admin/bookings", label: "All Bookings", icon: Inbox },
+      { href: "/admin/bookings", label: "Bookings", icon: Inbox },
       { href: "/admin/bookings/calendar", label: "Calendar", icon: Calendar },
       { href: "/admin/bookings/new", label: "New Booking", icon: Inbox },
     ],
@@ -46,7 +46,7 @@ const navSections = [
   {
     label: "Tours",
     items: [
-      { href: "/admin/tours", label: "All Tours", icon: MapPin },
+      { href: "/admin/tours", label: "Tours", icon: MapPin },
       { href: "/admin/tours/new", label: "Add Tour", icon: MapPin },
       { href: "/admin/tours/categories", label: "Categories", icon: Tag },
       { href: "/admin/tours/pricing", label: "Pricing", icon: CreditCard },
@@ -73,6 +73,7 @@ const navSections = [
   {
     label: "Settings",
     items: [
+      { href: "/admin/settings", label: "General", icon: Settings },
       { href: "/admin/settings/business", label: "Business", icon: Settings },
       { href: "/admin/settings/booking", label: "Booking", icon: Calendar },
       { href: "/admin/settings/social", label: "Social", icon: ExternalLink },
@@ -81,10 +82,11 @@ const navSections = [
   },
 ];
 
-function NavItem({ href, label, icon: Icon, isActive }: { href: string; label: string; icon: LucideIcon; isActive: boolean }) {
+function NavItem({ href, label, icon: Icon, isActive, onNavigate }: { href: string; label: string; icon: LucideIcon; isActive: boolean; onNavigate: () => void }) {
   return (
     <Link
       href={href}
+      onClick={onNavigate}
       className={`flex items-center gap-2 px-4 py-3 text-sm transition-colors rounded-lg mx-3 ${
         isActive
           ? "bg-clove-50 text-clove-700 border-r-2 border-clove-600"
@@ -97,7 +99,7 @@ function NavItem({ href, label, icon: Icon, isActive }: { href: string; label: s
   );
 }
 
-function NavSection({ label, items, pathname }: { label: string; items: { href: string; label: string; icon: LucideIcon }[]; pathname: string }) {
+function NavSection({ label, items, pathname, onNavigate }: { label: string; items: { href: string; label: string; icon: LucideIcon }[]; pathname: string; onNavigate: () => void }) {
   return (
     <div className="mb-6">
       <p className="px-4 py-1 text-xs font-semibold text-stone-400 uppercase tracking-wide">{label}</p>
@@ -108,6 +110,7 @@ function NavSection({ label, items, pathname }: { label: string; items: { href: 
           label={item.label}
           icon={item.icon}
           isActive={pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href + "/"))}
+          onNavigate={onNavigate}
         />
       ))}
     </div>
@@ -155,6 +158,7 @@ export default function AdminSidebar({ isOpen, onClose }: { isOpen: boolean; onC
                   label={section.label}
                   items={section.items}
                   pathname={pathname}
+                  onNavigate={onClose}
                 />
               ))}
             </div>
