@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { business } from "@/lib/constants";
 import { createClient } from "@/lib/supabase/server";
 import { rowToTour } from "@/lib/tours";
 import ToursExplorer from "@/components/ToursExplorer";
+import CategoryCards from "@/components/CategoryCards";
 import { getLang, tServer } from "@/lib/i18n/server";
 
 export const metadata: Metadata = {
@@ -22,6 +24,8 @@ export default async function ToursPage() {
     .eq("is_published", true)
     .order("created_at", { ascending: false });
   const tours = (data ?? []).map(rowToTour);
+  const counts: Record<string, number> = {};
+  for (const tour of tours) counts[tour.category] = (counts[tour.category] ?? 0) + 1;
 
   return (
     <div className="container-page py-10 md:py-14">
@@ -35,13 +39,17 @@ export default async function ToursPage() {
         {t("everyWayDesc")}
       </p>
 
-      <div className="mt-8">
+      <CategoryCards counts={counts} />
+
+      <div className="mt-12">
         {tours.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-8 text-center text-sm text-stone-500">
             {t("noMatchTours")}
           </p>
         ) : (
-          <ToursExplorer tours={tours} />
+          <Suspense>
+            <ToursExplorer tours={tours} />
+          </Suspense>
         )}
       </div>
     </div>

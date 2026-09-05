@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Link2, Check, ImageOff, X, Trash2, EyeOff, Eye } from "lucide-react";
+import { Link2, Check, ImageOff, X, Trash2, EyeOff, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { deleteMedia, setHeroImage, hideGallerySeed, unhideGallerySeed } from "@/app/actions/media";
 
 // Thumbnail with graceful fallback — if a stored URL ever breaks, the admin
@@ -44,18 +44,24 @@ export function CopyLinkButton({ url }: { url: string }) {
 function Lightbox({
   src,
   alt,
+  counter,
   onClose,
+  onPrev,
+  onNext,
   children,
 }: {
   src: string;
   alt: string;
+  counter?: string;
   onClose: () => void;
+  onPrev?: () => void;
+  onNext?: () => void;
   children?: React.ReactNode;
 }) {
   return (
     <div className="fixed inset-0 z-[60] bg-stone-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label={alt} onClick={onClose}>
       <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
-        <p className="text-sm truncate max-w-[80%]">{alt}</p>
+        <p className="text-sm truncate max-w-[80%]">{alt}{counter ? ` — ${counter}` : ""}</p>
         <button onClick={onClose} aria-label="Close" className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
           <X size={18} />
         </button>
@@ -63,6 +69,16 @@ function Lightbox({
       <div className="flex-1 relative flex items-center justify-center p-4 min-h-0" onClick={(e) => e.stopPropagation()}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={src} alt={alt} className="max-h-full max-w-full object-contain rounded-xl" />
+        {onPrev && (
+          <button onClick={onPrev} aria-label="Previous image" className="absolute left-4 md:left-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
+            <ChevronLeft size={20} />
+          </button>
+        )}
+        {onNext && (
+          <button onClick={onNext} aria-label="Next image" className="absolute right-4 md:right-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
+            <ChevronRight size={20} />
+          </button>
+        )}
       </div>
       {children && (
         <div className="px-4 pb-6 flex items-center justify-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
@@ -116,7 +132,13 @@ export function UploadGrid({ items }: { items: UploadItem[] }) {
   const [openId, setOpenId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [msg, setMsg] = useState<string | null>(null);
-  const current = items.find((i) => i.id === openId) ?? null;
+  const openIndex = items.findIndex((i) => i.id === openId);
+  const current = openIndex >= 0 ? items[openIndex] : null;
+  const step = (dir: 1 | -1) => {
+    if (items.length === 0) return;
+    const next = ((openIndex < 0 ? 0 : openIndex) + dir + items.length) % items.length;
+    setOpenId(items[next].id);
+  };
 
   const run = (fn: () => Promise<unknown>, okMsg: string) => {
     setMsg(null);
@@ -157,7 +179,14 @@ export function UploadGrid({ items }: { items: UploadItem[] }) {
         ))}
       </div>
       {current?.public_url && (
-        <Lightbox src={current.public_url} alt={current.alt_text ?? current.original_filename} onClose={() => setOpenId(null)}>
+        <Lightbox
+          src={current.public_url}
+          alt={current.alt_text ?? current.original_filename}
+          counter={items.length > 1 ? `${openIndex + 1} / ${items.length}` : undefined}
+          onClose={() => setOpenId(null)}
+          onPrev={items.length > 1 ? () => step(-1) : undefined}
+          onNext={items.length > 1 ? () => step(1) : undefined}
+        >
           <CopyLinkButton url={current.public_url} />
           <button
             type="button"
@@ -185,8 +214,14 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
   const [openSeed, setOpenSeed] = useState<string | null>(null);
   const [hidden, setHidden] = useState<Set<string>>(new Set(hiddenSeeds));
   const [isPending, startTransition] = useTransition();
-  const current = items.find((i) => i.seed === openSeed) ?? null;
+  const openIndex = items.findIndex((i) => i.seed === openSeed);
+  const current = openIndex >= 0 ? items[openIndex] : null;
   const isHidden = openSeed ? hidden.has(openSeed) : false;
+  const step = (dir: 1 | -1) => {
+    if (items.length === 0) return;
+    const next = ((openIndex < 0 ? 0 : openIndex) + dir + items.length) % items.length;
+    setOpenSeed(items[next].seed);
+  };
 
   const toggle = (seed: string, hide: boolean) => {
     startTransition(async () => {
@@ -230,7 +265,14 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
         })}
       </div>
       {current && (
-        <Lightbox src={current.src} alt={current.alt} onClose={() => setOpenSeed(null)}>
+        <Lightbox
+          src={current.src}
+          alt={current.alt}
+          counter={items.length > 1 ? `${openIndex + 1} / ${items.length}` : undefined}
+          onClose={() => setOpenSeed(null)}
+          onPrev={items.length > 1 ? () => step(-1) : undefined}
+          onNext={items.length > 1 ? () => step(1) : undefined}
+        >
           <button
             type="button"
             disabled={isPending}

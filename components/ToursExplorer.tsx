@@ -1,10 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import type { Tour } from "@/lib/tours";
 import TourCard from "./TourCard";
 import { useLang } from "@/lib/i18n/context";
+import { EXPERIENCE_CATEGORIES } from "@/lib/experience-categories";
 
 type SortKey = "recommended" | "duration";
 
@@ -22,13 +24,10 @@ function parseDurationToMinutes(s: string): number {
 export default function ToursExplorer({ tours }: { tours: Tour[] }) {
   const { t } = useLang();
 
+  const searchParams = useSearchParams();
   const categories: { value: string; label: string }[] = [
     { value: "All", label: t("catAll") },
-    { value: "Culture & History", label: t("catCultureHistory") },
-    { value: "Culture & Nature", label: t("catCultureNature") },
-    { value: "Ocean & Sailing", label: t("catOceanSailing") },
-    { value: "Nature & Wildlife", label: t("catNatureWildlife") },
-    { value: "Ocean & Wildlife", label: t("catOceanWildlife") },
+    ...EXPERIENCE_CATEGORIES.map((c) => ({ value: c.value, label: t(c.labelKey) })),
   ];
   const durations: { value: string; label: string; test: (t: Tour) => boolean }[] = [
     { value: "All durations", label: t("allDurations"), test: () => true },
@@ -48,6 +47,16 @@ export default function ToursExplorer({ tours }: { tours: Tour[] }) {
   const [diff, setDiff] = useState<Tour["difficulty"] | "All">("All");
   const [sort, setSort] = useState<SortKey>("recommended");
   const [showFilters, setShowFilters] = useState(false);
+
+  // Category cards link here with ?cat= — sync the filter on navigation.
+  useEffect(() => {
+    const c = searchParams.get("cat");
+    if (c) {
+      setCat(c);
+      setShowFilters(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
