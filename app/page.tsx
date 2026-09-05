@@ -75,10 +75,10 @@ export default async function HomePage() {
   ];
 
   const destinations = [
-    { name: "Stone Town", blurb: lang === "en" ? "Coral-stone alleys, carved doors, bazaars" : t("exploreIslandTitle"), seed: "stonetown-door" },
-    { name: "Spice Farms", blurb: lang === "en" ? "Clove, vanilla, cinnamon — tasted live" : t("localKnowledge"), seed: "spice-farm" },
-    { name: "Jozani Forest", blurb: lang === "en" ? "Red colobus monkeys, mangrove boardwalk" : t("personalAttention"), seed: "jozani-forest" },
-    { name: "South Coast", blurb: lang === "en" ? "Menai Bay, sandbanks & dhow sailing" : t("authenticExp"), seed: "safariblue" },
+    { name: "Stone Town", seed: "stonetown-door" },
+    { name: "Spice Farms", seed: "spice-farm" },
+    { name: "Jozani Forest", seed: "jozani-forest" },
+    { name: "South Coast", seed: "safariblue" },
   ];
 
   return (
@@ -238,12 +238,8 @@ export default async function HomePage() {
           <SectionHeading kicker={t("exploreIslandKicker")} title={t("exploreIslandTitle")} align="center" className="mb-8 md:mb-10" />
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
             {destinations.map((d) => (
-              <Link key={d.name} href="/tours" className="group relative aspect-[4/5] md:aspect-[3/4] rounded-2xl overflow-hidden bg-stone-900">
+              <Link key={d.name} href="/tours" aria-label={d.name} className="group relative aspect-[4/5] md:aspect-[3/4] rounded-2xl overflow-hidden bg-stone-900">
                 <Image src={placeholderPhoto(d.seed, 600, 800)} alt={d.name} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover group-hover:scale-105 transition-transform duration-700 ease-entrance" />
-                <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/85 via-indigo-900/10 to-transparent" />
-                <div className="absolute bottom-0 p-5">
-                  <p className="font-display text-white text-sm leading-snug">{d.blurb}</p>
-                </div>
               </Link>
             ))}
           </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
-import { Link2, Check, ImageOff, X, Trash2, Eye, ChevronLeft, ChevronRight, FolderOpen } from "lucide-react";
-import { deleteMedia, setHeroImage, hideGallerySeed, unhideGallerySeed } from "@/app/actions/media";
+import { useState, useTransition, useMemo, useEffect, useCallback } from "react";
+import { Link2, Check, ImageOff, X, Trash2, Eye, ChevronLeft, ChevronRight, FolderOpen, Maximize2 } from "lucide-react";
+import { deleteMedia, setHeroImage, hideGallerySeed, unhideGallerySeed, hideHeroSeed, unhideHeroSeed, clearHeroOverride } from "@/app/actions/media";
 
 // Thumbnail with graceful fallback — if a stored URL ever breaks, the admin
 // sees the filename instead of a broken-image icon.
@@ -58,8 +58,22 @@ function Lightbox({
   onNext?: () => void;
   children?: React.ReactNode;
 }) {
+  // Keyboard viewing: ← → browse, Esc closes.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onPrev?.();
+      if (e.key === "ArrowRight") onNext?.();
+    };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [onClose, onPrev, onNext]);
   return (
-    <div className="fixed inset-0 z-[60] bg-stone-950/90 backdrop-blur flex flex-col" role="dialog" aria-modal="true" aria-label={alt} onClick={onClose}>
+    <div className="fixed inset-0 z-[60] bg-stone-950/95 backdrop-blur flex flex-col animate-fade-in" role="dialog" aria-modal="true" aria-label={alt} onClick={onClose}>
       <div className="flex items-center justify-between px-4 md:px-6 py-4 text-white">
         <p className="text-sm truncate max-w-[80%]">{alt}{counter ? ` — ${counter}` : ""}</p>
         <button onClick={onClose} aria-label="Close" className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 hover:bg-white/20">
@@ -224,8 +238,12 @@ export function UploadGrid({ items }: { items: UploadItem[] }) {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {items.map((item) => (
           <div key={item.id} className="group rounded-2xl border border-stone-200 bg-white overflow-hidden hover:border-clove-300 transition-colors">
-            <button type="button" onClick={() => setOpenId(item.id)} className="block w-full aspect-[4/3] bg-stone-100 overflow-hidden" aria-label={`View ${item.original_filename}`}>
-              <MediaThumb src={item.public_url ?? ""} alt={item.alt_text ?? item.original_filename} />
+            <button type="button" onClick={() => setOpenId(item.id)} className="group/thumb relative block w-full aspect-[4/3] bg-stone-100 overflow-hidden" aria-label={`View ${item.original_filename}`}>
+              <span className="block h-full w-full transition-transform duration-300 group-hover/thumb:scale-105">
+                <MediaThumb src={item.public_url ?? ""} alt={item.alt_text ?? item.original_filename} />
+              </span>
+              <span className="absolute inset-0 bg-stone-950/0 group-hover/thumb:bg-stone-950/20 transition-colors" />
+              <Maximize2 size={16} className="absolute bottom-2 right-2 text-white opacity-0 group-hover/thumb:opacity-100 transition-opacity drop-shadow" />
             </button>
             <div className="p-3">
               <p className="text-sm font-medium text-stone-800 truncate" title={item.original_filename}>{item.original_filename}</p>
@@ -269,6 +287,151 @@ export function UploadGrid({ items }: { items: UploadItem[] }) {
       )}
       {msg && <p className="mt-3 text-sm text-stone-600">{msg}</p>}
     </>
+  );
+}
+
+export type HeroSlide = { seed: string; src: string; alt: string };
+
+// Live Hero folder — the exact slides rotating on the homepage right now.
+// Click to view large, delete any slide from rotation (reversible).
+export function HeroFolder({ slides, hiddenSeeds, override }: { slides: HeroSlide[]; hiddenSeeds: string[]; override: string | null }) {
+  const [expanded, setExpanded] = useState(false);
+  const [openSeed, setOpenSeed] = useState<string | null>(null);
+  const [hidden, setHidden] = useState<Set<string>>(new Set(hiddenSeeds));
+  const [isPending, startTransition] = useTransition();
+  const [msg, setMsg] = useState<string | null>(null);
+  const openIndex = slides.findIndex((s) => s.seed === openSeed);
+  const current = openIndex >= 0 ? slides[openIndex] : null;
+  const isHidden = openSeed ? hidden.has(openSeed) : false;
+  const step = useCallback((dir: 1 | -1) => {
+    if (slides.length === 0) return;
+    const next = ((openIndex < 0 ? 0 : openIndex) + dir + slides.length) % slides.length;
+    setOpenSeed(slides[next].seed);
+  }, [slides, openIndex]);
+
+  const toggle = (seed: string, hide: boolean) => {
+    startTransition(async () => {
+      try {
+        if (hide) {
+          await hideHeroSeed(seed);
+          setHidden((prev) => new Set(prev).add(seed));
+        } else {
+          await unhideHeroSeed(seed);
+          setHidden((prev) => {
+            const next = new Set(prev);
+            next.delete(seed);
+            return next;
+          });
+        }
+      } catch {}
+    });
+  };
+
+  const removeOverride = () => {
+    startTransition(async () => {
+      try {
+        await clearHeroOverride();
+        setMsg("Custom hero removed — safari_blue carousel plays again.");
+      } catch (e) {
+        setMsg(e instanceof Error ? e.message : "Action failed");
+      }
+    });
+  };
+
+  return (
+    <div className="rounded-2xl border border-stone-200 bg-white divide-y divide-stone-100 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+        className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-stone-50 transition-colors"
+      >
+        <span className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${expanded ? "bg-clove-100 text-clove-700" : "bg-stone-100 text-stone-500"}`}>
+          <FolderOpen size={18} />
+        </span>
+        <span className="flex-1 min-w-0">
+          <span className="block text-sm font-semibold text-stone-800">Hero images folder</span>
+          <span className="block text-xs text-stone-500">
+            {override ? "1 custom hero live" : `${slides.length} slides live on homepage`}
+            {hidden.size > 0 ? ` · ${hidden.size} deleted` : ""}
+          </span>
+        </span>
+        <ChevronRight size={18} className={`shrink-0 text-stone-400 transition-transform ${expanded ? "rotate-90" : ""}`} />
+      </button>
+      {expanded && (
+        <div className="px-4 pb-4 pt-1">
+          {override && (
+            <div className="mb-3 rounded-xl border border-lagoon-200 bg-lagoon-50 p-3 flex items-center gap-3">
+              <div className="h-16 w-24 shrink-0 rounded-lg overflow-hidden bg-stone-100">
+                <MediaThumb src={override} alt="Custom hero" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-lagoon-900">Custom hero is live</p>
+                <p className="text-xs text-stone-500">Uploaded via “Use as hero”. Carousel paused.</p>
+              </div>
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={removeOverride}
+                className="shrink-0 rounded-full border border-lagoon-300 bg-white text-lagoon-800 px-3 py-1.5 text-xs font-medium hover:bg-lagoon-100 transition-colors disabled:opacity-60"
+              >
+                Remove
+              </button>
+            </div>
+          )}
+          {msg && <p className="mb-3 text-xs text-stone-600">{msg}</p>}
+          <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+            {slides.map((s) => {
+              const h = hidden.has(s.seed);
+              return (
+                <button
+                  key={s.seed}
+                  type="button"
+                  onClick={() => setOpenSeed(s.seed)}
+                  className="group rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 hover:shadow-card transition-all"
+                  aria-label={`View ${s.alt}`}
+                >
+                  <div className={`aspect-video bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
+                    <div className="h-full w-full transition-transform duration-300 group-hover:scale-105">
+                      <MediaThumb src={s.src} alt={s.alt} />
+                    </div>
+                  </div>
+                  <p className="flex items-center justify-between gap-1 text-[11px] text-stone-500 px-2 py-1" title={s.seed}>
+                    <span className="truncate">{h ? "Deleted · " : ""}{s.seed}</span>
+                    <Maximize2 size={11} className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+      {current && (
+        <Lightbox
+          src={current.src}
+          alt={current.alt}
+          counter={slides.length > 1 ? `${openIndex + 1} / ${slides.length}` : undefined}
+          onClose={() => setOpenSeed(null)}
+          onPrev={slides.length > 1 ? () => step(-1) : undefined}
+          onNext={slides.length > 1 ? () => step(1) : undefined}
+        >
+          {isHidden ? (
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => toggle(current.seed, false)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white text-stone-800 px-4 py-1.5 text-xs font-medium hover:bg-stone-100 transition-colors disabled:opacity-60"
+            >
+              <Eye size={14} /> Restore to hero
+            </button>
+          ) : (
+            <DangerButton onConfirm={() => toggle(current.seed, true)}>
+              <span className="inline-flex items-center gap-1"><Trash2 size={12} /> Delete from hero</span>
+            </DangerButton>
+          )}
+        </Lightbox>
+      )}
+    </div>
   );
 }
 
@@ -363,17 +526,20 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
                         <button
                           key={p.seed}
                           type="button"
-                          onClick={() => setOpenSeed(p.seed)}
-                          className="rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 transition-colors"
-                          aria-label={`View ${p.alt}`}
-                        >
-                          <div className={`aspect-square bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
-                            <MediaThumb src={p.src} alt={p.alt} />
-                          </div>
-                          <p className="text-[11px] text-stone-500 truncate px-2 py-1" title={`${p.alt} · file: ${p.seed}`}>
-                            {h ? "Deleted · " : ""}{p.seed}
-                          </p>
-                        </button>
+                    onClick={() => setOpenSeed(p.seed)}
+                    className="group rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 hover:shadow-card transition-all"
+                    aria-label={`View ${p.alt}`}
+                  >
+                    <div className={`relative aspect-square bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
+                      <span className="block h-full w-full transition-transform duration-300 group-hover:scale-105">
+                        <MediaThumb src={p.src} alt={p.alt} />
+                      </span>
+                      <Maximize2 size={13} className="absolute bottom-1.5 right-1.5 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow" />
+                    </div>
+                    <p className="text-[11px] text-stone-500 truncate px-2 py-1" title={`${p.alt} · file: ${p.seed}`}>
+                      {h ? "Deleted · " : ""}{p.seed}
+                    </p>
+                  </button>
                       );
                     })}
                   </div>

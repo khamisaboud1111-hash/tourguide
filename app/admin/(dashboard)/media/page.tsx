@@ -1,8 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { getLang, tServer } from "@/lib/i18n/server";
 import MediaUploadForm from "./MediaUploadForm";
-import { FolderBrowser, GalleryPreviewGrid, type UploadItem } from "@/components/admin/media-client";
+import { FolderBrowser, GalleryPreviewGrid, HeroFolder, type UploadItem } from "@/components/admin/media-client";
 import { galleryPhotos, resolveGallerySrc } from "@/lib/gallery-photos";
+import { HERO_SLIDES } from "@/lib/hero-slides";
+import { placeholderPhoto } from "@/lib/placeholder";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +36,14 @@ export default async function AdminMediaPage() {
     .maybeSingle();
   const hiddenValue: unknown = (hiddenRow as { value: unknown } | null)?.value;
   const hiddenSeeds = Array.isArray(hiddenValue) ? hiddenValue.filter((x): x is string => typeof x === "string") : [];
+  const [{ data: heroHiddenRow }, { data: heroSetting }] = await Promise.all([
+    supabase.from("website_settings").select("value").eq("section", "hero").eq("key", "hidden_seeds").maybeSingle(),
+    supabase.from("website_settings").select("value").eq("section", "homepage").eq("key", "hero_image_seed").maybeSingle(),
+  ]);
+  const heroHiddenValue: unknown = (heroHiddenRow as { value: unknown } | null)?.value;
+  const heroHiddenSeeds = Array.isArray(heroHiddenValue) ? heroHiddenValue.filter((x): x is string => typeof x === "string") : [];
+  const heroOverrideValue: unknown = (heroSetting as { value: unknown } | null)?.value;
+  const heroOverride = typeof heroOverrideValue === "string" && heroOverrideValue.startsWith("http") ? heroOverrideValue : null;
 
   return (
     <div>
@@ -69,7 +79,15 @@ export default async function AdminMediaPage() {
         />
       )}
 
-      <h2 className="font-display text-lg font-semibold mt-10 mb-3">Gallery ({galleryPhotos.length})</h2>
+      <h2 className="font-display text-lg font-semibold mt-10 mb-3">Hero images folder</h2>
+      <p className="text-xs text-stone-500 mb-4">Every slide rotating on the homepage right now — click the folder to view, delete any slide from rotation.</p>
+      <HeroFolder
+        slides={HERO_SLIDES.map((s) => ({ seed: s.seed, src: placeholderPhoto(s.seed, 640, 360), alt: s.alt }))}
+        hiddenSeeds={heroHiddenSeeds}
+        override={heroOverride}
+      />
+
+      <h2 className="font-display text-lg font-semibold mt-10 mb-3">Gallery images folder ({galleryPhotos.length})</h2>
       <p className="text-xs text-stone-500 mb-4">Click any image to view it large — you can hide it from the site or show it again at any time.</p>
       <GalleryPreviewGrid
         items={galleryPhotos.map((p) => ({ seed: p.seed, src: resolveGallerySrc(p.seed, 400, 400), alt: p.alt, cat: p.cat }))}

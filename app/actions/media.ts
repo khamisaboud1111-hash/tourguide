@@ -135,6 +135,70 @@ export async function unhideGallerySeed(seed: string) {
   return { ok: true };
 }
 
+async function getHeroHidden(): Promise<string[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("website_settings")
+    .select("value")
+    .eq("section", "hero")
+    .eq("key", "hidden_seeds")
+    .maybeSingle();
+  const v = (data as { value: unknown } | null)?.value;
+  return Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : [];
+}
+
+async function saveHeroHidden(seeds: string[]) {
+  const supabase = await createClient();
+  const { error } = await supabase.from("website_settings").upsert(
+    {
+      section: "hero",
+      key: "hidden_seeds",
+      value: seeds,
+      description: "Hero slides hidden from the live site by admin",
+      is_public: true,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "section,key" }
+  );
+  if (error) throw new Error(error.message);
+}
+
+// Delete a live hero slide from rotation (reversible).
+export async function hideHeroSeed(seed: string) {
+  await authorizeStaff("update homepage settings");
+  if (!seed || typeof seed !== "string") throw new Error("Invalid photo");
+  const seeds = await getHeroHidden();
+  if (!seeds.includes(seed)) await saveHeroHidden([...seeds, seed]);
+  revalidatePath("/");
+  revalidatePath("/admin/media");
+  return { ok: true };
+}
+
+export async function unhideHeroSeed(seed: string) {
+  await authorizeStaff("update homepage settings");
+  const seeds = await getHeroHidden();
+  await saveHeroHidden(seeds.filter((s) => s !== seed));
+  revalidatePath("/");
+  revalidatePath("/admin/media");
+  return { ok: true };
+}
+
+// Remove a custom uploaded hero so the safari_blue carousel plays again.
+export async function clearHeroOverride() {
+  await authorizeStaff("update homepage settings");
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("website_settings")
+    .delete()
+    .eq("section", "homepage")
+    .eq("key", "hero_image_seed");
+  if (error) throw new Error(error.message);
+  revalidatePath("/");
+  revalidatePath("/admin/media");
+  revalidatePath("/admin/website/homepage");
+  return { ok: true };
+}
+
 export async function deleteMedia(id: string) {
   await authorizeStaff("delete media");
   const supabase = await createClient();
