@@ -99,6 +99,72 @@ export type UploadItem = {
   alt_text: string | null;
 };
 
+export type UploadFolder = {
+  prefix: string;
+  title: string;
+  hint: string;
+  items: UploadItem[];
+};
+
+// Folder browser — folders first; click a folder to see only its images.
+export function FolderBrowser({ folders }: { folders: UploadFolder[] }) {
+  const [openPrefix, setOpenPrefix] = useState<string | null>(null);
+  const open = folders.find((f) => f.prefix === openPrefix) ?? null;
+  const total = folders.reduce((n, f) => n + f.items.length, 0);
+
+  if (open) {
+    return (
+      <div>
+        <button
+          type="button"
+          onClick={() => setOpenPrefix(null)}
+          className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:border-clove-400 hover:text-clove-700 transition-colors"
+        >
+          <ChevronLeft size={16} /> All folders
+        </button>
+        <h3 className="font-display text-base font-semibold">{open.title} ({open.items.length})</h3>
+        <p className="text-xs text-stone-500 mt-0.5 mb-3">{open.hint}</p>
+        <UploadGrid items={open.items} />
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <p className="text-xs text-stone-500 mb-3">{total} images in {folders.length} folders — click a folder to open it.</p>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {folders.map((f) => {
+          const cover = f.items[0];
+          return (
+            <button
+              key={f.prefix}
+              type="button"
+              onClick={() => setOpenPrefix(f.prefix)}
+              className="group rounded-2xl border border-stone-200 bg-white overflow-hidden text-left hover:border-clove-400 hover:shadow-card transition-all"
+            >
+              <div className="aspect-[4/3] bg-stone-100 overflow-hidden">
+                {cover ? (
+                  <div className="h-full w-full transition-transform duration-300 group-hover:scale-105">
+                    <MediaThumb src={cover.public_url ?? ""} alt={cover.original_filename} />
+                  </div>
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-stone-300">
+                    <ImageOff size={28} />
+                  </div>
+                )}
+              </div>
+              <div className="p-3">
+                <p className="text-sm font-semibold text-stone-800">{f.title}</p>
+                <p className="text-xs text-stone-500 mt-0.5">{f.items.length} image{f.items.length === 1 ? "" : "s"}</p>
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function DangerButton({ onConfirm, children }: { onConfirm: () => void; children: React.ReactNode }) {
   const [armed, setArmed] = useState(false);
   if (!armed) {

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getLang, tServer } from "@/lib/i18n/server";
 import MediaUploadForm from "./MediaUploadForm";
-import { UploadGrid, GalleryPreviewGrid, type UploadItem } from "@/components/admin/media-client";
+import { FolderBrowser, GalleryPreviewGrid, type UploadItem } from "@/components/admin/media-client";
 import { galleryPhotos, resolveGallerySrc } from "@/lib/gallery-photos";
 
 export const dynamic = "force-dynamic";
@@ -52,31 +52,21 @@ export default async function AdminMediaPage() {
           <p className="text-sm text-stone-500 mt-1">{tServer("adminNoMediaInFolder", lang)} — upload real photos above.</p>
         </div>
       ) : (
-        <div className="space-y-8">
-          {FOLDER_SECTIONS.map((section) => {
-            const group = uploads.filter((u) => folderOf(u) === section.prefix);
-            if (group.length === 0) return null;
-            return (
-              <section key={section.prefix}>
-                <h3 className="font-display text-base font-semibold">{section.title} ({group.length})</h3>
-                <p className="text-xs text-stone-500 mt-0.5 mb-3">{section.hint}</p>
-                <UploadGrid items={group} />
-              </section>
-            );
-          })}
-          {(() => {
-            const known = new Set(FOLDER_SECTIONS.map((s) => s.prefix));
-            const rest = uploads.filter((u) => !known.has(folderOf(u)));
-            if (rest.length === 0) return null;
-            return (
-              <section>
-                <h3 className="font-display text-base font-semibold">Other ({rest.length})</h3>
-                <p className="text-xs text-stone-500 mt-0.5 mb-3">Uploads in other folders.</p>
-                <UploadGrid items={rest} />
-              </section>
-            );
-          })()}
-        </div>
+        <FolderBrowser
+          folders={[
+            ...FOLDER_SECTIONS.map((section) => ({
+              prefix: section.prefix,
+              title: section.title,
+              hint: section.hint,
+              items: uploads.filter((u) => folderOf(u) === section.prefix),
+            })).filter((f) => f.items.length > 0),
+            ...(() => {
+              const known = new Set(FOLDER_SECTIONS.map((s) => s.prefix));
+              const rest = uploads.filter((u) => !known.has(folderOf(u)));
+              return rest.length > 0 ? [{ prefix: "other", title: "Other", hint: "Uploads in other folders.", items: rest }] : [];
+            })(),
+          ]}
+        />
       )}
 
       <h2 className="font-display text-lg font-semibold mt-10 mb-3">Gallery ({galleryPhotos.length})</h2>
