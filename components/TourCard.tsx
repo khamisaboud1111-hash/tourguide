@@ -54,12 +54,12 @@ export default function TourCard({ tour, featured = false, highlight }: { tour: 
     >
       <div className={`relative w-full overflow-hidden bg-stone-100 ${featured ? "aspect-[16/10]" : "aspect-[4/3]"}`}>
         <Image
-          src={placeholderPhoto(tour.photoSeed, featured ? 3840 : 1920, featured ? 2160 : 1280)}
+          src={placeholderPhoto(tour.photoSeed, featured ? 1600 : 900, featured ? 1000 : 675)}
           alt={tour.title}
           fill
           sizes={featured ? "(min-width: 768px) 66vw, 100vw" : "(min-width: 768px) 33vw, 100vw"}
           className="object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-entrance"
-          quality={90}
+          quality={80}
         />
         {/* top bar: category + favorite */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between">

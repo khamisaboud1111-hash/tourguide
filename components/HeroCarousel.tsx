@@ -30,12 +30,17 @@ export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }
       setIndex((i) => (i + 1) % seeds.length);
     }, 3000);
     return () => clearInterval(id);
-  }, []);
+  }, [seeds.length]);
+
+  // Perf: only mount the visible slide + preload the next one. Mounting all 9
+  // full-screen images at once (~8MB) made the homepage crawl on mobile data.
+  const visible = new Set([index, (index + 1) % seeds.length]);
 
   return (
     <div className="absolute inset-0">
       {seeds.map((seed, i) => {
-        const src = seed.startsWith("http") || seed.startsWith("/") ? seed : placeholderPhoto(seed, 3840, 2160);
+        if (!visible.has(i)) return null;
+        const src = seed.startsWith("http") || seed.startsWith("/") ? seed : placeholderPhoto(seed, 1920, 1080);
         return (
           <Image
             key={seed}
@@ -44,9 +49,9 @@ export default function HeroCarousel({ overrideSeed }: { overrideSeed?: string }
             fill
             priority={i === 0}
             sizes="100vw"
-            quality={100}
+            quality={85}
             className={`object-cover transition-opacity duration-700 ease-in-out ${i === index ? "opacity-100" : "opacity-0"}`}
-            unoptimized={false}
+            unoptimized={seed.startsWith("http")}
           />
         );
       })}

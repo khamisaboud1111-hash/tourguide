@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Link2, Check, ImageOff, X, Trash2, EyeOff, Eye, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useTransition, useMemo } from "react";
+import { Link2, Check, ImageOff, X, Trash2, Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { deleteMedia, setHeroImage, hideGallerySeed, unhideGallerySeed } from "@/app/actions/media";
 
 // Thumbnail with graceful fallback — if a stored URL ever breaks, the admin
@@ -241,28 +241,56 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
     });
   };
 
+  // Group live-site images by their folder (category) — Gallery, Hero-style
+  // shots and every other area each in its own folder section.
+  const groups = useMemo(() => {
+    const map = new Map<string, GalleryPreviewItem[]>();
+    for (const p of items) {
+      const list = map.get(p.cat) ?? [];
+      list.push(p);
+      map.set(p.cat, list);
+    }
+    const out: { cat: string; list: GalleryPreviewItem[] }[] = [];
+    map.forEach((list, cat) => out.push({ cat, list }));
+    return out;
+  }, [items]);
+
+  const viewerButton = current && !isHidden ? (
+    <DangerButton onConfirm={() => toggle(current.seed, true)}>
+      <span className="inline-flex items-center gap-1"><Trash2 size={12} /> Delete from site</span>
+    </DangerButton>
+  ) : null;
+
   return (
     <>
-      <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
-        {items.map((p) => {
-          const h = hidden.has(p.seed);
-          return (
-            <button
-              key={p.seed}
-              type="button"
-              onClick={() => setOpenSeed(p.seed)}
-              className="rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 transition-colors"
-              aria-label={`View ${p.alt}`}
-            >
-              <div className={`aspect-square bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
-                <MediaThumb src={p.src} alt={p.alt} />
-              </div>
-              <p className="text-[11px] text-stone-500 truncate px-2 py-1" title={p.alt}>
-                {h ? "Hidden · " : ""}{p.cat}
-              </p>
-            </button>
-          );
-        })}
+      <div className="space-y-6">
+        {groups.map(({ cat, list }) => (
+          <section key={cat}>
+            <h3 className="font-display text-base font-semibold">{cat} ({list.length})</h3>
+            <p className="text-xs text-stone-500 mt-0.5 mb-3">Folder: gallery / {cat.toLowerCase().replace(/[^a-z0-9]+/g, "-")}</p>
+            <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+              {list.map((p) => {
+                const h = hidden.has(p.seed);
+                return (
+                  <button
+                    key={p.seed}
+                    type="button"
+                    onClick={() => setOpenSeed(p.seed)}
+                    className="rounded-xl overflow-hidden border border-stone-200 bg-white text-left hover:border-clove-300 transition-colors"
+                    aria-label={`View ${p.alt}`}
+                  >
+                    <div className={`aspect-square bg-stone-100 overflow-hidden ${h ? "opacity-40 grayscale" : ""}`}>
+                      <MediaThumb src={p.src} alt={p.alt} />
+                    </div>
+                    <p className="text-[11px] text-stone-500 truncate px-2 py-1" title={`${p.alt} · file: ${p.seed}`}>
+                      {h ? "Deleted · " : ""}{p.seed}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
       </div>
       {current && (
         <Lightbox
@@ -273,14 +301,18 @@ export function GalleryPreviewGrid({ items, hiddenSeeds }: { items: GalleryPrevi
           onPrev={items.length > 1 ? () => step(-1) : undefined}
           onNext={items.length > 1 ? () => step(1) : undefined}
         >
-          <button
-            type="button"
-            disabled={isPending}
-            onClick={() => toggle(current.seed, !isHidden)}
-            className="inline-flex items-center gap-1.5 rounded-full bg-white text-stone-800 px-4 py-1.5 text-xs font-medium hover:bg-stone-100 transition-colors disabled:opacity-60"
-          >
-            {isHidden ? <><Eye size={14} /> Show on site again</> : <><EyeOff size={14} /> Hide from site</>}
-          </button>
+          {isHidden ? (
+            <button
+              type="button"
+              disabled={isPending}
+              onClick={() => toggle(current.seed, false)}
+              className="inline-flex items-center gap-1.5 rounded-full bg-white text-stone-800 px-4 py-1.5 text-xs font-medium hover:bg-stone-100 transition-colors disabled:opacity-60"
+            >
+              <Eye size={14} /> Restore to site
+            </button>
+          ) : (
+            viewerButton
+          )}
         </Lightbox>
       )}
     </>

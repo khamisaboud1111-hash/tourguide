@@ -56,12 +56,12 @@ export default function GalleryClient() {
             aria-label={t("openPhoto").replace("{alt}", p.alt)}
           >
             <Image
-              src={resolveGallerySrc(p.seed, 1200, p.tall ? 1600 : 1200)}
+              src={resolveGallerySrc(p.seed, 800, p.tall ? 1067 : 800)}
               alt={p.alt}
               fill
               sizes="(min-width:768px) 33vw, 50vw"
               className="object-cover"
-              quality={90}
+              quality={75}
               unoptimized={p.seed.startsWith("http")}
             />
           </button>
@@ -85,7 +85,7 @@ export default function GalleryClient() {
             </button>
           </div>
           <div className="flex-1 relative flex items-center justify-center p-4">
-            <Image src={resolveGallerySrc(current.seed, 3840, 2160)} alt={current.alt} fill className="object-contain p-4 md:p-10" sizes="100vw" quality={100} unoptimized={current.seed.startsWith("http")} />
+            <Image src={resolveGallerySrc(current.seed, 1920, 1080)} alt={current.alt} fill className="object-contain p-4 md:p-10" sizes="100vw" quality={85} unoptimized={current.seed.startsWith("http")} />
             <button onClick={prev} aria-label={t("previous")} className="absolute left-4 md:left-8 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/15 hover:bg-white/25 text-white backdrop-blur">
               <ChevronLeft size={20} />
             </button>

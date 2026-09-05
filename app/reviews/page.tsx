@@ -21,15 +21,17 @@ const PUBLIC_REVIEW_COLUMNS =
 export default async function ReviewsPage() {
   const lang = getLang();
   const supabase = await createClient();
-  const { data: reviews } = await supabase
-    .from("reviews")
-    .select(PUBLIC_REVIEW_COLUMNS)
-    .eq("published", true)
-    .eq("is_spam", false)
-    .order("is_featured", { ascending: false })
-    .order("created_at", { ascending: false })
-    .limit(24);
-  const { data: tours } = await supabase.from("tours").select("id, title").eq("is_published", true).order("title");
+  const [{ data: reviews }, { data: tours }] = await Promise.all([
+    supabase
+      .from("reviews")
+      .select(PUBLIC_REVIEW_COLUMNS)
+      .eq("published", true)
+      .eq("is_spam", false)
+      .order("is_featured", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(24),
+    supabase.from("tours").select("id, title").eq("is_published", true).order("title"),
+  ]);
 
   const list = (reviews ?? []) as TourReview[];
   const tourOptions = ((tours ?? []) as { id: string; title: string }[]).map((t) => ({ id: t.id, title: t.title }));

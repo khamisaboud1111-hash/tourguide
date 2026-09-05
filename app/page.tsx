@@ -43,13 +43,16 @@ export default async function HomePage() {
   const lang = getLang();
   const t = (k: string) => tServer(k, lang);
   const supabase = await createClient();
-  const { data } = await supabase.from("tours").select("*").eq("is_published", true).order("created_at", { ascending: false });
+  // Parallel fetches — sequential awaits stacked transatlantic latency on every visit.
+  const [{ data }, { data: hpSettings }] = await Promise.all([
+    supabase.from("tours").select("*").eq("is_published", true).order("created_at", { ascending: false }),
+    supabase.from("website_settings").select("key, value").eq("section", "homepage"),
+  ]);
   const tours = (data ?? []).map(rowToTour);
   const [featured] = tours;
   const signature = tours.slice(0, 6);
 
-  // CMS — homepage settings from website_settings (admin can change hero/about)
-  const { data: hpSettings } = await supabase.from("website_settings").select("key, value").eq("section", "homepage");
+  // CMS - homepage settings from website_settings (admin can change hero/about)
   const hpMap = new Map((hpSettings ?? []).map((r) => [r.key, r.value]));
   const hp = (k: string, fallback: string) => {
     const v = hpMap.get(k);
