@@ -1,7 +1,6 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
 import { useState, useEffect } from "react";
 import MediaUploadForm from "./MediaUploadForm";
 import { FolderBrowser, GalleryPreviewGrid, type GalleryPreviewItem, HeroFolder, type UploadItem } from "@/components/admin/media-client";
@@ -10,7 +9,6 @@ import { HERO_SLIDES } from "@/lib/hero-slides";
 import { placeholderPhoto } from "@/lib/placeholder";
 
 import { dictionary, type Lang } from "@/lib/i18n/dictionary";
-import { House, CalendarDays, Image, Settings, Truck } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -126,130 +124,54 @@ export default function AdminMediaPage() {
 
   const uploads = items;
 
-  // Color palette for folder categories
-  const folderColors: Record<string, string> = {
-    hero: "from-clove-500 to-clove-600",
-    gallery: "from-ocean-500 to-ocean-600",
-    tours: "from-saffron-500 to-saffron-600",
-    team: "from-indigo-500 to-indigo-600",
-    blog: "from-lagoon-500 to-lagoon-600",
-    other: "from-stone-500 to-stone-600",
-  };
-
   // Compute folders for FolderBrowser
-  const folderSections = FOLDER_SECTIONS.map((section) => {
-    const itemsInSection = uploads.filter((u) => folderOf(u) === section.prefix);
-    return {
-      prefix: section.prefix,
-      title: t(section.title, lang),
-      hint: t(section.hint, lang),
-      items: itemsInSection,
-      color: folderColors[section.prefix] ?? "from-stone-500 to-stone-600",
-    };
-  }).filter((f) => f.items.length > 0 || f.prefix === "gallery"); // Always include gallery
+  const folderSections = FOLDER_SECTIONS.map((section) => ({
+    prefix: section.prefix,
+    title: t(section.title, lang),
+    hint: t(section.hint, lang),
+    items: uploads.filter((u) => folderOf(u) === section.prefix),
+    lang: lang,
+  })).filter((f) => f.items.length > 0);
 
   const unknownItems = uploads.filter((u) => !FOLDER_SECTIONS.some((s) => folderOf(u) === s.prefix));
-  const otherFolder = unknownItems.length > 0 ? {
-    prefix: "other",
-    title: t("Other", lang),
-    hint: t("Uploads in other folders.", lang),
-    items: unknownItems,
-    color: "from-stone-500 to-stone-600",
-  } : null;
+  const otherFolder = unknownItems.length > 0 ? [{ prefix: "other", title: t("Other", lang), hint: t("Uploads in other folders.", lang), items: unknownItems }] : [];
 
-  const allFolders = [...folderSections, ...(otherFolder ? [otherFolder] :[])];
+  const allFolders = [...folderSections, ...otherFolder];
 
   return (
-    <div className="min-h-screen bg-stone-50">
-      {/* Sidebar */}
-      <aside className="bg-white shadow-lg h-screen border-r border-stone-200">
-        <div className="p-6 border-b border-stone-200">
-          <h1 className="font-display text-xl font-semibold text-clove-800">Admin</h1>
+    <div>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="font-display text-2xl font-semibold">{t("adminMediaLibrary", lang)}</h1>
+        <span className="text-xs text-stone-500">{uploads.length} uploaded · {galleryPhotosLocal.length} in gallery</span>
+      </div>
+
+      <MediaUploadForm folders={folders} />
+
+      <h2 className="font-display text-lg font-semibold mt-8 mb-3">Your uploads</h2>
+      <p className="text-xs text-stone-500 mb-4">Grouped by folder — click any image to view it large. Deleting removes it everywhere live.</p>
+      {uploads.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-12 text-center">
+          <p className="text-stone-600 font-medium">No media yet</p>
+          <p className="text-sm text-stone-500 mt-1">{t("adminNoMediaInFolder", lang)} — upload real photos above.</p>
         </div>
-        <nav className="p-3 space-y-2">
-          <Link
-            href="/admin"
-            className="flex items-center gap-3 rounded-lg px-4 py-2 text-stone-700 hover:bg-stone-100 transition-colors"
-          >
-            <House size={18} /> {t("adminOverview", lang)}
-          </Link>
-          <Link
-            href="/admin/booking"
-            className="flex items-center gap-3 rounded-lg px-4 py-2 text-stone-700 hover:bg-stone-100 transition-colors"
-          >
-            <CalendarDays size={18} /> {t("adminBookingCalendarTitle", lang)}
-          </Link>
-          <Link
-            href="/admin/media"
-            className="flex items-center gap-3 rounded-lg bg-clove-50 px-4 py-2 text-clove-700 font-medium"
-            aria-current="page"
-          >
-            <Image size={18} /> {t("adminMediaLibrary", lang)}
-          </Link>
-          <Link
-            href="/admin/tours"
-            className="flex items-center gap-3 rounded-lg px-4 py-2 text-stone-700 hover:bg-stone-100 transition-colors"
-          >
-            <Truck size={18} /> {t("adminToursListed", lang)}
-          </Link>
-          <Link
-            href="/admin/settings"
-            className="flex items-center gap-3 rounded-lg px-4 py-2 text-stone-700 hover:bg-stone-100 transition-colors"
-          >
-            <Settings size={18} /> {t("adminTitle", lang)}
-          </Link>
-        </nav>
-      </aside>
+      ) : (
+        <FolderBrowser folders={allFolders} />
+      )}
 
-      {/* Main content */}
-      <main className="p-6 md:p-8 min-h-screen">
-        <div className="max-w-7xl mx-auto">
+      <h2 className="font-display text-lg font-semibold mt-10 mb-3">Hero images folder</h2>
+      <p className="text-xs text-stone-500 mb-4">Every slide rotating on the homepage right now — click the folder to view, delete any slide from rotation.</p>
+      <HeroFolder
+        slides={HERO_SLIDES.map((s) => ({ seed: s.seed, src: placeholderPhoto(s.seed, 640, 360), alt: s.alt }))}
+        hiddenSeeds={heroHiddenSeeds}
+        override={heroOverride}
+      />
 
-          <header className="mb-8">
-            <h1 className="font-display text-3xl font-bold text-clove-900 mb-2">{t("adminMediaLibrary", lang)}</h1>
-            <p className="text-stone-500">{uploads.length} uploaded · {galleryPhotosLocal.length} in gallery</p>
-          </header>
-
-          <MediaUploadForm folders={folders} />
-
-          <section className="space-y-6">
-            {/* Your uploads */}
-            <div>
-              <h2 className="font-display text-lg font-medium text-clove-800 mb-3">Your uploads</h2>
-              <p className="text-stone-500 text-sm mb-4">Grouped by folder — click any image to view it large. Deleting removes it everywhere live.</p>
-              {uploads.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-12 text-center">
-                  <p className="text-stone-600 font-medium">No media yet</p>
-                  <p className="text-sm text-stone-500 mt-1">{t("adminNoMediaInFolder", lang)} — upload real photos above.</p>
-                </div>
-              ) : (
-                <FolderBrowser folders={allFolders} />
-              )}
-            </div>
-
-            {/* Hero images folder */}
-            <div>
-              <h2 className="font-display text-lg font-medium text-clove-800 mb-3">Hero images folder</h2>
-              <p className="text-stone-500 text-sm mb-4">Every slide rotating on the homepage right now — click the folder to view, delete any slide from rotation.</p>
-              <HeroFolder
-                slides={HERO_SLIDES.map((s) => ({ seed: s.seed, src: placeholderPhoto(s.seed, 640, 360), alt: s.alt }))}
-                hiddenSeeds={heroHiddenSeeds}
-                override={heroOverride}
-              />
-            </div>
-
-            {/* Gallery images folder */}
-            <div>
-              <h2 className="font-display text-lg font-medium text-clove-800 mb-3">Gallery images folder ({galleryPhotosLocal.length})</h2>
-              <p className="text-stone-500 text-sm mb-4">Click any image to view it large — you can hide it from the site or show it again at any time.</p>
-              <GalleryPreviewGrid
-                items={galleryPhotosLocal}
-                hiddenSeeds={useState<string[]>(heroHiddenSeeds)[0]}
-              />
-            </div>
-          </section>
-        </div>
-      </main>
+      <h2 className="font-display text-lg font-semibold mt-10 mb-3">Gallery images folder ({galleryPhotosLocal.length})</h2>
+      <p className="text-xs text-stone-500 mb-4">Click any image to view it large — you can hide it from the site or show it again at any time.</p>
+      <GalleryPreviewGrid
+        items={galleryPhotosLocal}
+        hiddenSeeds={heroHiddenSeeds}
+      />
     </div>
   );
 }

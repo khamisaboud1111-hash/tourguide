@@ -163,6 +163,7 @@ export function FolderBrowser({ folders }: { folders: UploadFolder[] }) {
               onClick={() => setOpenPrefix(f.prefix)}
               role="button"
               aria-label={`Open ${f.title} folder`}
+              style={{ borderColor: openPrefix === f.prefix ? 'clove-400' : 'stone-200' }}
             >
               <div className="aspect-[4/3] bg-stone-100 overflow-hidden">
                 {cover ? (
@@ -179,6 +180,13 @@ export function FolderBrowser({ folders }: { folders: UploadFolder[] }) {
                 <p className="text-sm font-semibold text-stone-800">{f.title}</p>
                 <p className="text-xs text-stone-500 mt-0.5">{f.items.length} image{f.items.length === 1 ? "" : "s"}</p>
                 <p className="text-xs text-stone-400 mt-1">{f.hint}</p>
+                <button
+                  type="button"
+                  onClick={() => setOpenPrefix(f.prefix)}
+                  className="mt-1 w-full rounded-lg border border-clove-300 bg-clove-50 text-clove-700 px-3 py-1.5 text-xs font-medium hover:bg-clove-100 transition-colors"
+                >
+                  Add images to {f.title}
+                </button>
               </div>
             </div>
           );
