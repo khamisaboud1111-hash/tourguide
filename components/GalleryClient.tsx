@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Image from "next/image";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { galleryPhotos, resolveGallerySrc, type GalleryPhoto as Photo } from "@/lib/gallery-photos";
 import { useLang } from "@/lib/i18n/context";
 import { createClient } from "@/lib/supabase/client";
+import { gsap } from "gsap";
 
 const photos: Photo[] = galleryPhotos;
 export default function GalleryClient() {
@@ -39,32 +40,67 @@ export default function GalleryClient() {
     });
   }, []);
 
-  const allPhotos = [...photos.filter((p) => !hiddenSeeds.has(p.seed)), ...dynamic];
+  const allPhotos = useMemo(
+    () => [...photos.filter((p) => !hiddenSeeds.has(p.seed)), ...dynamic],
+    [hiddenSeeds, dynamic]
+  );
+  const photoCount = allPhotos.length;
+  const [activeIndex, setActiveIndex] = useState(0);
+  const motionRef = useRef({ timeline: gsap.timeline({ paused: true, repeat: -1, yoyo: true }) });
 
-  const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % allPhotos.length));
-  const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + allPhotos.length) % allPhotos.length));
+  // Auto-play vertical slow-motion animation
+  useEffect(() => {
+    if (photoCount < 2) return;
+    const tl = motionRef.current.timeline;
+    allPhotos.forEach((_, i) => {
+      const delay = (i / photoCount) * 10;
+      tl.to(
+        `.gallery-client-item-${i}`,
+        {
+          y: i % 2 === 0 ? "-20%" : "20%",
+          duration: 1.5,
+          ease: "power2.inOut",
+        },
+        delay
+      );
+    });
+    tl.play();
+    return () => {
+      tl.kill();
+    };
+  }, [photoCount, allPhotos]);
+
+  const next = () => setOpen((i) => (i === null ? 0 : (i + 1) % photoCount));
+  const prev = () => setOpen((i) => (i === null ? 0 : (i - 1 + photoCount) % photoCount));
   const current = open !== null ? allPhotos[open] : null;
 
   return (
     <>
       <div className="columns-2 md:columns-3 gap-4 space-y-4 max-h-[85vh] overflow-y-auto pr-1 overscroll-contain">
         {allPhotos.map((p, idx) => (
-          <button
+          <motion.div
             key={`${p.seed}-${idx}`}
-            onClick={() => setOpen(idx)}
-            className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid group text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"}`}
-            aria-label={t("openPhoto").replace("{alt}", p.alt)}
+            className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid group text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"} gallery-client-item-${idx}`}
+            style={{
+              transition: "transform 1.5s ease-in-out",
+            }}
           >
-            <Image
-              src={resolveGallerySrc(p.seed, 800, p.tall ? 1067 : 800)}
-              alt={p.alt}
-              fill
-              sizes="(min-width:768px) 33vw, 50vw"
-              className="object-cover"
-              quality={75}
-              unoptimized={p.seed.startsWith("http")}
-            />
-          </button>
+            <button
+              onClick={() => setOpen(idx)}
+              className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid group text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"}`}
+              aria-label={t("openPhoto").replace("{alt}", p.alt)}
+            >
+              <Image
+                src={resolveGallerySrc(p.seed, 800, p.tall ? 1067 : 800)}
+                alt={p.alt}
+                fill
+                sizes="(min-width:768px) 33vw, 50vw"
+                className="object-cover"
+                quality={75}
+                unoptimized={p.seed.startsWith("http")}
+              />
+            </button>
+          </motion.div>
         ))}
       </div>
 
