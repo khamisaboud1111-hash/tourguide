@@ -80,17 +80,9 @@ export default function GalleryClient() {
         {allPhotos.map((p, idx) => (
           <motion.div
             key={`${p.seed}-${idx}`}
-            className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid group text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"} gallery-client-item-${idx}`}
-            style={{
-              transition: "transform 1.5s ease-in-out",
-            }}
+            className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"} gallery-client-item-${idx}`}
           >
-            <button
-              onClick={() => setOpen(idx)}
-              className={`relative w-full overflow-hidden rounded-2xl break-inside-avoid group text-left ${p.tall ? "aspect-[3/4]" : "aspect-square"}`}
-              aria-label={t("openPhoto").replace("{alt}", p.alt)}
-            >
-              <Image
+            <Image
                 src={resolveGallerySrc(p.seed, 800, p.tall ? 1067 : 800)}
                 alt={p.alt}
                 fill
@@ -99,7 +91,6 @@ export default function GalleryClient() {
                 quality={75}
                 unoptimized={p.seed.startsWith("http")}
               />
-            </button>
           </motion.div>
         ))}
       </div>

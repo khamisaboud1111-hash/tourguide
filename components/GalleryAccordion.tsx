@@ -19,7 +19,7 @@ export default function GalleryAccordion() {
   return (
     <div className="mb-4">
       <p className="text-[11px] uppercase tracking-[0.2em] font-medium text-stone-400 mb-3">{t("featuredMoments")}</p>
-      <AccordionGallery items={items} orientation="vertical" gap={10} height={340} duration={1.2} autoPlayInterval={5000} />
+      <AccordionGallery items={items} orientation="vertical" gap={10} height={340} duration={1.2} autoPlayInterval={5000} autoPlay={true} />
     </div>
   );
 }
