@@ -147,9 +147,9 @@ export default function AdminBookingCalendarPage() {
 
       {/* New event form - slide in */}
       {showNewEvent && (
-        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur flex items-center justify-center p-4" onClick={(e) => e.currentTarget !== e.target && setShowNewEvent(false)}>
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={() => setShowNewEvent(false)}>
           <div
-            className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl transform scale-95 opacity-0 transition-all duration-300 ease-out"
+            className="bg-white rounded-xl p-6 w-full max-w-md shadow-2xl transform scale-100 transition-all duration-300"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="font-display text-lg font-semibold mb-4">{t("adminAddEvent")}</h2>

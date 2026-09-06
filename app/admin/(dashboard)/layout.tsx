@@ -28,14 +28,6 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    titleKey: "adminGroupSales",
-    items: [
-      { href: "/admin/bookings", labelKey: "adminNavBookings", icon: Inbox },
-      { href: "/admin/bookings/calendar", labelKey: "adminNavCalendar", icon: CalendarRange },
-      { href: "/admin/bookings/new", labelKey: "adminNavNewBooking", icon: PlusCircle },
-    ],
-  },
-  {
     titleKey: "adminGroupContent",
     items: [
       { href: "/admin/tours", labelKey: "adminNavTours", icon: MapPin },
@@ -48,21 +40,23 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    titleKey: "adminGroupGeneralSettings",
+    items: [
+      { href: "/admin/settings", labelKey: "adminNavGeneral", icon: Settings },
+      { href: "/admin/settings/security", labelKey: "adminNavSecurity", icon: Lock },
+      { href: "/admin/bookings", labelKey: "adminNavBookings", icon: Inbox },
+      { href: "/admin/bookings/calendar", labelKey: "adminNavCalendar", icon: CalendarRange },
+      { href: "/admin/bookings/new", labelKey: "adminNavNewBooking", icon: PlusCircle },
+      { href: "/admin/settings/social", labelKey: "adminNavSocial", icon: Share2 },
+      { href: "/admin/website/footer", labelKey: "adminNavFooter", icon: BarChart3 },
+    ],
+  },
+  {
     titleKey: "adminGroupWebsite",
     items: [
       { href: "/admin/website/homepage", labelKey: "adminNavHomepage", icon: LayoutGrid },
       { href: "/admin/website/about", labelKey: "adminNavAbout", icon: FileText },
       { href: "/admin/website/contact", labelKey: "adminNavContact", icon: MessageSquare },
-      { href: "/admin/website/footer", labelKey: "adminNavFooter", icon: BarChart3 },
-      { href: "/admin/settings/social", labelKey: "adminNavSocial", icon: Share2 },
-    ],
-  },
-  {
-    titleKey: "adminGroupSettings",
-    items: [
-      { href: "/admin/settings", labelKey: "adminNavGeneral", icon: Settings },
-      { href: "/admin/settings/booking", labelKey: "adminNavBookingSettings", icon: CalendarDays },
-      { href: "/admin/settings/security", labelKey: "adminNavSecurity", icon: Lock },
     ],
   },
 ];

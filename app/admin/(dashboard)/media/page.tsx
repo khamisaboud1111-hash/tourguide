@@ -17,12 +17,12 @@ export const dynamic = "force-dynamic";
 const folders = ["All", "Tours", "Hero", "Gallery", "Team", "Blog"];
 
 // Folder prefix (storage_path "hero/...") -> display section in the library.
-const FOLDER_SECTIONS: { prefix: string; title: string; hint: string; color: string }[] = [
-  { prefix: "hero", title: "Hero images", hint: "Homepage hero candidates — open one and tap “Use as hero”.", color: "from-clove-500 to-clove-600" },
-  { prefix: "gallery", title: "Gallery images", hint: "These appear on the live Gallery page automatically.", color: "from-ocean-500 to-ocean-600" },
-  { prefix: "tours", title: "Tour / Experience images", hint: "Attached to tours and experiences across the site.", color: "from-saffron-500 to-saffron-600" },
-  { prefix: "team", title: "Team images", hint: "Photos of the team.", color: "from-indigo-500 to-indigo-600" },
-  { prefix: "blog", title: "Journal images", hint: "Used in journal posts.", color: "from-lagoon-500 to-lagoon-600" },
+const FOLDER_SECTIONS: { prefix: string; title: string; hint: string }[] = [
+  { prefix: "hero", title: "Hero images", hint: "Homepage hero candidates — open one and tap “Use as hero”." },
+  { prefix: "gallery", title: "Gallery images", hint: "These appear on the live Gallery page automatically." },
+  { prefix: "tours", title: "Tour / Experience images", hint: "Attached to tours and experiences across the site." },
+  { prefix: "team", title: "Team images", hint: "Photos of the team." },
+  { prefix: "blog", title: "Journal images", hint: "Used in journal posts." },
 ];
 
 function folderOf(item: UploadItem): string {
@@ -124,6 +124,8 @@ export default function AdminMediaPage() {
     setGalleryPhotosLocal(galleryPhotos.map((p) => ({ seed: p.seed, src: resolveGallerySrc(p.seed, 400, 400), alt: p.alt, cat: p.cat })));
   }, []);
 
+  const uploads = items;
+
   // Color palette for folder categories
   const folderColors: Record<string, string> = {
     hero: "from-clove-500 to-clove-600",
@@ -136,7 +138,7 @@ export default function AdminMediaPage() {
 
   // Compute folders for FolderBrowser
   const folderSections = FOLDER_SECTIONS.map((section) => {
-    const itemsInSection = items.filter((u) => folderOf(u) === section.prefix);
+    const itemsInSection = uploads.filter((u) => folderOf(u) === section.prefix);
     return {
       prefix: section.prefix,
       title: t(section.title, lang),
@@ -146,7 +148,7 @@ export default function AdminMediaPage() {
     };
   }).filter((f) => f.items.length > 0 || f.prefix === "gallery"); // Always include gallery
 
-  const unknownItems = items.filter((u) => !FOLDER_SECTIONS.some((s) => folderOf(u) === s.prefix));
+  const unknownItems = uploads.filter((u) => !FOLDER_SECTIONS.some((s) => folderOf(u) === s.prefix));
   const otherFolder = unknownItems.length > 0 ? {
     prefix: "other",
     title: t("Other", lang),
@@ -205,7 +207,7 @@ export default function AdminMediaPage() {
 
           <header className="mb-8">
             <h1 className="font-display text-3xl font-bold text-clove-900 mb-2">{t("adminMediaLibrary", lang)}</h1>
-            <p className="text-stone-500">{items.length} uploaded · {galleryPhotosLocal.length} in gallery</p>
+            <p className="text-stone-500">{uploads.length} uploaded · {galleryPhotosLocal.length} in gallery</p>
           </header>
 
           <MediaUploadForm folders={folders} />
@@ -215,7 +217,7 @@ export default function AdminMediaPage() {
             <div>
               <h2 className="font-display text-lg font-medium text-clove-800 mb-3">Your uploads</h2>
               <p className="text-stone-500 text-sm mb-4">Grouped by folder — click any image to view it large. Deleting removes it everywhere live.</p>
-              {items.length === 0 ? (
+              {uploads.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-12 text-center">
                   <p className="text-stone-600 font-medium">No media yet</p>
                   <p className="text-sm text-stone-500 mt-1">{t("adminNoMediaInFolder", lang)} — upload real photos above.</p>
@@ -242,7 +244,7 @@ export default function AdminMediaPage() {
               <p className="text-stone-500 text-sm mb-4">Click any image to view it large — you can hide it from the site or show it again at any time.</p>
               <GalleryPreviewGrid
                 items={galleryPhotosLocal}
-                hiddenSeeds={heroHiddenSeeds}
+                hiddenSeeds={useState<string[]>(heroHiddenSeeds)[0]}
               />
             </div>
           </section>
