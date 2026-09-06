@@ -30,7 +30,9 @@ const AccordionGallery = ({
   showLabels = true,
   grayscale = true,
   height = 280,
-  className = ""
+  className = "",
+  autoPlay = true,
+  autoPlayInterval = 3000
 }) => {
   const rootRef = useRef(null);
   const panelRefs = useRef([]);
@@ -40,6 +42,7 @@ const AccordionGallery = ({
   const tlRef = useRef(null);
   const firstRunRef = useRef(true);
   const mediaSizeRef = useRef(320);
+  const autoPlayRef = useRef({ running: false });
 
   const vertical = orientation === "vertical";
   const count = items.length;
@@ -78,7 +81,7 @@ const AccordionGallery = ({
         if (media) {
           const drift = Math.max(-1.5, Math.min(1.5, active - i));
           const shift = drift * parallax * mediaSize * 0.06;
-          const gray = grayscale ? (isActive ? 0 : 1) : 0;
+
           tl.to(
             media,
             {
@@ -86,7 +89,7 @@ const AccordionGallery = ({
               yPercent: -50,
               x: vertical ? 0 : isActive ? 0 : shift,
               y: vertical ? (isActive ? 0 : shift) : 0,
-              "--ag-gray": gray,
+              "--ag-gray": grayscale ? (isActive ? 0 : 1) : 0,
               "--ag-dim": isActive ? 0 : 0.35,
               duration: dur,
               ease
@@ -147,12 +150,26 @@ const AccordionGallery = ({
     firstRunRef.current = false;
   }, [applyLayout]);
 
-  useEffect(
-    () => () => {
-      tlRef.current?.kill();
-    },
-    []
-  );
+  // Auto-play: cycle through items automatically
+  useEffect(() => {
+    if (!autoPlay || prefersReduced) return;
+    autoPlayRef.current.running = true;
+    let timeoutId: NodeJS.Timeout;
+    let activeIdx = active;
+
+    const cycle = () => {
+      if (!autoPlayRef.current.running) return;
+      activeIdx = (activeIdx + 1) % count;
+      setActive(activeIdx);
+      timeoutId = setTimeout(cycle, autoPlayInterval);
+    };
+
+    cycle();
+    return () => {
+      autoPlayRef.current.running = false;
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, [active, count, autoPlay, autoPlayInterval, prefersReduced]);
 
   const handleEnter = i => {
     if (trigger === "hover") setActive(i);
