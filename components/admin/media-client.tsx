@@ -128,17 +128,24 @@ export function FolderBrowser({ folders }: { folders: UploadFolder[] }) {
 
   if (open) {
     return (
-      <div>
+      <div className="p-4 bg-stone-50 rounded-xl border border-stone-200 mb-4">
         <button
           type="button"
           onClick={() => setOpenPrefix(null)}
-          className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-4 py-2 text-sm font-medium text-stone-700 hover:border-clove-400 hover:text-clove-700 transition-colors"
+          className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-stone-300 bg-white px-3 py-1.5 text-sm font-medium text-stone-700 hover:border-clove-400 hover:text-clove-700 transition-colors float-right"
         >
           <ChevronLeft size={16} /> All folders
         </button>
-        <h3 className="font-display text-base font-semibold">{open.title} ({open.items.length})</h3>
-        <p className="text-xs text-stone-500 mt-0.5 mb-3">{open.hint}</p>
+        <h3 className="font-display text-base font-semibold truncate">{open.title} ({open.items.length})</h3>
+        <p className="text-xs text-stone-500 mt-1 mb-3">{open.hint}</p>
         <UploadGrid items={open.items} />
+        <button
+          type="button"
+          onClick={() => setOpenPrefix(null)}
+          className="mt-2 w-full rounded-lg border border-clove-300 bg-clove-50 text-clove-700 px-3 py-1.5 text-xs font-medium hover:bg-clove-100 transition-colors"
+        >
+          Add images to {open.title}
+        </button>
       </div>
     );
   }
@@ -150,11 +157,12 @@ export function FolderBrowser({ folders }: { folders: UploadFolder[] }) {
         {folders.map((f) => {
           const cover = f.items[0];
           return (
-            <button
+            <div
               key={f.prefix}
-              type="button"
+              className="group rounded-2xl border border-stone-200 bg-white overflow-hidden text-left hover:border-clove-400 hover:shadow-lg transition-all cursor-pointer"
               onClick={() => setOpenPrefix(f.prefix)}
-              className="group rounded-2xl border border-stone-200 bg-white overflow-hidden text-left hover:border-clove-400 hover:shadow-card transition-all"
+              role="button"
+              aria-label={`Open ${f.title} folder`}
             >
               <div className="aspect-[4/3] bg-stone-100 overflow-hidden">
                 {cover ? (
@@ -170,8 +178,9 @@ export function FolderBrowser({ folders }: { folders: UploadFolder[] }) {
               <div className="p-3">
                 <p className="text-sm font-semibold text-stone-800">{f.title}</p>
                 <p className="text-xs text-stone-500 mt-0.5">{f.items.length} image{f.items.length === 1 ? "" : "s"}</p>
+                <p className="text-xs text-stone-400 mt-1">{f.hint}</p>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>
